@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
+use App\Models\Master\Produk;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
@@ -14,7 +15,7 @@ class SalesController extends Controller
      */
     public function index()
     {
-        return view('components.makro.list-data');
+        //
     }
 
     /**

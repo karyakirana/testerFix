@@ -24,6 +24,7 @@
     <link href="/assets/css/themes/layout/brand/dark.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/themes/layout/aside/dark.css" rel="stylesheet" type="text/css" />
     <!--end::Layout Themes-->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="/assets/media/logos/favicon.ico" />
 </head>
 <!--end::Head-->

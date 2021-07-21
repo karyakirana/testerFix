@@ -18,7 +18,7 @@ class ProdukTable {
                 return $row->kategoriharga->nama_kat ?? "";
             })
             ->addColumn('idLokal', function ($row){
-                return $row->kategoriharga->id_lokal ?? "";
+                return $row->kategori->id_lokal ?? "";
             })
             ->make(true);
     }
@@ -37,8 +37,8 @@ class ProdukTable {
                 return $row->kategoriharga->id_lokal ?? "";
             })
             ->addColumn('Action', function($row){
-                $edit= '';
-                $delete = '';
+                $edit= '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id_produk.'" title="Edit"><i class="la la-edit"></i></a>';
+                $delete = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id_produk.'" title="Delete"><i class="la la-trash"></i></a>';
                 return $edit.$delete;
             })
             ->rawColumns(['Action'])
