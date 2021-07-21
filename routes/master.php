@@ -9,6 +9,8 @@ Route::middleware(['auth'])->group(function (){
     Route::get('master/kategori/produk/{id}', [\App\Http\Controllers\Master\KategoriController::class, 'edit']);
     Route::delete('master/kategori/produk/{id}', [\App\Http\Controllers\Master\KategoriController::class, 'destroy']);
 
+    Route::get('master/kategori/harga', [\App\Http\Controllers\Master\KategoriHargaController::class, 'index'])->name('kategoriHarga');
+
     Route::get('/master/produk/list', [\App\Http\Controllers\Master\ProdukController::class, 'index'])->name('produkList');
     Route::post('/master/produk/list', [\App\Http\Controllers\Master\ProdukController::class, 'store']);
     Route::get('/master/produk/list/{id}', [\App\Http\Controllers\Master\ProdukController::class, 'edit']);
