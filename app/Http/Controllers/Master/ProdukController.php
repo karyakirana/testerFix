@@ -142,7 +142,7 @@ class ProdukController extends Controller
      */
     public function destroy($id)
     {
-        $action = Produk::where('id_produk', $id)->destroy();
+        $action = Produk::where('id_produk', $id)->delete();
         return response()->json(['status'=>true, 'action'=>$action]);
     }
 }

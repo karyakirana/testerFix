@@ -117,6 +117,11 @@
                     editData(dataEdit)
                 });
 
+                $('body').on('click', '#btnSoft', function (){
+                    let dataDelete = $(this).data('value');
+                    deletedata(dataDelete);
+                })
+
                 $('#btnSave').on('click', function (){
                     savedata();
                 });
@@ -227,7 +232,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/produk/list/'+id,
+                        url : '{{ url('/') }}'+'/master/produk/list/'+id,
                         method: "GET",
                         dataType : "JSON",
                         success : function (data){
@@ -279,6 +284,30 @@
                         success : function (data){
                             if (data.status){
                                 $('#modalForm').modal('hide');
+                                reloadTable();
+                            }
+                        },
+                        error : function (jqXHR, textStatus, errorThrown){
+                            $('.invalid-feedback').remove();
+                            $('.is-invalid').removeClass('is-invalid');
+                            for (const property in jqXHR.responseJSON.errors) {
+                                // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                                $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                                $("#alertText").empty();
+                                $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                            }
+                        }
+                    });
+                }
+
+                function deletedata(id)
+                {
+                    $.ajax({
+                        headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url : '{{url('/')}}'+'/master/produk/list/'+id,
+                        method : 'DELETE',
+                        success : function (data){
+                            if (data.status){
                                 reloadTable();
                             }
                         },

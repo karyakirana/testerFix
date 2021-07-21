@@ -10,8 +10,9 @@
             <thead>
             <tr>
                 <td width="10%" class="text-center">ID</td>
+                <td width="10%" class="text-center">ID-Lokal</td>
                 <td class="text-center">Jenis</td>
-                <td class="none text-center">Keterangan</td>
+                <td class="none">Keterangan</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -20,11 +21,17 @@
         </x-nano.table-standart>
 
         <x-nano.modal-standart id="modalForm">
-            <x-slot name="title">Jenis Supplier Form</x-slot>
+            <x-slot name="title">Kategori Produk Form</x-slot>
             <form action="#" id="formModal">
                 <input type="text" name="id" hidden>
                 <div class="form-group row">
-                    <label class="col-3 col-form-label">Jenis Supplier</label>
+                    <label class="col-3 col-form-label">ID-Lokal</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="idLokal">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Jenis</label>
                     <div class="col-9">
                         <input type="text" class="form-control" name="jenis">
                     </div>
@@ -73,12 +80,13 @@
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/jenissupplier',
+                        url : '{{ url('/') }}'+'/data/kategori/produk',
                         method : 'PATCH'
                     },
                     columns : [
                         {data : 'DT_RowIndex', orderable : false},
-                        {data : 'jenis'},
+                        {data : 'id_lokal', className: "text-center"},
+                        {data : 'nama'},
                         {data : 'keterangan'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],
@@ -113,15 +121,16 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/jenissupplier/'+id,
+                        url : '{{ url('/') }}'+'/master/kategori/produk/'+id,
                         method: "GET",
                         dataType : "JSON",
                         success : function (data){
                             $('.invalid-feedback').remove();
                             $('.is-invalid').removeClass('is-invalid');
                             $('#formModal').trigger('reset'); // reset form on modals
-                            $('[name="id"]').val(data.id);
-                            $('[name="jenis"]').val(data.jenis);
+                            $('[name="id"]').val(data.id_kategori);
+                            $('[name="idLokal"]').val(data.id_lokal);
+                            $('[name="jenis"]').val(data.nama);
                             $('[name="keterangan"]').val(data.keterangan);
                             $('#modalForm').modal('show');
                         },
@@ -140,7 +149,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/jenissupplier/'+id,
+                        url : '{{ url('/') }}'+'/master/kategori/produk/'+id,
                         method: "DELETE",
                         dataType : "JSON",
                         success : function (data){
@@ -167,7 +176,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ route("jenisSupplierList") }}',
+                        url : '{{ route("kategoriProduk") }}',
                         method : "POST",
                         dataType : "JSON",
                         data : $('#formModal').serialize(),

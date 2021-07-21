@@ -11,6 +11,8 @@ class KategoriProduk extends Model
     use HasFactory , SoftDeletes;
 
     protected $table = 'kategori';
+    protected $primaryKey = 'id_kategori';
+    protected $keyType = 'string';
     protected $fillable = [
         'id_kategori', 'id_lokal', 'nama', 'keterangan'
     ];
