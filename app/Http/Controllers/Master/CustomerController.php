@@ -3,55 +3,58 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\Master\KategoriHarga;
+use App\Models\Master\Customer;
 use Illuminate\Http\Request;
 
-class KategoriHargaController extends Controller
+class CustomerController extends Controller
 {
     public function index()
     {
-        return view('pages.master.kategoriHarga');
+        return view('pages.master.customer');
     }
 
-    protected function idKatHarga()
+    public function idCustomer()
     {
-        $idKategori = KategoriHarga::orderBy('id_kat_harga', 'desc')->first();
+        $idCustomer = Customer::latest('id_cust')->first();
         $num = null;
-        if(!$idKategori)
+        if(!$idCustomer)
         {
             $num = 1;
         } else {
-            $urutan = (int) substr($idKategori->id_kat_harga, 1, 5);
+            $urutan = (int) substr($idCustomer->id_cust, 1, 5);
             $num = $urutan + 1;
         }
-        $id = "H".sprintf("%05s", $num);
+        $id = "C".sprintf("%05s", $num);
         return $id;
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'kategori'=>'required'
+            'nama'=>'required'
         ]);
 
         $data = [
-            'nama_kat'=>$request->kategori,
+            'nama_cust'=>$request->nama,
+            'diskon'=>$request->diskon,
+            'telp_cust'=>$request->telepon,
+            'addr_cust'=>$request->alamat,
             'keterangan'=>$request->keterangan
         ];
 
-        $action = KategoriHarga::updateOrCreate(['id_kat_harga'=>$request->id ?? $this->idKatharga()], $data);
+        $action = Customer::updateOrCreate(['id_cust'=>$request->id ?? $this->idCustomer()], $data);
         return response()->json(['status'=>true, 'action'=>$action]);
     }
 
     public function edit($id)
     {
-        $data = KategoriHarga::find($id);
+        $data = Customer::find($id);
         return response()->json($data);
     }
 
     public function destroy($id)
     {
-        $action = KategoriHarga::destroy($id);
+        $action = Customer::destroy($id);
         return response()->json(['status'=>true, 'action'=>$action]);
     }
 }

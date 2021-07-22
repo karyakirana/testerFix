@@ -10,8 +10,11 @@
             <thead>
             <tr>
                 <td width="10%" class="text-center">ID</td>
-                <td class="text-center">Jenis</td>
-                <td class="none text-center">Keterangan</td>
+                <td class="text-center">Nama</td>
+                <td class="text-center">Diskon</td>
+                <td class="text-center">Telepon</td>
+                <td class="none">Alamat</td>
+                <td class="none">Keterangan</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -20,13 +23,31 @@
         </x-nano.table-standart>
 
         <x-nano.modal-standart id="modalForm">
-            <x-slot name="title">Jenis Supplier Form</x-slot>
+            <x-slot name="title">Kategori Produk Form</x-slot>
             <form action="#" id="formModal">
                 <input type="text" name="id" hidden>
                 <div class="form-group row">
-                    <label class="col-3 col-form-label">Jenis Supplier</label>
+                    <label class="col-3 col-form-label">Nama</label>
                     <div class="col-9">
-                        <input type="text" class="form-control" name="jenis">
+                        <input type="text" class="form-control" name="nama">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Diskon</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="diskon">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Telepon</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="telepon">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Alamat</label>
+                    <div class="col-9">
+                        <textarea name="alamat" id="alamat" class="form-control" cols="2" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -73,12 +94,15 @@
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/jenissupplier',
+                        url : '{{ url('/') }}'+'/data/customer',
                         method : 'PATCH'
                     },
                     columns : [
-                        {data : 'DT_RowIndex', orderable : false, className: "text-center"},
-                        {data : 'jenis'},
+                        {data : 'DT_RowIndex', orderable : false},
+                        {data : 'nama_cust'},
+                        {data : 'diskon'},
+                        {data : 'telp_cust'},
+                        {data : 'addr_cust'},
                         {data : 'keterangan'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],
@@ -113,15 +137,18 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/jenissupplier/'+id,
+                        url : '{{ url('/') }}'+'/master/customer/'+id,
                         method: "GET",
                         dataType : "JSON",
                         success : function (data){
                             $('.invalid-feedback').remove();
                             $('.is-invalid').removeClass('is-invalid');
                             $('#formModal').trigger('reset'); // reset form on modals
-                            $('[name="id"]').val(data.id);
-                            $('[name="jenis"]').val(data.jenis);
+                            $('[name="id"]').val(data.id_cust);
+                            $('[name="nama"]').val(data.nama_cust);
+                            $('[name="diskon"]').val(data.diskon);
+                            $('[name="telepon"]').val(data.telp_cust);
+                            $('[name="alamat"]').val(data.addr_cust);
                             $('[name="keterangan"]').val(data.keterangan);
                             $('#modalForm').modal('show');
                         },
@@ -140,7 +167,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/jenissupplier/'+id,
+                        url : '{{ url('/') }}'+'/master/customer/'+id,
                         method: "DELETE",
                         dataType : "JSON",
                         success : function (data){
@@ -167,7 +194,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ route("jenisSupplierList") }}',
+                        url : '{{ route("customer") }}',
                         method : "POST",
                         dataType : "JSON",
                         data : $('#formModal').serialize(),

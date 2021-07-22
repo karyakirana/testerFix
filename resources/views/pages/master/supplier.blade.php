@@ -10,8 +10,12 @@
             <thead>
             <tr>
                 <td width="10%" class="text-center">ID</td>
-                <td class="text-center">Jenis</td>
-                <td class="none text-center">Keterangan</td>
+                <td width="10%" class="text-center">Jenis</td>
+                <td width="25%" class="text-center">Supplier</td>
+                <td class="none">Alamat</td>
+                <td class="none">NPWP</td>
+                <td class="none">Email</td>
+                <td class="none">Keterangan</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -20,13 +24,49 @@
         </x-nano.table-standart>
 
         <x-nano.modal-standart id="modalForm">
-            <x-slot name="title">Jenis Supplier Form</x-slot>
+            <x-slot name="title">Produk Form</x-slot>
             <form action="#" id="formModal">
                 <input type="text" name="id" hidden>
                 <div class="form-group row">
+                    <label class="col-3 col-form-label">ID Supplier</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="idSupplier" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-3 col-form-label">Jenis Supplier</label>
                     <div class="col-9">
-                        <input type="text" class="form-control" name="jenis">
+                        <select name="jenisSupplier" id="jenisSupplier" class="form-control select2" data-width="100%"></select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Nama</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="nama">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Alamat</label>
+                    <div class="col-9">
+                        <textarea name="alamat" id="alamat" class="form-control" cols="2" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Telepon</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="telepon">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">NPWP</label>
+                    <div class="col-9">
+                        <input type="text" class="form-control" name="npwp">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Email</label>
+                    <div class="col-9">
+                        <input type="email" class="form-control" name="email">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -50,36 +90,36 @@
                 let tableList = document.getElementById('listTable');
                 let saveMethod;
 
-                // jquery click edit
                 $('body').on('click', '#btnEdit', function(){
                     let dataEdit = $(this).data("value");
                     editData(dataEdit)
                 });
 
-                // jquery click delete
                 $('body').on('click', '#btnSoft', function (){
                     let dataDelete = $(this).data('value');
                     deletedata(dataDelete);
                 })
 
-                // jquery click save
                 $('#btnSave').on('click', function (){
                     savedata();
                 });
 
-                // datatable
                 $(tableList).DataTable({
                     order : [],
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/jenissupplier',
+                        url : '{{ route("suppliercrud") }}',
                         method : 'PATCH'
                     },
                     columns : [
-                        {data : 'DT_RowIndex', orderable : false, className: "text-center"},
+                        {data : 'kodeSupplier'},
                         {data : 'jenis'},
-                        {data : 'keterangan'},
+                        {data : 'namaSupplier'},
+                        {data : 'alamatSupplier'},
+                        {data : 'npwpSupplier'},
+                        {data : 'emailSupplier'},
+                        {data : 'keteranganSupplier'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],
                     columnDefs: [
@@ -90,30 +130,53 @@
                     ],
                 });
 
-                // reload datatables
                 function reloadTable(){
                     $(tableList).DataTable().ajax.reload();
                 }
 
-                // function show modals form for add data
+                $('#jenisSupplier').select2({
+                    placeholder : "Silahkan Pilih",
+                    width : "resolve",
+                    ajax : {
+                        headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        allowClear : true,
+                        url : "{{ route('select2JenisSupplier') }}",
+                        type : "POST",
+                        dataType : "json",
+                        data : function (params) {
+                            return {
+                                q : params.term
+                            }
+                        },
+                        processResults : function (data) {
+                            return {
+                                results : $.map(data, function (item){
+                                    return {
+                                        text: item.jenis,
+                                        id: item.id,
+                                    }
+                                })
+                            }
+                        },
+                        cache : true,
+                    }
+                });
+
                 function addData()
                 {
                     $('#formModal').trigger('reset'); // reset form on modals
                     $('.invalid-feedback').remove();
                     $('.is-invalid').removeClass('is-invalid');
                     let newOption = new Option('', '', false, true);
-                    $('#kategori').append(newOption).trigger('change');
-                    let newOption_2 = new Option('', '', false, true);
-                    $('#kategoriHarga').append(newOption_2).trigger('change');
+                    $('#jenisSupplier').append(newOption).trigger('change');
                     $('#modalForm').modal('show'); // show bootstrap modal
                 }
 
-                // function get data and show modal for show the data
                 function editData(id)
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/jenissupplier/'+id,
+                        url : '{{ url('/') }}'+'/master/supplier/'+id,
                         method: "GET",
                         dataType : "JSON",
                         success : function (data){
@@ -121,8 +184,20 @@
                             $('.is-invalid').removeClass('is-invalid');
                             $('#formModal').trigger('reset'); // reset form on modals
                             $('[name="id"]').val(data.id);
-                            $('[name="jenis"]').val(data.jenis);
-                            $('[name="keterangan"]').val(data.keterangan);
+                            $('[name="idSupplier"]').val(data.kodeSupplier);
+                            $('[name="jenisSupplier"]').val(data.jenisSupplier);
+                            $('[name="nama"]').val(data.namaSupplier);
+                            $('[name="alamat"]').val(data.alamatSupplier);
+                            $('[name="telepon"]').val(data.tlpSupplier);
+                            $('[name="npwp"]').val(data.npwpSupplier);
+                            $('[name="email"]').val(data.emailSupplier);
+                            $('[name="keterangan"]').val(data.keteranganSupplier);
+                            let dataSelect2_1 = {
+                                text: data.jenis,
+                                id: data.jenisSupplier,
+                            }
+                            let newOption = new Option(dataSelect2_1.text, dataSelect2_1.id, false, true);
+                            $('#jenisSupplier').append(newOption).trigger('change');
                             $('#modalForm').modal('show');
                         },
                         error : function (jqXHR, textStatus, errorThrown)
@@ -135,16 +210,17 @@
 
                 }
 
-                // function deleting data
-                function deletedata(id)
+                function savedata()
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/jenissupplier/'+id,
-                        method: "DELETE",
+                        url : '{{ route("supplier") }}',
+                        method : "POST",
                         dataType : "JSON",
+                        data : $('#formModal').serialize(),
                         success : function (data){
                             if (data.status){
+                                $('#modalForm').modal('hide');
                                 reloadTable();
                             }
                         },
@@ -159,21 +235,16 @@
                             }
                         }
                     });
-
                 }
 
-                // function to save and update data to database
-                function savedata()
+                function deletedata(id)
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ route("jenisSupplierList") }}',
-                        method : "POST",
-                        dataType : "JSON",
-                        data : $('#formModal').serialize(),
+                        url : '{{url('/')}}'+'/master/supplier/'+id,
+                        method : 'DELETE',
                         success : function (data){
                             if (data.status){
-                                $('#modalForm').modal('hide');
                                 reloadTable();
                             }
                         },

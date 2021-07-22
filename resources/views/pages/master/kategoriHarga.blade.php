@@ -11,7 +11,7 @@
             <tr>
                 <td width="10%" class="text-center">ID</td>
                 <td class="text-center">Kategori Harga</td>
-                <td class="none">Keterangan</td>
+                <td class="text-center">Keterangan</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -73,13 +73,12 @@
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/kategori/produk',
+                        url : '{{ url('/') }}'+'/data/kategori/harga',
                         method : 'PATCH'
                     },
                     columns : [
-                        {data : 'DT_RowIndex', orderable : false},
-                        {data : 'id_lokal', className: "text-center"},
-                        {data : 'nama'},
+                        {data : 'DT_RowIndex', className: "text-center", orderable : false},
+                        {data : 'nama_kat'},
                         {data : 'keterangan'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],
@@ -102,10 +101,6 @@
                     $('#formModal').trigger('reset'); // reset form on modals
                     $('.invalid-feedback').remove();
                     $('.is-invalid').removeClass('is-invalid');
-                    let newOption = new Option('', '', false, true);
-                    $('#kategori').append(newOption).trigger('change');
-                    let newOption_2 = new Option('', '', false, true);
-                    $('#kategoriHarga').append(newOption_2).trigger('change');
                     $('#modalForm').modal('show'); // show bootstrap modal
                 }
 
@@ -114,7 +109,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/kategori/produk/'+id,
+                        url : '{{ url('/') }}'+'/master/kategori/harga/'+id,
                         method: "GET",
                         dataType : "JSON",
                         success : function (data){
@@ -141,7 +136,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/master/kategori/produk/'+id,
+                        url : '{{ url('/') }}'+'/master/kategori/harga/'+id,
                         method: "DELETE",
                         dataType : "JSON",
                         success : function (data){
@@ -168,7 +163,7 @@
                 {
                     $.ajax({
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ route("kategoriProduk") }}',
+                        url : '{{ route("kategoriHarga") }}',
                         method : "POST",
                         dataType : "JSON",
                         data : $('#formModal').serialize(),

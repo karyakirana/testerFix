@@ -17,8 +17,8 @@ class Supplier extends Model
         'emailSupplier', 'keteranganSupplier'
     ];
 
-    function jenisSupplier()
+    function jenis()
     {
-        return $this->belongsTo(JenisSupplier::class, 'jenisSupplier');
+        return $this->belongsTo(JenisSupplier::class, 'jenisSupplier', 'id');
     }
 }

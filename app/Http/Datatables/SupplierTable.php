@@ -17,8 +17,8 @@ class SupplierTable {
         $data = $this->data();
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('jenisSupplier', function($row){
-                return $row->jenisSupplier->jenis ?? '';
+            ->addColumn('jenis', function($row){
+                return $row->jenis->jenis ?? '';
             })
             ->addColumn('Action', function($row){
                 $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
@@ -33,8 +33,8 @@ class SupplierTable {
         $data = $this->data();
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('jenisSupplier', function($row){
-                return $row->jenisSupplier->jenis ?? '';
+            ->addColumn('jenis', function($row){
+                return $row->jenis->jenis ?? '';
             })
             ->addColumn('Action', function($row){
                 $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
