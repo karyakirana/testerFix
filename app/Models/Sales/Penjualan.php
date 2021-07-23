@@ -2,6 +2,9 @@
 
 namespace App\Models\Sales;
 
+use App\Models\Master\Customer;
+use App\Models\Stock\BranchStock;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,9 +20,23 @@ class Penjualan extends Model
         'status_bayar', 'sudahBayar', 'total_jumlah', 'ppn', 'biaya_lain', 'total_bayar',
         'keterangan', 'print'
     ];
+    protected $casts = [
+        'tgl_nota'=> 'date:d-m-Y',
+        'tgl_tempo'=> 'date:d-m-Y'
+    ];
 
     public function customer()
     {
-        //
+        return $this->belongsTo(Customer::class, 'id_cust', 'id_cust');
+    }
+
+    public function pengguna()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(BranchStock::class, 'idBranch');
     }
 }
