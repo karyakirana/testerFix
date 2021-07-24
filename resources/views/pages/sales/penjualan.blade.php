@@ -11,11 +11,11 @@
             <thead>
             <tr>
                 <td width="10%" class="text-center">ID</td>
-                <td width="10%" class="text-center">Customer</td>
-                <td width="10%" class="text-center">Cabang</td>
+                <td width="20%" class="text-center">Customer</td>
+                <td class="none">Cabang</td>
                 <td class="text-center">Tgl Nota</td>
                 <td class="text-center">Tgl Tempo</td>
-                <td class="text-center">Status</td>
+                <td class="none">Status</td>
                 <td class="text-center">Jenis Bayar</td>
                 <td class="text-center">Total Bayar</td>
                 <td class="none text-center">Pembuat</td>
@@ -30,32 +30,75 @@
             <tfoot></tfoot>
         </x-nano.table-standart>
 
+        <x-nano.modal-standart id="modalDetil">
+            <x-slot name="title">Detil Penjualan</x-slot>
+
+            <x-nano.table-standart id="detilTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Produk</th>
+                        <th>Jumlah</th>
+                        <th>Harga</th>
+                        <th>Diskon</th>
+                        <th>Sub Total</th>
+                    </tr>
+                </thead>
+            </x-nano.table-standart>
+
+        </x-nano.modal-standart>
+
     </x-mikro.card-custom>
 
     @push('scripts')
         <script>
             let tableList = document.getElementById('listTable');
+            let detilList = document.getElementById('detilTable');
+
+            // table detil
+            function detil(id)
+            {
+                $(detilList).DataTable({
+                    order : [],
+                    responsive : true,
+                    ajax : {
+                        header : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url : '{{url('/')}}'+'/data/penjualandetil/'+id,
+                        method : 'PATCH',
+                    },
+                    columns : [
+                        {data : 'DT_RowIndex'},
+                        {data : 'produk'},
+                        {data : 'jumlah'},
+                        {data : 'harga'},
+                        {data : 'diskon'},
+                        {data : 'sub_total'},
+                    ]
+                })
+            }
 
             $(tableList).DataTable({
                 order : [],
                 responsive : true,
                 ajax : {
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{ route("produkcrud") }}',
+                    url : '{{ route("penjualanList") }}',
                     method : 'PATCH'
                 },
                 columns : [
-                    {data : 'id_produk'},
-                    {data : 'kode_lokal'},
-                    {data : 'nama_produk'},
-                    {data : 'harga', render : $.fn.dataTable.render.number( '.', ',', 0, ''), className: "text-right"},
-                    {data : 'kategori'},
-                    {data : 'kategoriHarga', className: "text-center"},
-                    {data : 'penerbit'},
-                    {data : 'cover'},
-                    {data : 'hal'},
-                    {data : 'size'},
-                    {data : 'deskripsi'},
+                    {data : 'id_jual'},
+                    {data : 'customer'},
+                    {data : 'branch'},
+                    {data : 'tgl_nota'},
+                    {data : 'tgl_tempo'},
+                    {data : 'sudahBayar'},
+                    {data : 'status_bayar', className: "text-center"},
+                    {data : 'total_bayar', render : $.fn.dataTable.render.number( '.', ',', 0, ''), className: "text-right"},
+                    {data : 'user'},
+                    {data : 'ppn'},
+                    {data : 'biaya_lain'},
+                    {data : 'keterangan'},
+                    {data : 'print', className: "text-center"},
                     {data : 'Action', responsivePriority: -1, className: "text-center"},
                 ],
                 columnDefs: [
