@@ -22,4 +22,3 @@ Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'list'
 Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'listcrud']);
 
 Route::patch('data/penjualan', [\App\Http\Datatables\SalesTransTable::class, 'penjualanList'])->name('penjualanList');
-Route::patch('data/penjualandetil/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilList'])->name('penjualanDetilList');

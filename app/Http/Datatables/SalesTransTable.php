@@ -26,7 +26,7 @@ class SalesTransTable {
             })
             ->addColumn('Action', function($row){
                 $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id_jual.'" title="edit"><i class="la la-edit"></i></a>';
-                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.$row->id_jual.'" title="show"><i class="flaticon2-indent-dots"></i></a>';
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.str_replace('/', '-', $row->id_jual).'" title="show"><i class="flaticon2-indent-dots"></i></a>';
                 $delete = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btndelete" data-value="'.$row->id_jual.'" title="delete"><i class="flaticon2-trash"></i></a>';
                 $print = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnPrint" data-value="'.$row->id_jual.'" title="print"><i class="flaticon-technology"></i></a>';
                 return $edit.$show.$delete.$print;
@@ -37,7 +37,7 @@ class SalesTransTable {
 
     public function detilList($id)
     {
-        $data = PenjualanDetil::where('id_jual', $id)->latest('id_detil')->get();
+        $data = PenjualanDetil::where('id_jual', str_replace('-', '/', $id))->latest('id_detil')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('produk', function ($row){

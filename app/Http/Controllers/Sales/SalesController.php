@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master\Produk;
+use App\Models\Sales\Penjualan;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
@@ -25,7 +26,7 @@ class SalesController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.sales.penjualanTransaksi');
     }
 
     /**
@@ -47,7 +48,8 @@ class SalesController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Penjualan::findOrFail(str_replace('-', '/', $id));
+        return response()->json($data);
     }
 
     /**

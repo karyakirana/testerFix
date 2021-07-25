@@ -30,30 +30,100 @@
             <tfoot></tfoot>
         </x-nano.table-standart>
 
-        <x-nano.modal-standart id="modalDetil">
+        <x-nano.modal-large id="modalDetil">
             <x-slot name="title">Detil Penjualan</x-slot>
 
-            <x-nano.table-standart id="detilTable">
+            <x-nano.table-standart id="detilTable" width="100%">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Produk</th>
-                        <th>Jumlah</th>
-                        <th>Harga</th>
-                        <th>Diskon</th>
-                        <th>Sub Total</th>
+                        <th width="5%" class="text-center">No</th>
+                        <th width="45%" class="text-center">Produk</th>
+                        <th width="5%" class="text-center">Jumlah</th>
+                        <th width="20%" class="text-center">Harga</th>
+                        <th width="5%" class="text-center">Diskon</th>
+                        <th width="20%" class="text-center">Sub Total</th>
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="6"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-left">Total Biaya :</td>
+                        <td></td>
+                        <td id="total" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-left">PPN :</td>
+                        <td></td>
+                        <td id="ppn" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-left">Biaya Lain :</td>
+                        <td></td>
+                        <td id="biayalain" class="text-right"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-left">Jumlah :</td>
+                        <td></td>
+                        <td id="totalBayar" class="text-right"></td>
+                    </tr>
+                </tfoot>
             </x-nano.table-standart>
-
-        </x-nano.modal-standart>
+        </x-nano.modal-large>
 
     </x-mikro.card-custom>
 
     @push('scripts')
         <script>
+
+            jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
+                return this.flatten().reduce( function ( a, b ) {
+                    if ( typeof a === 'string' ) {
+                        a = a.replace(/[^\d.-]/g, '') * 1;
+                    }
+                    if ( typeof b === 'string' ) {
+                        b = b.replace(/[^\d.-]/g, '') * 1;
+                    }
+
+                    return a + b;
+                }, 0 );
+            } );
+
             let tableList = document.getElementById('listTable');
             let detilList = document.getElementById('detilTable');
+            let tokenCsrf = {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')};
+
+            // jquery click show data
+            $('body').on('click', '#btnShow', function(){
+                let dataShow = $(this).data("value");
+                detil(dataShow);
+                showData(dataShow);
+                $('#modalDetil').modal('show'); // show bootstrap modal
+            })
+
+            $('#modalDetil').on('hide.bs.modal', function (e) {
+
+                $(detilList).DataTable().destroy();
+            })
+
+            function showData(id)
+            {
+                $.ajax({
+                    url : '{{ url('/') }}'+'/sales/list/'+id,
+                    method: "GET",
+                    dataType : "JSON",
+                    success : function (data){
+                        $('#ppn').html(data.ppn);
+                        $('#biayalain').html(data.biaya_lain);
+                        $('#totalBayar').html(data.total_bayar);
+                    },
+                })
+            }
 
             // table detil
             function detil(id)
@@ -61,27 +131,39 @@
                 $(detilList).DataTable({
                     order : [],
                     responsive : true,
+                    autoWidth: false,
                     ajax : {
-                        header : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{url('/')}}'+'/data/penjualandetil/'+id,
-                        method : 'PATCH',
+                        // header : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),"id": id},
+                        url : '{{url('/')}}'+'/api/data/penjualandetil/'+id,
+                        method : 'POST',
                     },
                     columns : [
-                        {data : 'DT_RowIndex'},
+                        {data : 'DT_RowIndex', className: "text-center", width: '5%'},
                         {data : 'produk'},
-                        {data : 'jumlah'},
-                        {data : 'harga'},
-                        {data : 'diskon'},
-                        {data : 'sub_total'},
-                    ]
-                })
+                        {data : 'jumlah', className: "text-center"},
+                        {data : 'harga', render : $.fn.dataTable.render.number( '.', ',', 0, ''), className: "text-right"},
+                        {data : 'diskon', className: "text-center"},
+                        {data : 'sub_total', render : $.fn.dataTable.render.number( '.', ',', 0, ''), className: "text-right"},
+                    ],
+                    drawCallback : function (){
+                        let api = this.api();
+                        let display = $.fn.dataTable.render.number( '.', ',', 0, '' ).display;
+                        $('#total').html(
+                            display(api.column(-1).data().sum())
+                        );
+                    }
+                });
+            }
+
+            function reloadTable(){
+                $(tableList).DataTable().ajax.reload();
             }
 
             $(tableList).DataTable({
                 order : [],
                 responsive : true,
                 ajax : {
-                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    headers : tokenCsrf,
                     url : '{{ route("penjualanList") }}',
                     method : 'PATCH'
                 },
@@ -93,7 +175,7 @@
                     {data : 'tgl_tempo'},
                     {data : 'sudahBayar'},
                     {data : 'status_bayar', className: "text-center"},
-                    {data : 'total_bayar', render : $.fn.dataTable.render.number( '.', ',', 0, ''), className: "text-right"},
+                    {data : 'total_bayar', className: "text-right"},
                     {data : 'user'},
                     {data : 'ppn'},
                     {data : 'biaya_lain'},

@@ -20,10 +20,16 @@ class Penjualan extends Model
         'status_bayar', 'sudahBayar', 'total_jumlah', 'ppn', 'biaya_lain', 'total_bayar',
         'keterangan', 'print'
     ];
+
     protected $casts = [
         'tgl_nota'=> 'date:d-m-Y',
-        'tgl_tempo'=> 'date:d-m-Y'
+        'tgl_tempo'=> 'date:d-m-Y',
     ];
+
+    protected function getTotalBayarAttribute($value)
+    {
+        return number_format($value, '0', ',', '.');
+    }
 
     public function customer()
     {
