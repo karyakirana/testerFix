@@ -18,7 +18,11 @@ Route::patch('data/supplier/listcrud', [\App\Http\Datatables\SupplierTable::clas
 Route::patch('data/kategori/produk', [\App\Http\Datatables\KategoriProdukTable::class, 'list']);
 Route::patch('data/kategori/harga', [\App\Http\Datatables\KategoriHargaTable::class, 'list']);
 
-Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'list']);
+Route::post('data/customer', [\App\Http\Datatables\CustomerTable::class, 'list']);
 Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'listcrud']);
 
 Route::patch('data/penjualan', [\App\Http\Datatables\SalesTransTable::class, 'penjualanList'])->name('penjualanList');
+
+// temporary
+Route::post('data/penjualan/trans/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilTemp'])->name('detilTemp');
+

@@ -11,4 +11,6 @@ Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\SalesController::cl
 Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
 
 // temp transaction
-
+Route::post('sales/temp/', [\App\Http\Controllers\Sales\DetilTempController::class, 'store']);
+Route::get('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'edit']);
+Route::delete('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'destroy']);

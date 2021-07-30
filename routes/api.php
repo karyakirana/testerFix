@@ -20,3 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('data/penjualandetil/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilList'])->name('penjualanDetilList');
 
+// temporary
+Route::post('data/penjualan/trans/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilTemp'])->name('detilTemp');
+

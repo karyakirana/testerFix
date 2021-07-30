@@ -20,6 +20,10 @@ class ProdukTable {
             ->addColumn('idLokal', function ($row){
                 return $row->kategori->id_lokal ?? "";
             })
+            ->addColumn('Action', function ($row){
+                return '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnAddProduk" data-value="'.$row->id_produk.'" title="Edit"><i class="flaticon-download"></i></a>';
+            })
+            ->rawColumns(['Action'])
             ->make(true);
     }
 

@@ -13,7 +13,7 @@ class CustomerTable {
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('Action', function($row){
-                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id_cust.'" title="Edit"><i class="la la-edit"></i></a>';
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnAddCustomer" data-value="'.$row->id_cust.'" title="Edit"><i class="flaticon-download"></i></a>';
                 return $edit;
             })
             ->rawColumns(['Action'])
