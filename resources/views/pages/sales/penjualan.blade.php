@@ -81,6 +81,11 @@
     @push('scripts')
         <script>
 
+            $('body').on('click', '#btnEdit', function(){
+                let editData = $(this).data("value");
+                window.location.href = '{{ url('/') }}'+'/sales/edit/'+editData;
+            })
+
             jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
                 return this.flatten().reduce( function ( a, b ) {
                     if ( typeof a === 'string' ) {

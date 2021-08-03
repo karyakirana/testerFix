@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <form action="#" id="formGlobal" class="form">
-                    <input type="text" name="id" hidden>
+                    <input type="text" name="id" value="{{ $id_jual ?? '' }}" hidden>
                     <input type="text" name="idCustomer" hidden>
                     <input type="text" name="diskonHidden" hidden>
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
@@ -16,7 +16,7 @@
                         <label class="col-lg-2 col-form-label text-lg-right" for="customer">Customer</label>
                         <div class="col-lg-4">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="customer" id="customer" value="{{ $customer->nama_cust ?? '' }}" readonly>
+                                <input type="text" class="form-control" name="customer" id="customer" value="{{ $nama_customer ?? '' }}" readonly>
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="button" id="btnCustomer">Customer</button>
                                 </div>
@@ -90,7 +90,7 @@
                                             <label class="col-form-label">Total</label>
                                         </td>
                                         <td colspan="2">
-                                            <input type="text" class="form-control" name="total" id="total" value="{{ $ppn ?? '' }}">
+                                            <input type="text" class="form-control" name="total" id="total" autocomplete="off">
                                         </td>
                                     </tr>
                                     <tr>

@@ -45,11 +45,12 @@ class SalesController extends Controller
      *
      * @return integer session('penjualan')
      */
-    protected function createTemp()
+    protected function createTemp($id_jual = null)
     {
         $create = PenjualanTemp::create([
             'jenisTemp' => 'Penjualan',
             'idSales' => Auth::user()->id,
+            'id_jual'=> $id_jual,
         ]);
         session(['penjualan'=>$create->id]);
 
@@ -64,24 +65,36 @@ class SalesController extends Controller
     public function create()
     {
         $sessionTemp = session('penjualan');
-        $data = null;
-        if ($sessionTemp) {
+        $penjualanTemp = null;
+
+        // check session baru atau edit, check pembuat adalah yg login saat ini
+        if ($sessionTemp)
+        {
             $penjualanTemp = PenjualanTemp::find($sessionTemp);
-            $sales = User::find($penjualanTemp)->first();
-            $data = [
-                'idTemp' => $sessionTemp,
-                'idSales' => $penjualanTemp->idSales,
-                'namaSales' => $sales->name,
-            ];
+            // jika ada id_jual atau idSales tidak sesuai dengan user yg sedang login
+            // maka buat session baru
+            if ($penjualanTemp->id_jual || $penjualanTemp->idSales != Auth::id()){
+                // jika id_jual ada, maka buat temporary baru
+                $penjualanTemp = $this->createTemp();
+            }
         } else {
-            $temporary = $this->createTemp();
-            $sales = User::find($temporary->idSales);
-            $data = [
-                'idTemp' => $temporary->id,
-                'idSales' => $temporary->idSales,
-                'namaSales' => $sales->name,
-            ];
+            // buat session baru, dengan check temporary yg lama
+            $penjualanTemp = PenjualanTemp::whereNull('id_jual')->where('idSales', Auth::id())->latest()->first();
+            if (!$penjualanTemp){
+                // jika tidak ada data, maka buat session baru
+                $penjualanTemp = $this->createTemp();
+            } else {
+                // jika ada, maka ambil temporary yg lama dan buat session untuk itu
+                $penjualanTemp = $penjualanTemp;
+                session()->put(['penjualan'=>$penjualanTemp->id]);
+            }
         }
+
+        $data = [
+            'idTemp' => $penjualanTemp->id,
+            'idSales' => $penjualanTemp->jenisTemp,
+            'namaSales'=> $penjualanTemp->idSales,
+        ];
         return view('pages.sales.penjualanTransaksi', $data);
     }
 
@@ -185,8 +198,49 @@ class SalesController extends Controller
     public function edit($id)
     {
         // check temp for edit
-        $checkTemp = PenjualanTemp::where('');
-        return view('pages.sales.penjualanTransaksi');
+        $id_jual = str_replace('-', '/', $id);
+        $checkTemp = PenjualanTemp::where('id_jual', $id_jual)->first();
+        $penjualan = Penjualan::with('customer')->find($id_jual);
+        if ($checkTemp){
+            // jika temp edit sebelumnya ada
+//            session()->put(['penjualan'=>$checkTemp->id]);
+            // delete detil_temp where id_temp
+            PenjualanDetilTemp::where('idPenjualanTemp', $checkTemp->id)->delete();
+            $idTemp = $checkTemp->id;
+        } else {
+            $idTemp = $this->createTemp($id_jual);
+            dd($idTemp);
+        }
+        $detil = PenjualanDetil::where('id_jual', $id_jual);
+        // insert detil to detil_temporary
+        if ($detil->count() > 0){
+            foreach ($detil->get() as $row)
+            {
+                // insert
+                PenjualanDetilTemp::create([
+                    'idPenjualanTemp'=> $idTemp,
+                    'idBarang'=>$row->id_produk,
+                    'harga'=>$row->harga,
+                    'jumlah'=>$row->jumlah,
+                    'diskon'=>$row->diskon,
+                    'sub_total'=>$row->sub_total,
+                ]);
+            }
+        }
+        $data = [
+            'idTemp'=>$idTemp,
+            'id_jual'=>$penjualan->id_jual,
+            'idCustomer'=>$penjualan->id_cust,
+            'nama_customer'=>$penjualan->customer->nama_cust,
+            'status_bayar'=>$penjualan->status_bayar,
+            'tgl_nota'=> $penjualan->tgl_nota,
+            'tgl_tempo' => ($penjualan->tgl_tempo) ? date('d-M-Y', $penjualan->tgl_tempo) : null,
+            'ppn' => $penjualan->ppn,
+            'biaya_lain'=>$penjualan->biaya_lain,
+            'total_bayar'=>$penjualan->total_bayar,
+            'keterangan'=>$penjualan->keterangan
+        ];
+        return view('pages.sales.penjualanTransaksi', $data);
     }
 
     /**
