@@ -99,7 +99,7 @@
                                             <label class="col-form-label">PPN</label>
                                         </td>
                                         <td colspan="2">
-                                            <input type="text" class="form-control" name="ppn" id="ppn" value="{{ $ppn ?? '' }}">
+                                            <input type="text" class="form-control" name="ppn" id="ppn" value="{{ $ppn ?? '' }}" autocomplete="off">
                                         </td>
                                     </tr>
                                     <tr>
@@ -108,7 +108,7 @@
                                             <label class="col-form-label">Biaya Lain</label>
                                         </td>
                                         <td colspan="2">
-                                            <input type="text" class="form-control" name="biayaLain" id="biayaLain" value="{{ $biaya_lain ?? '' }}">
+                                            <input type="text" class="form-control" name="biayaLain" id="biayaLain" value="{{ $biaya_lain ?? '' }}" autocomplete="off">
                                         </td>
                                     </tr>
                                     <tr>
@@ -117,7 +117,7 @@
                                             <label class="col-form-label">Total Bayar</label>
                                         </td>
                                         <td colspan="2">
-                                            <input type="text" class="form-control" name="totalBayar" id="totalBayar" value="{{ $total_bayar ?? '' }}">
+                                            <input type="text" class="form-control" name="totalBayar" id="totalBayar" value="{{ $total_bayar ?? '' }}" autocomplete="off">
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -305,6 +305,11 @@
                                 orderable: false
                             }
                         ],
+                        drawCallback : function(){
+                            let total = $('#tableTransaksi').DataTable().column(-2).data().sum() ?? 0;
+                            $('#total').val(formatter.format(total));
+                            totalGrand();
+                        }
                     });
                 }
 
@@ -411,7 +416,49 @@
             jQuery(document).ready(function() {
                 detilTable.init();
                 $('#detilTrans').trigger('reset'); // reset form detil
+                totalGrand();
             });
+
+            // total Grand
+            function totalGrand()
+            {
+                let total = $('#tableTransaksi').DataTable().column(-2).data().sum();
+                let ppn = $('#ppn').val() ?? 0;
+                let biayaLain = $('#biayaLain').val() ?? 0;
+
+                let hasil = total + Number(biayaLain) + (total * Number(ppn) / 100);
+                $('#totalBayar').val(formatter.format(hasil));
+            }
+
+            // event listener keyUp
+            $('#ppn, #biayaLain').keyup(function (){
+                totalGrand();
+            });
+
+            $('#btnSave').on('click', function(){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/sales/temp/'+editData,
+                    method: "POST",
+                    dataType : "JSON",
+                    data : $('#formGlobal, #formTable').serialize(),
+                    success : function (data){
+                        if (data.status){
+                            window.location.href = '{{ route("daftarSales") }}';
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                })
+            })
 
 
         </script>
