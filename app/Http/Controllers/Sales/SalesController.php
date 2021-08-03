@@ -252,7 +252,64 @@ class SalesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $idPenjualan = $request->id;
+        $idTemp = $request->idTemp;
+        $tglPenjualan = date('Y-m-d', strtotime($request->tglNota));
+        $tglTempo = date('Y-m-d', strtotime($request->tglTempo));
+
+        // ambil data dari detil_penjualan_temp
+        $detilTemp = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp);
+
+        $jsonData = null;
+        DB::beginTransaction();
+
+        try {
+            $simpanMaster = [
+                'id_cust'=>$request->idCustomer,
+                'idBranch'=>1,
+                'id_user'=>Auth::id(),
+                'tgl_nota'=>$tglPenjualan,
+                'tgl_tempo'=>($request->jenisBayar == 'Tempo') ? $tglTempo : null,
+                'status_bayar'=>$request->jenisBayar,
+                'sudahBayar'=>'Belum',
+                'ppn'=>$request->ppn,
+                'biaya_lain'=>$request->biayaLain,
+                'total_bayar'=>$request->totalBayar,
+                'keterangan'=>$request->keterangan
+            ];
+            $update = Penjualan::where('id_jual', $idPenjualan)->update($simpanMaster);
+            $deleteDetil = PenjualanDetil::where('id_jual', $idPenjualan)->delete();
+            if ($detilTemp->count() > 0)
+            {
+                foreach ($detilTemp->get() as $row)
+                {
+                    PenjualanDetil::create([
+                        'id_jual'=>$idPenjualan,
+                        'id_produk'=>$row->idBarang,
+                        'jumlah'=>$row->jumlah,
+                        'harga'=>$row->harga,
+                        'diskon'=>$row->diskon,
+                        'sub_total'=>$row->sub_total
+                    ]);
+                }
+            }
+            // delete detil temp
+            PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
+            // delete temp
+            PenjualanTemp::destroy($idTemp);
+            // destroy session penjualan
+            session()->forget('penjualan');
+            DB::commit();
+            $jsonData = [
+                'status'=>true
+            ];
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            $jsonData = [
+                'status'=>true
+            ];
+        }
+        return response()->json($jsonData);
     }
 
     /**
