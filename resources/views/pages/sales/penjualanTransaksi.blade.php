@@ -438,7 +438,7 @@
             $('#btnSave').on('click', function(){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{ url('/') }}'+'/sales/temp/'+editData,
+                    url : '{{ url('/') }}'+'/sales/list/',
                     method: "POST",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),

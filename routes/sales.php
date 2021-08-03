@@ -14,3 +14,6 @@ Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::
 Route::post('sales/temp/', [\App\Http\Controllers\Sales\DetilTempController::class, 'store']);
 Route::get('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'edit']);
 Route::delete('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'destroy']);
+
+// printing
+Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'printRaw']);

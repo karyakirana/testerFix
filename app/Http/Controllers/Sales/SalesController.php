@@ -121,7 +121,7 @@ class SalesController extends Controller
             'activeCash' => session('ClosedCash'),
             'id_jual' => $idPenjualan,
             'tgl_nota' => $tglPenjualan,
-            'tgl_tempo' => ($request->jenisBayar == 'Tunai') ? $tglTempo : null,
+            'tgl_tempo' => ($request->jenisBayar == 'Tempo') ? $tglTempo : null,
             'status_bayar' => $request->jenisBayar,
             'sudahBayar'=> "belum", // pembuatan nota belum bayar
             'total_jumlah' => $detilTemp->count(), // jumlah Item
@@ -184,6 +184,8 @@ class SalesController extends Controller
      */
     public function edit($id)
     {
+        // check temp for edit
+        $checkTemp = PenjualanTemp::where('');
         return view('pages.sales.penjualanTransaksi');
     }
 
