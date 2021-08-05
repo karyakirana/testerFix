@@ -23,6 +23,8 @@ Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'listc
 
 Route::patch('data/penjualan', [\App\Http\Datatables\SalesTransTable::class, 'penjualanList'])->name('penjualanList');
 
+Route::patch('data/stock/keluar', [\App\Http\Datatables\StockTable::class, 'stockKeluarList'])->name('stockKeluarList');
+Route::patch('data/stock/keluar/detil/{id}', [\App\Http\Datatables\StockDetilTable::class, 'stockKeluarDetil']);
+
 // temporary
 Route::post('data/penjualan/trans/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilTemp'])->name('detilTemp');
-

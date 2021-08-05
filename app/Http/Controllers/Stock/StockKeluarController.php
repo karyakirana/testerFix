@@ -14,7 +14,7 @@ class StockKeluarController extends Controller
 {
     public function index()
     {
-        //
+        return view('pages.stock.stockKeluarList');
     }
 
     private function createSessionStock($idStockMasuk = null)
@@ -58,7 +58,7 @@ class StockKeluarController extends Controller
 
     public function create()
     {
-        return view('pages.stock.stockKeluar', $this->checkLastCart());
+        return view('pages.stock.stockKeluarTrans', $this->checkLastCart());
     }
 
     private function kode()
@@ -111,5 +111,10 @@ class StockKeluarController extends Controller
     public function edit($id)
     {
         return view('pages.stock.stockKeluar', $this->checkSessionEdit($id));
+    }
+
+    public function update(Request $request)
+    {
+        //
     }
 }

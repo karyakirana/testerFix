@@ -35,4 +35,5 @@ Route::get('/dashboard', function () {
 //require __DIR__.'/auth.php';
 require __DIR__.'/sales.php';
 require __DIR__.'/master.php';
+require __DIR__.'/stock.php';
 require __DIR__.'/datatablesRoute.php';
