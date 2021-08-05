@@ -203,13 +203,12 @@ class SalesController extends Controller
         $penjualan = Penjualan::with('customer')->find($id_jual);
         if ($checkTemp){
             // jika temp edit sebelumnya ada
-//            session()->put(['penjualan'=>$checkTemp->id]);
+            // session()->put(['penjualan'=>$checkTemp->id]);
             // delete detil_temp where id_temp
             PenjualanDetilTemp::where('idPenjualanTemp', $checkTemp->id)->delete();
             $idTemp = $checkTemp->id;
         } else {
             $idTemp = $this->createTemp($id_jual);
-            dd($idTemp);
         }
         $detil = PenjualanDetil::where('id_jual', $id_jual);
         // insert detil to detil_temporary
