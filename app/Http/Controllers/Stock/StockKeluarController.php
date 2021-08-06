@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Stock;
 
 use App\Http\Controllers\Controller;
 use App\Models\Stock\StockDetilTemp;
+use App\Models\Stock\StockKeluar;
 use App\Models\Stock\StockTemp;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class StockKeluarController extends Controller
         } else {
             // check last temp
             $lastTemp = StockTemp::where('idUser', Auth::id())->where('jenisTemp', 'StockKeluar')->whereNull('stockMasuk');
-            if ($lastTemp->count > 0)
+            if ($lastTemp->count() > 0)
             {
                 // jika ada
                 $stock = $lastTemp->latest()->first();
@@ -63,7 +64,16 @@ class StockKeluarController extends Controller
 
     private function kode()
     {
-        //
+        $data = StockKeluar::where('active_cash', session('ClosedCash'))->latest()->first();
+        $num = null;
+        if(!$data){
+            $num = 1;
+        } else {
+            $urutan = (int) substr($data->kode, 0, 4);
+            $num = $urutan + 1;
+        }
+        $id = sprintf("%04s", $num)."/SK/".date('Y');
+        return $id;
     }
 
     public function store(Request $request)
@@ -74,7 +84,8 @@ class StockKeluarController extends Controller
         DB::beginTransaction();
         try {
             // insert to stock_keluar
-            // insert to stock_keluar_detil
+            $stockKeluar = StockKeluar::create();
+            // insert to stock_keluar_detil from stock_detil_temp
             // destroy stock_temp
             // destroy stock_detil_temp
             // destroy session stock

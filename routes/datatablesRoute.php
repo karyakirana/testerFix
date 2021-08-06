@@ -28,3 +28,5 @@ Route::patch('data/stock/keluar/detil/{id}', [\App\Http\Datatables\StockDetilTab
 
 // temporary
 Route::post('data/penjualan/trans/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilTemp'])->name('detilTemp');
+
+Route::patch('data/stock/temp/detil/{id}', [\App\Http\Datatables\StockTempTable::class, 'stockTrans']);

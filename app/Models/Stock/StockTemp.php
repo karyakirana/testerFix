@@ -10,6 +10,6 @@ class StockTemp extends Model
     use HasFactory;
     protected $table = 'stock_temp';
     protected $fillable = [
-        'activeCash', 'kode', 'idBranch', 'idSupplier', 'idUser', 'tglMasuk', 'nomorPo', 'keterangan'
+        'activeCash', 'jenisTemp', 'kode', 'idBranch', 'idSupplier', 'idUser', 'tglMasuk', 'nomorPo', 'keterangan'
     ];
 }

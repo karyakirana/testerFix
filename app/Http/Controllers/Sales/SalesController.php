@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Stock\StockKeluarController;
 use App\Models\Master\Produk;
 use App\Models\Sales\Penjualan;
 use App\Models\Sales\PenjualanDetil;
 use App\Models\Sales\PenjualanDetilTemp;
 use App\Models\Sales\PenjualanTemp;
+use App\Models\Stock\StockKeluar;
+use App\Models\Stock\StockKeluarDetil;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -37,6 +40,20 @@ class SalesController extends Controller
             $num = $urutan + 1;
         }
         $id = sprintf("%04s", $num)."/PJ/".date('Y');
+        return $id;
+    }
+
+    public function kode()
+    {
+        $data = StockKeluar::where('active_cash', session('ClosedCash'))->latest()->first();
+        $num = null;
+        if(!$data){
+            $num = 1;
+        } else {
+            $urutan = (int) substr($data->kode, 0, 4);
+            $num = $urutan + 1;
+        }
+        $id = sprintf("%04s", $num)."/SK/".date('Y');
         return $id;
     }
 
@@ -150,10 +167,32 @@ class SalesController extends Controller
         $jsonData = null;
         DB::beginTransaction();
         try {
-
+            // insert detil_penjualan
             $insertDetail = PenjualanDetil::insert($dataDetil);
+            // insert penjualan
             $insertMaster = Penjualan::create($data);
+            // insert stock_keluar
+            $insertStockKeluar = StockKeluar::insert([
+                'tgl_keluar'=>$tglPenjualan,
+                'kode'=>$this->kode(),
+                'branch'=>$request->branch ?? null,
+                'jenis_keluar'=>'Penjualan',
+                'customer'=>$request->idCustomer,
+                'penjualan'=>$idPenjualan,
+                'users'=>Auth::id(),
+            ]);
+            // insert stock_keluar_detil
+            foreach ($detilTemp as $row) {
+                StockKeluarDetil::create([
+                    'stock_keluar'=>$insertStockKeluar->id,
+                    'id_produk'=>$row->idBarang,
+                    'jumlah'=>$row->jumlah
+
+                ]);
+            }
+            // delete detil_penjualan_temp
             $deleteTempDetail = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
+            // delete penjualan_temp
             $deleteTempMaster = PenjualanTemp::where('id', $idTemp)->delete();
             DB::commit();
             session()->forget('penjualan'); // hapus session temp
@@ -277,7 +316,12 @@ class SalesController extends Controller
                 'keterangan'=>$request->keterangan
             ];
             $update = Penjualan::where('id_jual', $idPenjualan)->update($simpanMaster);
+            $updateStockDetil = StockKeluarDetil::where('id_jual', '$idPenjualan')
+                ->update([
+                    ''
+                ]);
             $deleteDetil = PenjualanDetil::where('id_jual', $idPenjualan)->delete();
+            // insert detil_penjualan and insert stock_keluar_detil
             if ($detilTemp->count() > 0)
             {
                 foreach ($detilTemp->get() as $row)
@@ -289,6 +333,11 @@ class SalesController extends Controller
                         'harga'=>$row->harga,
                         'diskon'=>$row->diskon,
                         'sub_total'=>$row->sub_total
+                    ]);
+                    StockKeluarDetil::create([
+                        'stock_keluar'=>$idPenjualan,
+                        'id_produk'=>$row->idBarang,
+                        'jumlah'=>$row->jumlah,
                     ]);
                 }
             }

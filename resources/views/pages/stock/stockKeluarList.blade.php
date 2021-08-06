@@ -25,60 +25,61 @@
 
     </x-mikro.card-custom>
 
+    @push('scripts')
+        <script>
+
+            let listTable = function (){
+
+                let initTable = function (){
+
+                    $('#listTable').DataTable({
+                        order : [],
+                        ordering : false,
+                        responsive : true,
+                        ajax : {
+                            headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url : '{{ url('/') }}'+'/data/stock/keluar/',
+                            method : 'PATCH'
+                        },
+                        columns : [
+                            {data : 'kode'},
+                            {data : 'tgl_keluar', className: "text-right"},
+                            {data : 'branch', className: "text-center"},
+                            {data : 'jenis_keluar', className: "text-center"},
+                            {data : 'supplier', className: "text-right"},
+                            {data : 'customer', className: "text-right"},
+                            {data : 'penjualan', className: "text-right"},
+                            {data : 'Action', responsivePriority: -1, className: "text-center"},
+                        ],
+                        columnDefs: [
+                            {
+                                targets : [-1],
+                                orderable: false
+                            }
+                        ],
+                    });
+                };
+
+                return {
+                    init : function (){
+                        initTable();
+                    }
+                };
+            }();
+
+            function detilTable($idDetil)
+            {
+                //
+            }
+
+            // direct to edit page
+
+            jQuery(document).ready(function (){
+                listTable.init();
+            });
+
+        </script>
+    @endpush
+
 </x-makro.list-data>
 
-@push('scripts')
-    <script>
-
-        let listTable = function (){
-
-            let initTable = function (){
-
-                $('#listTable').DataTable({
-                    order : [],
-                    ordering : false,
-                    responsive : true,
-                    ajax : {
-                        headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/stock/keluar/',
-                        method : 'POST'
-                    },
-                    columns : [
-                        {data : 'kode'},
-                        {data : 'tgl_keluar', className: "text-right"},
-                        {data : 'branch', className: "text-center"},
-                        {data : 'jenis_keluar', className: "text-center"},
-                        {data : 'supplier', className: "text-right"},
-                        {data : 'customer', className: "text-right"},
-                        {data : 'penjualan', className: "text-right"},
-                        {data : 'Action', responsivePriority: -1, className: "text-center"},
-                    ],
-                    columnDefs: [
-                        {
-                            targets : [-1],
-                            orderable: false
-                        }
-                    ],
-                });
-            };
-
-            return {
-                init : function (){
-                    initTable();
-                }
-            };
-        }();
-
-        function detilTable($idDetil)
-        {
-            $('')
-        }
-
-        // direct to edit page
-
-        jQuery(document).ready(function (){
-            listTable.init();
-        });
-
-    </script>
-@endpush
