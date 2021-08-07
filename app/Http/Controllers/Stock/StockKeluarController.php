@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use App\Models\Stock\StockDetilTemp;
 use App\Models\Stock\StockKeluar;
+use App\Models\Stock\StockKeluarDetil;
 use App\Models\Stock\StockTemp;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -80,19 +81,51 @@ class StockKeluarController extends Controller
     {
         $idTemp = $request->idTemp;
         $kode = $this->kode();
+        $tglKeluar = date('Y-m-d', strtotime($request->tgl_keluar));
 
         DB::beginTransaction();
         try {
             // insert to stock_keluar
-            $stockKeluar = StockKeluar::create();
+            $stockKeluar = StockKeluar::create([
+                'active_cash'=>session('closedCash'),
+                'tgl_keluar'=>$tglKeluar,
+                'kode'=>$kode,
+                'branch'=>$request->branch,
+                'jenis_keluar'=>'nonPenjualan',
+                'supplier'=>$request->supplier,
+                'customer'=>null,
+                'penjualan' =>null,
+                'users'=>Auth::id(),
+            ]);
             // insert to stock_keluar_detil from stock_detil_temp
+            $stock_detil_temp = StockDetilTemp::where('stock_temp', $idTemp);
+            if ($stock_detil_temp->get()->count() > 0){
+                foreach ($stock_detil_temp->get as $row){
+                    StockKeluarDetil::create([
+                        'stock_keluar'=>$stockKeluar->id,
+                        'id_produk'=>$row->idProduk,
+                        'jumlah'=>$row->jumlah
+                    ]);
+                }
+            }
             // destroy stock_temp
+            StockTemp::destroy($idTemp);
             // destroy stock_detil_temp
+            $stock_detil_temp->delete();
             // destroy session stock
             DB::commit();
+            session()->forget('stockKeluar');
+            $jsonData = [
+                'status'=>true
+            ];
         } catch (\ModelNotFoundException $e) {
             DB::rollBack();
+            $jsonData = [
+                'status'=>false,
+                'keterangan'=>$e->getMessage(),
+            ];
         }
+        return response()->json($jsonData);
     }
 
     /**

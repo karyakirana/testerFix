@@ -183,6 +183,83 @@
                 });
             }
 
+            // add to table transaksi
+            $('#btnAddDetil').on('click', function(){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/stock/temp',
+                    method : 'POST',
+                    dataType : 'JSON',
+                    data : $('#detilTrans, #formGlobal').serialize(),
+                    success : function (data) {
+                        if (data.status){
+                            resetFormDetil();
+                            reloadTable();
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                });
+            });
+
+            // get from table transaksi
+            $('body').on('click', '#btnEdit', function (){
+                let editData = $(this).data("value");
+                $.ajax({
+                    url : '{{ url('/') }}'+'/stock/temp/'+editData,
+                    method : 'GET',
+                    dataType : 'JSON',
+                    success : function (data) {
+                        resetFormDetil();
+                        $('[name="idTransDetil"]').val(data.id);
+                        $('[name="idProduk"]').val(data.idBarang);
+                        $('[name="produk"]').val(data.nama_produk+'\n'+data.kode_lokal+'\n'+data.cover+'\n'+data.nama_kat);
+                        $('[name="jumlah"]').val(data.jumlah);
+                        subTotal();
+                    },
+                    error : function (jqXHR, textStatus, errorThrown)
+                    {
+                        swal.fire({
+                            html: jqXHR.responseJSON.message+"<br><br>"+jqXHR.responseJSON.file+"<br><br>Line: "+jqXHR.responseJSON.line,
+                        });
+                    }
+                });
+            });
+
+            // save data all
+            $('#btnSave').on('click', function(){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/stock/list/',
+                    method: "POST",
+                    dataType : "JSON",
+                    data : $('#formGlobal, #formTable').serialize(),
+                    success : function (data){
+                        if (data.status){
+                            window.location.href = '{{ route("daftarSales") }}';
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                })
+            })
+
             jQuery(document).ready(function (){
                 tableTransaksi();
             });
