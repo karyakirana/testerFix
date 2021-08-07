@@ -9,7 +9,7 @@
             <div class="col-lg-8">
                 <form action="#" id="formGlobal" class="form">
                     <input type="text" name="id" value="{{ $id_jual ?? '' }}" hidden>
-                    <input type="text" name="idCustomer" hidden>
+                    <input type="text" name="idCustomer" value="{{ $idCustomer ?? '' }}" hidden>
                     <input type="text" name="diskonHidden" hidden>
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
                     <div class="form-group row">
@@ -440,6 +440,31 @@
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     url : '{{ url('/') }}'+'/sales/list/',
                     method: "POST",
+                    dataType : "JSON",
+                    data : $('#formGlobal, #formTable').serialize(),
+                    success : function (data){
+                        if (data.status){
+                            window.location.href = '{{ route("daftarSales") }}';
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                })
+            })
+
+            $('#btnUpdate').on('click', function (){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/sales/list/',
+                    method: "PUT",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){

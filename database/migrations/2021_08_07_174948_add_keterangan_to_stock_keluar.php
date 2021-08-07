@@ -14,7 +14,7 @@ class AddKeteranganToStockKeluar extends Migration
     public function up()
     {
         Schema::table('stock_keluar', function (Blueprint $table) {
-            //
+            $table->text('keterangan')->nullable()->after('users');
         });
     }
 

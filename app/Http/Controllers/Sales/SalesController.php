@@ -69,7 +69,6 @@ class SalesController extends Controller
             'idSales' => Auth::user()->id,
             'id_jual'=> $id_jual,
         ]);
-        session(['penjualan'=>$create->id]);
 
         return $create;
     }
@@ -93,6 +92,7 @@ class SalesController extends Controller
             if ($penjualanTemp->id_jual || $penjualanTemp->idSales != Auth::id()){
                 // jika id_jual ada, maka buat temporary baru
                 $penjualanTemp = $this->createTemp();
+                session()->put(['penjualan'=>$penjualanTemp->id]);
             }
         } else {
             // buat session baru, dengan check temporary yg lama
@@ -100,6 +100,7 @@ class SalesController extends Controller
             if (!$penjualanTemp){
                 // jika tidak ada data, maka buat session baru
                 $penjualanTemp = $this->createTemp();
+                session()->put(['penjualan'=>$penjualanTemp->id]);
             } else {
                 // jika ada, maka ambil temporary yg lama dan buat session untuk itu
                 $penjualanTemp = $penjualanTemp;
@@ -172,7 +173,7 @@ class SalesController extends Controller
             // insert penjualan
             $insertMaster = Penjualan::create($data);
             // insert stock_keluar
-            $insertStockKeluar = StockKeluar::insert([
+            $insertStockKeluar = StockKeluar::create([
                 'tgl_keluar'=>$tglPenjualan,
                 'kode'=>$this->kode(),
                 'branch'=>$request->branch ?? null,
@@ -242,17 +243,16 @@ class SalesController extends Controller
         $penjualan = Penjualan::with('customer')->find($id_jual);
         if ($checkTemp){
             // jika temp edit sebelumnya ada
-            // session()->put(['penjualan'=>$checkTemp->id]);
             // delete detil_temp where id_temp
             PenjualanDetilTemp::where('idPenjualanTemp', $checkTemp->id)->delete();
             $idTemp = $checkTemp->id;
         } else {
-            $idTemp = $this->createTemp($id_jual);
+            $idTemp = $this->createTemp($id_jual)->id;
         }
-        $detil = PenjualanDetil::where('id_jual', $id_jual);
+        $detil = PenjualanDetil::where('id_jual', $id_jual)->get();
         // insert detil to detil_temporary
         if ($detil->count() > 0){
-            foreach ($detil->get() as $row)
+            foreach ($detil as $row)
             {
                 // insert
                 PenjualanDetilTemp::create([
@@ -271,12 +271,13 @@ class SalesController extends Controller
             'idCustomer'=>$penjualan->id_cust,
             'nama_customer'=>$penjualan->customer->nama_cust,
             'status_bayar'=>$penjualan->status_bayar,
-            'tgl_nota'=> $penjualan->tgl_nota,
-            'tgl_tempo' => ($penjualan->tgl_tempo) ? date('d-M-Y', $penjualan->tgl_tempo) : null,
+            'tgl_nota'=> date('d-M-Y', strtotime($penjualan->tgl_nota)),
+            'tgl_tempo' => (isset($penjualan->tgl_tempo)) ? date('d-M-Y',strtotime($penjualan->tgl_tempo)) : null,
             'ppn' => $penjualan->ppn,
             'biaya_lain'=>$penjualan->biaya_lain,
             'total_bayar'=>$penjualan->total_bayar,
-            'keterangan'=>$penjualan->keterangan
+            'keterangan'=>$penjualan->keterangan,
+            'update'=>true
         ];
         return view('pages.sales.penjualanTransaksi', $data);
     }
@@ -288,7 +289,7 @@ class SalesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $idPenjualan = $request->id;
         $idTemp = $request->idTemp;
@@ -312,14 +313,10 @@ class SalesController extends Controller
                 'sudahBayar'=>'Belum',
                 'ppn'=>$request->ppn,
                 'biaya_lain'=>$request->biayaLain,
-                'total_bayar'=>$request->totalBayar,
+                'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
                 'keterangan'=>$request->keterangan
             ];
             $update = Penjualan::where('id_jual', $idPenjualan)->update($simpanMaster);
-            $updateStockDetil = StockKeluarDetil::where('id_jual', '$idPenjualan')
-                ->update([
-                    ''
-                ]);
             $deleteDetil = PenjualanDetil::where('id_jual', $idPenjualan)->delete();
             // insert detil_penjualan and insert stock_keluar_detil
             if ($detilTemp->count() > 0)
@@ -333,11 +330,6 @@ class SalesController extends Controller
                         'harga'=>$row->harga,
                         'diskon'=>$row->diskon,
                         'sub_total'=>$row->sub_total
-                    ]);
-                    StockKeluarDetil::create([
-                        'stock_keluar'=>$idPenjualan,
-                        'id_produk'=>$row->idBarang,
-                        'jumlah'=>$row->jumlah,
                     ]);
                 }
             }

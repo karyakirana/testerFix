@@ -195,6 +195,11 @@
                     }
                 ],
             });
+
+            $('body').on('click', '#btnEdit', function (){
+                let editData = $(this).data("value");
+                window.location.href = '{{url('/')}}'+'/sales/edit/'+editData;
+            })
         </script>
     @endpush
 
