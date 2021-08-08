@@ -360,6 +360,7 @@ class SalesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $action = Penjualan::destroy($id);
+        return response()->json(['status'=>true, 'action'=>$action]);
     }
 }
