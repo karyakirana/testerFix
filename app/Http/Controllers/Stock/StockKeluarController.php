@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Stock;
 
 use App\Http\Controllers\Controller;
+use App\Models\Stock\InventoryReal;
 use App\Models\Stock\StockDetilTemp;
 use App\Models\Stock\StockKeluar;
 use App\Models\Stock\StockKeluarDetil;
@@ -87,7 +88,7 @@ class StockKeluarController extends Controller
         try {
             // insert to stock_keluar
             $stockKeluar = StockKeluar::create([
-                'active_cash'=>session('closedCash'),
+                'active_cash'=>session('ClosedCash'),
                 'tgl_keluar'=>$tglKeluar,
                 'kode'=>$kode,
                 'branch'=>$request->branch,
@@ -107,6 +108,26 @@ class StockKeluarController extends Controller
                         'id_produk'=>$row->idProduk,
                         'jumlah'=>$row->jumlah
                     ]);
+
+                    // update or create inventory_real
+                    $inventory_real = InventoryReal::where('idProduk', $row->idProduk)
+                        ->where('branchId', $request->branch)->get();
+                    if ($inventory_real->count() > 0){
+                        // update
+                        InventoryReal::where('idProduk', $row->idProduk)
+                            ->where('branchId', $request->branch)
+                            ->update([
+                                'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
+                                'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
+                            ]);
+                    } else {
+                        InventoryReal::create([
+                            'idProduk'=>$row->idProduk,
+                            'branchId'=>$request->branch,
+                            'stockOut'=>$row->jumlah,
+                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
+                        ]);
+                    }
                 }
             }
             // destroy stock_temp
@@ -190,10 +211,23 @@ class StockKeluarController extends Controller
         $idTemp = $request->idTemp;
         $id_stock_keluar = $request->id;
         $tglKeluar = date('Y-m-d', strtotime($request->tgl_keluar));
+        $data_lama = StockKeluar::find($id_stock_keluar);
 
         DB::beginTransaction();
         try {
 
+            // delete stock_keluar_detil
+            $delete_detil = StockKeluarDetil::where('stock_keluar', $id_stock_keluar);
+            foreach ($delete_detil->get() as $row){
+                // update inventory_real
+                InventoryReal::where('idProduk', $row->id_produk)
+                    ->where('branchId', $data_lama->branch)
+                    ->update([
+                        'stockOut'=>DB::raw('stockOut -'.$row->jumlah),
+                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                    ]);
+            }
+            $delete_detil->delete();
             // update stock_keluar
             $update = StockKeluar::where('id', $id_stock_keluar)
                 ->update([
@@ -207,8 +241,6 @@ class StockKeluarController extends Controller
                     'keterangan'=>$request->keterangan,
                     'users'=>Auth::id(),
                 ]);
-            // delete stock_keluar_detil
-            StockKeluarDetil::where('stock_keluar', $id_stock_keluar)->delete();
             // insert stock_keluar_detil by stock_detil_temp
             $stock_detil_temp = StockDetilTemp::where('stockTemp', $idTemp)->get();
             if ($stock_detil_temp->count() > 0){
@@ -218,6 +250,22 @@ class StockKeluarController extends Controller
                         'id_produk'=>$row->idProduk,
                         'jumlah'=>$row->jumlah
                     ]);
+                    // update inventory_real
+                    $update_inventory = InventoryReal::where('idProduk', $row->idProduk)
+                        ->where('branchId', $request->branch);
+                    if($update_inventory->get()->count() > 0){
+                        $update_inventory->update([
+                            'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
+                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
+                        ]);
+                    } else {
+                        InventoryReal::create([
+                            'idProduk'=>$row->idProduk,
+                            'branchId'=>$request->branch,
+                            'stockOut'=>$row->jumlah,
+                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
+                        ]);
+                    }
                 }
             }
             // delete stock_temp

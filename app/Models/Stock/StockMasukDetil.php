@@ -16,6 +16,6 @@ class StockMasukDetil extends Model
 
     public function produk()
     {
-        return $this->belongsTo(Produk::class, 'idProduk');
+        return $this->belongsTo(Produk::class, 'idProduk', 'id_produk');
     }
 }

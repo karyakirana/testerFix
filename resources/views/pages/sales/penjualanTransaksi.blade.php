@@ -63,6 +63,21 @@
                         <div class="col-lg-4">
                             <input type="text" class="form-control" name="keterangan" value="{{ $keterangan ?? '' }}">
                         </div>
+                        <label class="col-lg-2 col-form-label text-lg-right">Gudang</label>
+                        <div class="col-lg-4">
+                            <select name="branch" id="branch" class="form-control" autocomplete="off">
+                                <option disabled {{ (isset($branch)) ? '' : 'selected' }}>Silahkan Pilih</option>
+                                @php
+                                    $data_branch = \App\Models\Stock\BranchStock::latest()->get();
+                                    $branch = $branch ?? '';
+                                @endphp
+                                @if($data_branch->count() > 0)
+                                    @foreach($data_branch as $row)
+                                            <option value="{{$row->id}}" {{ ($row->id == $branch) ? 'selected' : '' }}>{{$row->branchName}}</option>
+                                        @endforeach
+                                @endif
+                            </select>
+                        </div>
                     </div>
                 </form>
                 <div class="example">

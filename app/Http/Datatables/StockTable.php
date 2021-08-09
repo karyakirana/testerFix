@@ -6,6 +6,7 @@ use App\Models\Stock\StockAkhir;
 use App\Models\Stock\StockKeluar;
 use App\Models\Stock\StockKeluarDetil;
 use App\Models\Stock\StockMasuk;
+use App\Models\Stock\StockMasukDetil;
 use Yajra\DataTables\DataTables;
 
 class StockTable {
@@ -28,9 +29,10 @@ class StockTable {
                 return $row->user->name ?? '';
             })
             ->addColumn('Action', function($row){
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.$row->id.'" title="show"><i class="flaticon2-indent-dots"></i></a>';
                 $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
                 $soft = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></a>';
-                return $edit.$soft;
+                return $show.$edit.$soft;
             })
             ->rawColumns(['Action'])
             ->make(true);
@@ -51,6 +53,20 @@ class StockTable {
                 ->latest('kode')->get();
         }
         return $this->action($data);
+    }
+
+    public function stockMasukDetil($idMasuk)
+    {
+        $data = StockMasukDetil::with('produk')->latest()->get();
+        return DataTables::of($data)
+            ->addColumn('produk', function($row){
+                $produk = $row->produk->nama_produk ?? '';
+                $cover = $row->produk->cover ?? '';
+                $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
+                return $produk.'<br>'.$cover.'-'.$kat_harga;
+            })
+            ->rawColumns(['produk'])
+            ->make(true);
     }
 
     /**
@@ -76,9 +92,9 @@ class StockTable {
      */
     public function stockKeluarList($idBranch = null)
     {
-        $data = StockKeluar::with(['suppliers', 'customers', 'branchs','penjualan', 'user'])->latest()->get();
+        $data = StockKeluar::with(['suppliers', 'customers', 'branchs', 'user'])->latest()->get();
         if ($idBranch){
-            $data = StockKeluar::with(['suppliers', 'customers', 'branchs','penjualan', 'user'])
+            $data = StockKeluar::with(['suppliers', 'customers', 'branchs', 'user'])
                 ->where('branch', $idBranch)
                 ->latest()->get();
         }
@@ -96,9 +112,10 @@ class StockTable {
                 return $row->customer->id_cust ?? '';
             })
             ->addColumn('Action', function($row){
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.$row->id.'" title="show"><i class="flaticon2-indent-dots"></i></a>';
                 $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
                 $soft = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></a>';
-                return $edit.$soft;
+                return $show.$edit.$soft;
             })
             ->rawColumns(['Action'])
             ->make(true);

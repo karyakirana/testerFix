@@ -13,32 +13,54 @@ use Illuminate\Support\Facades\DB;
 
 class GenerateSalesToStockController extends Controller
 {
+
+    private function kode()
+    {
+        $data = StockKeluar::where('active_cash', session('ClosedCash'))->latest('kode')->first();
+        $num = null;
+        if(!$data){
+            $num = 1;
+        } else {
+            $urutan = (int) substr($data->kode, 0, 4);
+            $num = $urutan + 1;
+        }
+        $id = sprintf("%04s", $num)."/SK/".date('Y');
+        return $id;
+    }
     public function store()
     {
-        $penjualan = Penjualan::where('activeCash', session('closedCash'))->get();
+        $penjualan = Penjualan::where('activeCash', session('ClosedCash'))->get();
         DB::beginTransaction();
         try {
             if ($penjualan->count() > 0) {
                 foreach ($penjualan as $row){
-                    $stock_keluar = StockKeluar::create([
-                        'active_cash'=>session('closedCash'),
-                        'tgl_keluar', //tgl_nota
-                        'kode', // generate code
-                        'branch', // nota keluar darimana
-                        'jenis_keluar'=>'penjualan',
-                        'customer', // customer penjualan
-                        'penjualan', // id penjualan
-                        'users', // pembuat nota
-                        'keterangan'=>null
-                    ]);
-                    // insert stock_keluar_detil from detil_penjualan
-                    $detil_penjualan = PenjualanDetil::where('id_jual', $row->id_jual)->get();
-                    foreach ($detil_penjualan as $row_){
-                        $stock_detil_keluar = StockKeluarDetil::create([
-                            'stock_keluar'=>$stock_keluar->id,
-                            'id_produk'=>$row_->id_produk,
-                            'jumlah'=>$row_->jumlah
+                    // check stock_keluar yang tidak ada penjualannya
+                    $check_stock_keluar = StockKeluar::where('penjualan', $row->id_jual)->get()->count();
+                    if ($check_stock_keluar == 0){
+                        // buat stock_keluar baru
+                        $stock_keluar_baru = StockKeluar::create([
+                            'active_cash'=>session('ClosedCash'),
+                            'tgl_keluar'=>$row->tgl_nota,
+                            'kode'=>$this->kode(),// generate kode baru
+                            'branch'=>$row->idBranch,
+                            'jenis_keluar'=>'penjualan',
+                            'customer'=>$row->id_cust,
+                            'penjualan'=>$row->id_jual,
+                            'users'=>$row->id_user
                         ]);
+                        // insert stock_keluar_detil from detil_penjualan
+                        $detil_penjualan = PenjualanDetil::where('id_jual', $row->id_jual)->get();
+                        if ($detil_penjualan->count() > 0)
+                        {
+                            foreach ($detil_penjualan as $row_)
+                            {
+                                StockKeluarDetil::create([
+                                    'stock_keluar'=>$stock_keluar_baru->id,
+                                    'id_produk'=>$row_->id_produk,
+                                    'jumlah'=>$row_->jumlah
+                                ]);
+                            }
+                        }
                     }
                 }
             }

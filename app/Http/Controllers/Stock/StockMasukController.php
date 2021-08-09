@@ -76,31 +76,31 @@ class StockMasukController extends Controller
 
     public function create()
     {
-        return view('pages.stock.stockMasukTrans');
+        return view('pages.stock.stockMasukTrans', $this->checkLastCart());
     }
 
     public function store(Request $request)
     {
         $idTemp = $request->idTemp;
         $kode = $this->kode();
-        $tglMasuk = date('Y-m-d', strtotime($request->tgl_masuk));
+        $tglMasuk = date('Y-m-d', strtotime($request->tglMasuk));
 
         DB::beginTransaction();
         try {
             // insert to stock_keluar
             $stockMasuk = StockMasuk::create([
-                'activeCash'=>session('closedCash'),
+                'activeCash'=>session('ClosedCash'),
                 'tglMasuk'=>$tglMasuk,
                 'kode'=>$kode,
                 'idBranch'=>$request->branch,
-                'idSupplier'=>$request->supplier,
+                'idSupplier'=>$request->idSupplier,
                 'keterangan'=>$request->keterangan,
-                'users'=>Auth::id(),
+                'idUser'=>Auth::id(),
             ]);
             // insert to stock_keluar_detil from stock_detil_temp
-            $stock_detil_temp = StockDetilTemp::where('stock_temp', $idTemp);
+            $stock_detil_temp = StockDetilTemp::where('stockTemp', $idTemp);
             if ($stock_detil_temp->get()->count() > 0){
-                foreach ($stock_detil_temp->get as $row){
+                foreach ($stock_detil_temp->get() as $row){
                     StockMasukDetil::create([
                         'idStockMasuk'=>$stockMasuk->id,
                         'idProduk'=>$row->idProduk,
@@ -114,7 +114,7 @@ class StockMasukController extends Controller
             $stock_detil_temp->delete();
             // destroy session stock
             DB::commit();
-            session()->forget('stockKeluar');
+            session()->forget('stockMasuk');
             $jsonData = [
                 'status'=>true
             ];
@@ -163,30 +163,44 @@ class StockMasukController extends Controller
 
     public function edit($id)
     {
-        //
+        // get data from stock_keluar
+        $stock_masuk = StockMasuk::with(['supplier', 'user', 'branch'])->find($id);
+        $stock = $this->checkSessionEdit($id);
+        $data = [
+            'idTemp'=>$stock->id,
+            'idUser'=>$stock->idUser,
+            'id'=>$id,
+            'kode'=>$stock_masuk->kode,
+            'supplier'=>$stock_masuk->idSupplier,
+            'namaSupplier'=>$stock_masuk->supplier->namaSupplier,
+            'branch'=>$stock_masuk->idBranch,
+            'tgl_keluar'=>$stock_masuk->tglMasuk->format('d-M-Y'),
+            'update'=>true
+        ];
+        return view('pages.stock.stockMasukTrans')->with($data);
     }
 
     public function update(Request $request)
     {
         $idTemp = $request->idTemp;
         $id_stock_masuk = $request->id;
-        $tglMasuk = date('Y-m-d', strtotime($request->tgl_masuk));
+        $tglMasuk = date('Y-m-d', strtotime($request->tglMasuk));
 
         DB::beginTransaction();
         try {
 
             // update stock_keluar
-            $update = StockKeluar::where('id', $id_stock_masuk)
+            $update = StockMasuk::where('id', $id_stock_masuk)
                 ->update([
                     'tglMasuk'=>$tglMasuk,
                     'idBranch'=>$request->branch,
-                    'idSupplier'=>$request->supplier,
+                    'idSupplier'=>$request->idSupplier,
                     'keterangan'=>$request->keterangan,
-                    'users'=>Auth::id(),
+                    'idUser'=>Auth::id(),
                 ]);
-            // delete stock_keluar_detil
+            // delete stock_masuk_detil
             StockMasukDetil::where('idStockMasuk', $id_stock_masuk)->delete();
-            // insert stock_keluar_detil by stock_detil_temp
+            // insert stock_masuk_detil by stock_detil_temp
             $stock_detil_temp = StockDetilTemp::where('stockTemp', $idTemp)->get();
             if ($stock_detil_temp->count() > 0){
                 foreach ($stock_detil_temp as $row){

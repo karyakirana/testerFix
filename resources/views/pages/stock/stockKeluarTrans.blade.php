@@ -9,9 +9,7 @@
             <div class="col-lg-8">
                 <form action="#" id="formGlobal" class="form">
                     <input type="text" name="id" value="{{ $id ?? '' }}" hidden>
-                    <input type="text" name="idCustomer" value="{{$customer ?? ''}}" hidden>
                     <input type="text" name="idSupplier" value="{{$supplier ?? ''}}" hidden autocomplete="off">
-                    <input type="text" name="diskonHidden" hidden>
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label text-lg-right" for="customer">Supplier</label>

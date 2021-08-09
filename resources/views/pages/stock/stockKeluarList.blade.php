@@ -5,6 +5,7 @@
         <x-slot name="title">Daftar Stock Keluar</x-slot>
         <x-slot name="toolbar">
             <a href="{{ route('stockKeluarNew') }}" class="btn btn-primary font-weight-bolder">New Record</a>
+            <a href="#" id="btnGenerate" class="btn btn-danger font-weight-bolder">Generate Stock</a>
         </x-slot>
 
         <x-nano.table-standart id="listTable">
@@ -12,12 +13,13 @@
             <tr>
                 <td width="10%" class="text-center">ID</td>
                 <td width="20%" class="text-center">Tgl Keluar</td>
-                <td class="none">Asal Gudang</td>
+                <td class="text-center">Asal Gudang</td>
                 <td class="text-center">Jenis Keluar</td>
                 <td class="text-center">Supplier</td>
                 <td class="none">Customer</td>
                 <td class="text-center">Nomor Penjualan</td>
-                <td width="10%">Action</td>
+                <td class="text-center">Pembuat</td>
+                <td width="15%">Action</td>
             </tr>
             </thead>
             <tbody></tbody>
@@ -63,12 +65,13 @@
                         },
                         columns : [
                             {data : 'kode'},
-                            {data : 'tgl_keluar', className: "text-right"},
+                            {data : 'tgl_keluar', className: "text-center"},
                             {data : 'branch', className: "text-center"},
                             {data : 'jenis_keluar', className: "text-center"},
-                            {data : 'supplier', className: "text-right"},
+                            {data : 'supplier', className: "text-center"},
                             {data : 'customer', className: "text-right"},
-                            {data : 'penjualan', className: "text-right"},
+                            {data : 'penjualan', className: "text-center"},
+                            {data : 'user', className: "text-center"},
                             {data : 'Action', responsivePriority: -1, className: "text-center"},
                         ],
                         columnDefs: [
@@ -90,15 +93,14 @@
             // jquery click show data
             $('body').on('click', '#btnShow', function(){
                 let dataShow = $(this).data("value");
-                detil(dataShow);
-                showData(dataShow);
+                detilTable(dataShow);
                 $('#modalDetil').modal('show'); // show bootstrap modal
             })
 
             // reset table when modal hide
             $('#modalDetil').on('hide.bs.modal', function (e) {
 
-                $(detilList).DataTable().destroy();
+                $('#detilTable').DataTable().destroy();
             })
 
             // detil table by id from stock_keluar
@@ -115,7 +117,7 @@
                     },
                     columns : [
                         {data : 'DT_RowIndex', orderable : false},
-                        {data : 'produk', className: "text-right"},
+                        {data : 'produk'},
                         {data : 'jumlah', className: "text-center"},
                     ],
                     columnDefs: [
@@ -132,6 +134,31 @@
             jQuery(document).ready(function (){
                 listTable.init();
             });
+
+            // generate stock
+            $('#btnGenerate').on('click', function(){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ route('generateSalesToStock') }}',
+                    method: "POST",
+                    dataType : "JSON",
+                    success : function (data){
+                        if (data.status){
+                            reloadTable();
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                });
+            })
 
         </script>
     @endpush

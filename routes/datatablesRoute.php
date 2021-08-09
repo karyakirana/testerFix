@@ -26,6 +26,9 @@ Route::patch('data/penjualan', [\App\Http\Datatables\SalesTransTable::class, 'pe
 Route::patch('data/stock/keluar', [\App\Http\Datatables\StockTable::class, 'stockKeluarList'])->name('stockKeluarList');
 Route::patch('data/stock/keluar/detil/{id}', [\App\Http\Datatables\StockDetilTable::class, 'stockKeluarDetil']);
 
+Route::patch('data/stock/masuk', [\App\Http\Datatables\StockTable::class, 'stockMasukList'])->name('stockMasukList');
+Route::patch('data/stock/masuk/detil/{id}', [\App\Http\Datatables\StockDetilTable::class, 'stockMasukDetil']);
+
 // temporary
 Route::post('data/penjualan/trans/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilTemp'])->name('detilTemp');
 

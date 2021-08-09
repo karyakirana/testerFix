@@ -15,7 +15,7 @@ class StockKeluar extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'stock_keluar';
     protected $fillable = [
-        'kode', 'tgl_keluar', 'branch', 'jenis_keluar', 'supplier', 'customer', 'penjualan', 'users'
+        'kode', 'active_cash', 'tgl_keluar', 'branch', 'jenis_keluar', 'supplier', 'customer', 'penjualan', 'users'
     ];
     protected $casts = [
         'tgl_keluar'=> 'date:d-M-Y',

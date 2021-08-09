@@ -16,7 +16,7 @@ class StockMasuk extends Model
         'nomotPo', 'keterangan'
     ];
     protected $casts = [
-        'tglMasuk'=>'date:d-m-Y'
+        'tglMasuk'=>'date:d-M-Y'
     ];
 
     public function branch()
