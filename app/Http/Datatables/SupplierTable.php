@@ -21,7 +21,7 @@ class SupplierTable {
                 return $row->jenis->jenis ?? '';
             })
             ->addColumn('Action', function($row){
-                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnAddSupplier" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
                 return $edit;
             })
             ->rawColumns(['Action'])

@@ -25,8 +25,28 @@
 
     </x-mikro.card-custom>
 
+    <x-nano.modal-large id="modalDetil">
+        <x-slot name="title">Detil Penjualan</x-slot>
+
+        <x-nano.table-standart id="detilTable" width="100%">
+            <thead>
+            <tr>
+                <th width="5%" class="text-center">No</th>
+                <th width="45%" class="text-center">Produk</th>
+                <th width="5%" class="text-center">Jumlah</th>
+            </tr>
+            </thead>
+        </x-nano.table-standart>
+    </x-nano.modal-large>
+
     @push('scripts')
         <script>
+
+            // direct to edit
+            $('body').on('click', '#btnEdit', function (){
+                let editData = $(this).data("value");
+                window.location.href = '{{ url('/') }}'+'/stock/keluar/edit/'+editData;
+            })
 
             let listTable = function (){
 
@@ -67,9 +87,44 @@
                 };
             }();
 
-            function detilTable($idDetil)
+            // jquery click show data
+            $('body').on('click', '#btnShow', function(){
+                let dataShow = $(this).data("value");
+                detil(dataShow);
+                showData(dataShow);
+                $('#modalDetil').modal('show'); // show bootstrap modal
+            })
+
+            // reset table when modal hide
+            $('#modalDetil').on('hide.bs.modal', function (e) {
+
+                $(detilList).DataTable().destroy();
+            })
+
+            // detil table by id from stock_keluar
+            function detilTable(idStockKeluar)
             {
-                //
+                $('#detilTable').DataTable({
+                    order : [],
+                    ordering : false,
+                    responsive : true,
+                    ajax : {
+                        headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url : '{{ url('/') }}'+'/data/stock/keluar/detil/'+idStockKeluar,
+                        method : 'PATCH'
+                    },
+                    columns : [
+                        {data : 'DT_RowIndex', orderable : false},
+                        {data : 'produk', className: "text-right"},
+                        {data : 'jumlah', className: "text-center"},
+                    ],
+                    columnDefs: [
+                        {
+                            targets : [-1],
+                            orderable: false
+                        }
+                    ],
+                });
             }
 
             // direct to edit page

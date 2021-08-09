@@ -18,15 +18,20 @@ class StockKeluar extends Model
         'kode', 'tgl_keluar', 'branch', 'jenis_keluar', 'supplier', 'customer', 'penjualan', 'users'
     ];
     protected $casts = [
-        'tgl_keluar'=> 'date:d-m-Y',
+        'tgl_keluar'=> 'date:d-M-Y',
     ];
 
-    public function supplier()
+    public function branchs()
+    {
+        return $this->belongsTo(BranchStock::class, 'branch');
+    }
+
+    public function suppliers()
     {
         return $this->belongsTo(Supplier::class, 'supplier');
     }
 
-    public function customer()
+    public function customers()
     {
         return $this->belongsTo(Customer::class, 'customer', 'id_cust');
     }
@@ -36,7 +41,7 @@ class StockKeluar extends Model
         return $this->belongsTo(Penjualan::class, 'penjualan', 'id_jual');
     }
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class, 'users');
     }

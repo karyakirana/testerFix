@@ -12,7 +12,7 @@ class StockTempTable {
      * @return mixed
      * @throws \Exception
      */
-    public function test(String $idStockTemp)
+    public function stockTrans(String $idStockTemp)
     {
         $data = StockDetilTemp::with('produk')->where('stockTemp', $idStockTemp)->get();
         return DataTables::of($data)

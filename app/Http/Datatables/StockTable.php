@@ -4,6 +4,7 @@ namespace App\Http\Datatables;
 
 use App\Models\Stock\StockAkhir;
 use App\Models\Stock\StockKeluar;
+use App\Models\Stock\StockKeluarDetil;
 use App\Models\Stock\StockMasuk;
 use Yajra\DataTables\DataTables;
 
@@ -100,6 +101,19 @@ class StockTable {
                 return $edit.$soft;
             })
             ->rawColumns(['Action'])
+            ->make(true);
+    }
+
+    public function stockKeluarDetil($idStockKeluar)
+    {
+        $data = StockKeluarDetil::where('stock_keluar', $idStockKeluar);
+        return DataTables::of($data)
+            ->addColumn('produk', function($row){
+                $produk = $row->produk->nama_produk ?? '';
+                $cover = $row->produk->cover ?? '';
+                $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
+                return $produk.'<br>'.$cover.'-'.$kat_harga;
+            })
             ->make(true);
     }
 }

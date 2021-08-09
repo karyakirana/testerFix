@@ -35,7 +35,8 @@ class StockTempController extends Controller
 
     public function edit($id)
     {
-        return StockDetilTemp::find($id);
+        $data  = StockDetilTemp::with(['produk.kategoriHarga'])->find($id);
+        return response()->json($data);
     }
 
     public function destroy($id)

@@ -92,15 +92,16 @@ class StockKeluarController extends Controller
                 'kode'=>$kode,
                 'branch'=>$request->branch,
                 'jenis_keluar'=>'nonPenjualan',
-                'supplier'=>$request->supplier,
+                'supplier'=>$request->idSupplier,
                 'customer'=>null,
                 'penjualan' =>null,
                 'users'=>Auth::id(),
+                'keterangan'=>$request->keterangan,
             ]);
             // insert to stock_keluar_detil from stock_detil_temp
-            $stock_detil_temp = StockDetilTemp::where('stock_temp', $idTemp);
+            $stock_detil_temp = StockDetilTemp::where('stockTemp', $idTemp);
             if ($stock_detil_temp->get()->count() > 0){
-                foreach ($stock_detil_temp->get as $row){
+                foreach ($stock_detil_temp->get() as $row){
                     StockKeluarDetil::create([
                         'stock_keluar'=>$stockKeluar->id,
                         'id_produk'=>$row->idProduk,
@@ -135,8 +136,8 @@ class StockKeluarController extends Controller
     public function checkSessionEdit($id)
     {
         //check temp
-        $checkTemp = StockTemp::where('stockMasuk', $id)->where('idUser', Auth::id());
-        if ($checkTemp->count() > 0){
+        $checkTemp = StockTemp::where('stockMasuk', $id)->where('jenisTemp', 'StockKeluar')->where('idUser', Auth::id());
+        if ($checkTemp->get()->count() > 0){
             // jika temp sebelumnya ada, dipakai saja
             $temp = $checkTemp->latest()->first();
             // delete detil stock lama
@@ -154,7 +155,20 @@ class StockKeluarController extends Controller
      */
     public function edit($id)
     {
-        return view('pages.stock.stockKeluar', $this->checkSessionEdit($id));
+        // get data from stock_keluar
+        $stock_keluar = StockKeluar::with(['suppliers', 'customers', 'user', 'branchs'])->find($id);
+        $stock = $this->checkSessionEdit($id);
+        $data = [
+            'idTemp'=>$stock->id,
+            'idUser'=>$stock->idUser,
+            '$id'=>$id,
+            'kode'=>$stock_keluar->kode,
+            'supplier'=>$stock_keluar->supplier,
+            'namaSupplier'=>$stock_keluar->suppliers->namaSupplier,
+            'branch'=>$stock_keluar->branch,
+            'tgl_keluar'=>$stock_keluar->tgl_keluar->format('d-M-Y')
+        ];
+        return view('pages.stock.stockKeluarTrans')->with($data);
     }
 
     public function update(Request $request)
@@ -173,9 +187,10 @@ class StockKeluarController extends Controller
                     'tgl_keluar'=>$tglKeluar,
                     'branch'=>$request->branch,
                     'jenis_keluar'=>'nonPenjualan',
-                    'supplier'=>$request->supplier,
+                    'supplier'=>$request->idSupplier,
                     'customer'=>null,
                     'penjualan' =>null,
+                    'keterangan'=>$request->keterangan,
                     'users'=>Auth::id(),
                 ]);
             // delete stock_keluar_detil

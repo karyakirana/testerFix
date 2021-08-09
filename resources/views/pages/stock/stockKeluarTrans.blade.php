@@ -9,53 +9,40 @@
             <div class="col-lg-8">
                 <form action="#" id="formGlobal" class="form">
                     <input type="text" name="id" value="{{ $id ?? '' }}" hidden>
-                    <input type="text" name="idCustomer" hidden>
+                    <input type="text" name="idCustomer" value="{{$customer ?? ''}}" hidden>
+                    <input type="text" name="idSupplier" value="{{$supplier ?? ''}}" hidden autocomplete="off">
                     <input type="text" name="diskonHidden" hidden>
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label text-lg-right" for="customer">Supplier</label>
                         <div class="col-lg-4">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="customer" id="customer" value="{{ $nama_customer ?? '' }}" readonly>
+                                <input type="text" class="form-control" name="supplier" id="supplier" value="{{ $namaSupplier ?? '' }}" readonly>
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="button" id="btnSupplier">Supplier</button>
                                 </div>
                             </div>
                         </div>
-                        <label for="jenisBayar" class="col-lg-2 col-form-label text-lg-right">Jenis Bayar</label>
+                        <label for="jenisBayar" class="col-lg-2 col-form-label text-lg-right">Gudang</label>
                         <div class="col-lg-4 col-form-label">
-                            @if(isset($status_bayar))
-                                <div class="radio-inline">
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tempo" checked="{{ ($status_bayar == 'Tempo') ? 'checked' : ''}}"><span></span>Tempo
-                                    </label>
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tunai" checked="{{ ($status_bayar == 'Tempo') ? 'checked' : ''}}"><span></span>Tunai
-                                    </label>
-                                </div>
-                            @else
-                                <div class="radio-inline">
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tempo" checked="checked"><span></span>Tempo
-                                    </label>
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tunai"><span></span>Tunai
-                                    </label>
-                                </div>
-                            @endif
+                            <select name="branch" id="branch" class="form-control" autocomplete="off">
+                                <option disabled>Silahkan Pilih</option>
+                                @php
+                                $data_branch = \App\Models\Stock\BranchStock::latest()->get();
+                                $branch = $branch ?? '';
+                                @endphp
+                                @if($data_branch->count() > 0)
+                                    @foreach($data_branch as $row)
+                                        <option value="{{$row->id}}" {{ ($row->id == $branch) ? 'selected' : '' }}>{{$row->branchName}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label text-lg-right">Tgl Nota</label>
                         <div class="col-lg-4">
-                            <x-nano.input-datepicker name="tglNota" id="tglNota" value="{{ $tgl_nota ?? date('d-M-Y') }}" autocomplete="off"/>
-                        </div>
-                        <label class="col-lg-2 col-form-label text-lg-right">Tgl Tempo</label>
-                        <div class="col-lg-4">
-                            @php
-                                $tglTempo = $tgl_tempo ?? date('d-M-Y', strtotime(" +2 months"));
-                            @endphp
-                            <x-nano.input-datepicker name="tglTempo" id="tglTempo" value="{{ $tglTempo }}" autocomplete="off"/>
+                            <x-nano.input-datepicker name="tglNota" id="tglNota" value="{{ $tgl_keluar ?? date('d-M-Y') }}" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -72,7 +59,6 @@
                                 <thead>
                                 <tr>
                                     <th width="30%">Produk</th>
-                                    <th>Harga</th>
                                     <th>Jumlah</th>
                                     <th></th>
                                 </tr>
@@ -125,6 +111,10 @@
             <x-nano.table-produk />
         </x-nano.modal-large>
 
+        <x-nano.modal-large id="modalSupplier">
+            <x-nano.table-supplier />
+        </x-nano.modal-large>
+
     </x-mikro.card-custom>
 
     @push('scripts')
@@ -147,6 +137,33 @@
                         $('[name="idProduk"]').val(data.id_produk);
                         $('[name="produk"]').val(data.nama_produk+'\n'+data.kode_lokal+'\n'+data.cover+'\n'+data.nama_kat);
                         $('#modalProduk').modal('hide');
+                    },
+                    error : function (jqXHR, textStatus, errorThrown)
+                    {
+                        swal.fire({
+                            html: jqXHR.responseJSON.message+"<br><br>"+jqXHR.responseJSON.file+"<br><br>Line: "+jqXHR.responseJSON.line,
+                        });
+                    }
+                });
+            });
+
+            // call supplier
+            $('#btnSupplier').on('click', function(){
+                $('#modalSupplier').modal('show');
+            });
+
+            // set supplier
+            $('body').on('click', '#btnAddSupplier', function (){
+                let dataEdit = $(this).data("value");
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/master/supplier/'+dataEdit,
+                    method: "GET",
+                    dataType : "JSON",
+                    success : function (data){
+                        $('[name="idSupplier"]').val(data.id);
+                        $('[name="supplier"]').val(data.namaSupplier);
+                        $('#modalSupplier').modal('hide');
                     },
                     error : function (jqXHR, textStatus, errorThrown)
                     {
@@ -183,6 +200,12 @@
                 });
             }
 
+            //reload
+            function reloadTable()
+            {
+                $('#tableTransaksi').DataTable().ajax.reload();
+            }
+
             // add to table transaksi
             $('#btnAddDetil').on('click', function(){
                 $.ajax({
@@ -210,6 +233,14 @@
                 });
             });
 
+            // reset form
+            function resetFormDetil()
+            {
+                $('#detilTrans').trigger('reset');
+                $('.invalid-feedback').remove();
+                $('.is-invalid').removeClass('is-invalid');
+            }
+
             // get from table transaksi
             $('body').on('click', '#btnEdit', function (){
                 let editData = $(this).data("value");
@@ -220,10 +251,12 @@
                     success : function (data) {
                         resetFormDetil();
                         $('[name="idTransDetil"]').val(data.id);
-                        $('[name="idProduk"]').val(data.idBarang);
-                        $('[name="produk"]').val(data.nama_produk+'\n'+data.kode_lokal+'\n'+data.cover+'\n'+data.nama_kat);
+                        $('[name="idProduk"]').val(data.idProduk);
+                        $('[name="produk"]').val(data.produk.nama_produk+'\n'+
+                            data.produk.kode_lokal+
+                            '\n'+data.produk.cover+
+                            '\n'+data.produk.kategori_harga.nama_kat);
                         $('[name="jumlah"]').val(data.jumlah);
-                        subTotal();
                     },
                     error : function (jqXHR, textStatus, errorThrown)
                     {
@@ -234,17 +267,69 @@
                 });
             });
 
+            // delete from transaksi
+            $('body').on('click', '#btnSoft', function (){
+                let deleteData = $(this).data("value");
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/stock/temp/'+deleteData,
+                    method : 'DELETE',
+                    dataType : 'JSON',
+                    success : function (data) {
+                        if (data.status){
+                            reloadTable();
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                });
+            })
+
             // save data all
             $('#btnSave').on('click', function(){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{ url('/') }}'+'/stock/list/',
+                    url : '{{ url('/') }}'+'/stock/keluar/',
                     method: "POST",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("daftarSales") }}';
+                            window.location.href = '{{ route("stokKeluar") }}';
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                })
+            })
+
+            // update data All
+            $('#btnUpdate').on('click', function (){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/stock/keluar/',
+                    method: "PUT",
+                    dataType : "JSON",
+                    data : $('#formGlobal, #formTable').serialize(),
+                    success : function (data){
+                        if (data.status){
+                            window.location.href = '{{ route("stokKeluar") }}';
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
