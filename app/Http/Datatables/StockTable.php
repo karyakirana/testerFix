@@ -76,23 +76,23 @@ class StockTable {
      */
     public function stockKeluarList($idBranch = null)
     {
-        $data = StockKeluar::with(['supplier', 'customer', 'branch','penjualan', 'users'])->latest()->get();
+        $data = StockKeluar::with(['suppliers', 'customers', 'branchs','penjualan', 'user'])->latest()->get();
         if ($idBranch){
-            $data = StockKeluar::with(['supplier', 'customer', 'branch','penjualan', 'users'])
+            $data = StockKeluar::with(['suppliers', 'customers', 'branchs','penjualan', 'user'])
                 ->where('branch', $idBranch)
                 ->latest()->get();
         }
         return DataTables::of($data)
             ->addColumn('branch', function($row){
-                return $row->branch->branchName ?? '';
+                return $row->branchs->branchName ?? '';
             })
-            ->addColumn('supplier', function($row){
+            ->addColumn('suppliers', function($row){
                 return $row->supplier->namaSupplier ?? '';
             })
             ->addColumn('user', function($row){
                 return $row->user->name ?? '';
             })
-            ->addColumn('customer', function ($row){
+            ->addColumn('customers', function ($row){
                 return $row->customer->id_cust ?? '';
             })
             ->addColumn('Action', function($row){

@@ -146,6 +146,19 @@ class StockKeluarController extends Controller
             // jika temp tidak ada, buat baru
             $temp = $this->createSessionStock($id);
         }
+        // insert detil
+        $stock_keluar_detil = StockKeluarDetil::where('stock_keluar', $id)->get();
+        if ($stock_keluar_detil->count() > 0)
+        {
+            foreach ($stock_keluar_detil as $row)
+            {
+                StockDetilTemp::create([
+                    'stockTemp'=>$temp->id,
+                    'idProduk'=>$row->id_produk,
+                    'jumlah'=>$row->jumlah
+                ]);
+            }
+        }
         return $temp;
     }
 
@@ -161,12 +174,13 @@ class StockKeluarController extends Controller
         $data = [
             'idTemp'=>$stock->id,
             'idUser'=>$stock->idUser,
-            '$id'=>$id,
+            'id'=>$id,
             'kode'=>$stock_keluar->kode,
             'supplier'=>$stock_keluar->supplier,
             'namaSupplier'=>$stock_keluar->suppliers->namaSupplier,
             'branch'=>$stock_keluar->branch,
-            'tgl_keluar'=>$stock_keluar->tgl_keluar->format('d-M-Y')
+            'tgl_keluar'=>$stock_keluar->tgl_keluar->format('d-M-Y'),
+            'update'=>true
         ];
         return view('pages.stock.stockKeluarTrans')->with($data);
     }

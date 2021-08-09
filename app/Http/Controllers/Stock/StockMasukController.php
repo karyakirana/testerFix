@@ -16,7 +16,12 @@ class StockMasukController extends Controller
 {
     public function index()
     {
-        //
+        return view('pages.stock.stockMasukList');
+    }
+
+    public function indexByBranch($idBranch)
+    {
+        return view('pages.stock.stockMasukList', ['idBranch'=>$idBranch]);
     }
 
     public function kode()
@@ -57,13 +62,10 @@ class StockMasukController extends Controller
             {
                 // jika ada
                 $stock = $lastTemp->latest()->first();
-
-                session()->put(['stockMasuk'=>$stock->id]);
-
             } else {
                 $stock = $this->createSessionStock();
-                session()->put(['stockMasuk'=>$stock->id]);
             }
+            session()->put(['stockMasuk'=>$stock->id]);
         }
         $data = [
             'idTemp'=>$stock->id,
@@ -74,7 +76,7 @@ class StockMasukController extends Controller
 
     public function create()
     {
-        //
+        return view('pages.stock.stockMasukTrans');
     }
 
     public function store(Request $request)
@@ -124,6 +126,39 @@ class StockMasukController extends Controller
             ];
         }
         return response()->json($jsonData);
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function checkSessionEdit($id)
+    {
+        //check temp
+        $checkTemp = StockTemp::where('stockMasuk', $id)->where('jenisTemp', 'StockMasuk')->where('idUser', Auth::id());
+        if ($checkTemp->get()->count() > 0){
+            // jika temp sebelumnya ada, dipakai saja
+            $temp = $checkTemp->latest()->first();
+            // delete detil_temp stock lama
+            StockDetilTemp::where('stockTemp', $temp->id)->delete();
+        } else {
+            // jika temp tidak ada, buat baru
+            $temp = $this->createSessionStock($id);
+        }
+        // insert detil
+        $stock_masuk_detil = StockMasukDetil::where('idStockmasuk', $id)->get();
+        if ($stock_masuk_detil->count() > 0)
+        {
+            foreach ($stock_masuk_detil as $row)
+            {
+                StockDetilTemp::create([
+                    'stockTemp'=>$temp->id,
+                    'idProduk'=>$row->idProduk,
+                    'jumlah'=>$row->jumlah
+                ]);
+            }
+        }
+        return $temp;
     }
 
     public function edit($id)

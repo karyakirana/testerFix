@@ -2,7 +2,7 @@
 
     <x-mikro.card-custom>
 
-        <x-slot name="title">Transaksi Penjualan</x-slot>
+        <x-slot name="title">Transaksi Stock keluar</x-slot>
         <x-slot name="toolbar">{{ $kode ?? '' }}</x-slot>
 
         <div class="row">
@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <label for="jenisBayar" class="col-lg-2 col-form-label text-lg-right">Gudang</label>
-                        <div class="col-lg-4 col-form-label">
+                        <div class="col-lg-4">
                             <select name="branch" id="branch" class="form-control" autocomplete="off">
                                 <option disabled>Silahkan Pilih</option>
                                 @php
@@ -42,7 +42,7 @@
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label text-lg-right">Tgl Nota</label>
                         <div class="col-lg-4">
-                            <x-nano.input-datepicker name="tglNota" id="tglNota" value="{{ $tgl_keluar ?? date('d-M-Y') }}" autocomplete="off"/>
+                            <x-nano.input-datepicker name="tgl_keluar" id="tgl_keluar" value="{{ $tgl_keluar ?? date('d-M-Y') }}" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group row">

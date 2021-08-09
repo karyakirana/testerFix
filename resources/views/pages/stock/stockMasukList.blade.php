@@ -15,8 +15,7 @@
                 <td class="none">Asal Gudang</td>
                 <td class="text-center">Jenis Keluar</td>
                 <td class="text-center">Supplier</td>
-                <td class="none">Customer</td>
-                <td class="text-center">Nomor Penjualan</td>
+                <td class="text-center">Nomor PO</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -26,7 +25,7 @@
     </x-mikro.card-custom>
 
     <x-nano.modal-large id="modalDetil">
-        <x-slot name="title">Detil Penjualan</x-slot>
+        <x-slot name="title">Detil</x-slot>
 
         <x-nano.table-standart id="detilTable" width="100%">
             <thead>
@@ -45,7 +44,7 @@
             // direct to edit
             $('body').on('click', '#btnEdit', function (){
                 let editData = $(this).data("value");
-                window.location.href = '{{ url('/') }}'+'/stock/keluar/edit/'+editData;
+                window.location.href = '{{ url('/') }}'+'/stock/masuk/edit/'+editData;
             })
 
             let listTable = function (){
@@ -58,7 +57,7 @@
                         responsive : true,
                         ajax : {
                             headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url : '{{ url('/') }}'+'/data/stock/keluar/',
+                            url : '{{ url('/') }}'+'/data/stock/masuk/',
                             method : 'PATCH'
                         },
                         columns : [
@@ -110,7 +109,7 @@
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/stock/keluar/detil/'+idStockKeluar,
+                        url : '{{ url('/') }}'+'/data/stock/masuk/detil/'+idStockKeluar,
                         method : 'PATCH'
                     },
                     columns : [
