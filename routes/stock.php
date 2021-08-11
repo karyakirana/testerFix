@@ -16,6 +16,10 @@ Route::put('/stock/masuk', [\App\Http\Controllers\Stock\StockMasukController::cl
 Route::get('/stock/masuk/new', [\App\Http\Controllers\Stock\StockMasukController::class, 'create'])->name('stockMasukNew');
 Route::get('/stock/masuk/edit/{id}', [\App\Http\Controllers\Stock\StockMasukController::class, 'edit']);
 
+// Stock Real
+Route::get('/stock/real', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'index']);
+Route::get('/stock/real/branch/{id}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'indexyByBranch']);
+
 // Stock Temp Trans
 Route::post('/stock/temp', [\App\Http\Controllers\Stock\StockTempController::class, 'store']);
 Route::get('/stock/temp/{id}', [\App\Http\Controllers\Stock\StockTempController::class, 'edit']);
