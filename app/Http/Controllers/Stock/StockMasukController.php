@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Stock;
 
 use App\Http\Controllers\Controller;
+use App\Models\Stock\InventoryReal;
 use App\Models\Stock\StockDetilTemp;
 use App\Models\Stock\StockMasuk;
 use App\Models\Stock\StockMasukDetil;
@@ -106,6 +107,25 @@ class StockMasukController extends Controller
                         'idProduk'=>$row->idProduk,
                         'jumlah'=>$row->jumlah
                     ]);
+                    // update or create inventory real
+                    $inventory_real = InventoryReal::where('idProduk', $row->idProduk)
+                        ->where('branchId', $request->branch)->get();
+                    if ($inventory_real->count() > 0){
+                        // update
+                        InventoryReal::where('idProduk', $row->idProduk)
+                            ->where('branchId', $request->branch)
+                            ->update([
+                                'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                                'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                            ]);
+                    } else {
+                        InventoryReal::create([
+                            'idProduk'=>$row->idProduk,
+                            'branchId'=>$request->branch,
+                            'stockIn'=>$row->jumlah,
+                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                        ]);
+                    }
                 }
             }
             // destroy stock_temp
@@ -185,10 +205,21 @@ class StockMasukController extends Controller
         $idTemp = $request->idTemp;
         $id_stock_masuk = $request->id;
         $tglMasuk = date('Y-m-d', strtotime($request->tglMasuk));
+        $data_lama = StockMasuk::find($id_stock_masuk);
 
         DB::beginTransaction();
         try {
-
+            // delete stock_keluar_detil
+            $delete_detil = StockMasukDetil::where('idStockMasuk', $id_stock_masuk);
+            foreach ($delete_detil->get() as $row){
+                // update inventory_real
+                InventoryReal::where('idProduk', $row->idProduk)
+                    ->where('branchId', $data_lama->idBranch)
+                    ->update([
+                        'stockIn'=>DB::raw('stockIn -'.$row->jumlah),
+                        'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
+                    ]);
+            }
             // update stock_keluar
             $update = StockMasuk::where('id', $id_stock_masuk)
                 ->update([
@@ -209,6 +240,23 @@ class StockMasukController extends Controller
                         'idProduk'=>$row->idProduk,
                         'jumlah'=>$row->jumlah
                     ]);
+
+                    // update inventory_real
+                    $update_inventory = InventoryReal::where('idProduk', $row->idProduk)
+                        ->where('branchId', $request->branch);
+                    if($update_inventory->get()->count() > 0){
+                        $update_inventory->update([
+                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                        ]);
+                    } else {
+                        InventoryReal::create([
+                            'idProduk'=>$row->idProduk,
+                            'branchId'=>$request->branch,
+                            'stockIn'=>$row->jumlah,
+                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                        ]);
+                    }
                 }
             }
             // delete stock_temp
