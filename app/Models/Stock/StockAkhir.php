@@ -23,6 +23,10 @@ class StockAkhir extends Model
         'keterangan'
     ];
 
+    protected $casts = [
+        'tglInput'=>'date:d-M-Y'
+    ];
+
     public function branch()
     {
         return $this->belongsTo(BranchStock::class, 'branchId');

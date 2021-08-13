@@ -29,6 +29,13 @@ Route::patch('data/stock/keluar/detil/{id}', [\App\Http\Datatables\StockDetilTab
 Route::patch('data/stock/masuk', [\App\Http\Datatables\StockTable::class, 'stockMasukList'])->name('stockMasukList');
 Route::patch('data/stock/masuk/detil/{id}', [\App\Http\Datatables\StockDetilTable::class, 'stockMasukDetil']);
 
+// stock_akhir
+Route::patch('data/stock/akhir', [\App\Http\Datatables\StockTable::class, 'stockAkhirList']);
+Route::patch('data/stock/akhir/branch/{id}', [\App\Http\Datatables\StockTable::class, 'stockAkhirList']);
+Route::patch('data/stock/akhir/list/{id}', [\App\Http\Datatables\StockTable::class, 'stockAkhirListDetil']);
+Route::patch('data/stock/akhir/detil/', [\App\Http\Datatables\StockTable::class, 'stockAkhirDetil']); // all Gudang
+Route::patch('data/stock/akhir/detil/{id}', [\App\Http\Datatables\StockTable::class, 'stockAkhirDetil']); // salah satu gudang
+
 // inventory_real
 Route::patch('data/stock/real', [\App\Http\Datatables\StockAllTable::class, 'StockAllBranch']);
 Route::patch('data/stock/real/branch/{id}', [\App\Http\Datatables\StockAllTable::class, 'StockByBranch']);

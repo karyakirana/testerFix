@@ -3,6 +3,7 @@
 namespace App\Http\Datatables;
 
 use App\Models\Stock\StockAkhir;
+use App\Models\Stock\StockAkhirDetil;
 use App\Models\Stock\StockKeluar;
 use App\Models\Stock\StockKeluarDetil;
 use App\Models\Stock\StockMasuk;
@@ -76,13 +77,64 @@ class StockTable {
      */
     public function stockAkhirList($idBranch = null)
     {
-        $data = StockAkhir::with(['branch', 'produk'])->latest('id_produk')->get();
+        $data = StockAkhir::with(['branch', 'user'])->latest()->get();
         if ($idBranch){
-            $data = StockAkhir::with(['branch', 'produk'])
+            $data = StockAkhir::with(['branch', 'user'])
                 ->where('branchId', $idBranch)
-                ->latest('id_produk')->get();
+                ->latest()->get();
         }
-        return $this->action($data);
+        return DataTables::of($data)
+            ->addColumn('branch', function ($row){
+                return $row->branch->branchName ?? '';
+            })
+            ->addColumn('user', function ($row){
+                return $row->user->name ?? '';
+            })
+            ->addColumn('Action', function ($row){
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.$row->id.'" title="show"><i class="flaticon2-indent-dots"></i></a>';
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
+                $soft = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></a>';
+                return $show.$edit.$soft;
+            })
+            ->rawColumns(['Action'])
+            ->make(true);
+    }
+
+    public function stockAkhirListDetil($idStockAkhir)
+    {
+        $data = StockAkhirDetil::with('produk')->where('id_stock_akhir', $idStockAkhir)->get();
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('produk', function($row){
+                $produk = $row->produk->nama_produk ?? '';
+                $cover = $row->produk->cover ?? '';
+                $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
+                return $produk.'<br>'.$cover.'-'.$kat_harga;
+            })
+            ->make(true);
+    }
+
+    public function stockAkhirDetil($branch = null)
+    {
+        $data = StockAkhirDetil::where('activeCash', session('ClosedCash'))
+            ->with('produk')
+            ->get();
+        if ($branch)
+        {
+            $data = StockAkhirDetil::leftJoin('stockakhir_master', 'stockakhir.id_stock_master', '=', 'stockakhir_master.id')
+                ->where('stockakhir_master.branchId', $branch)
+                ->where('activeCash', session('ClosedCash'))
+                ->with(['produk'])
+                ->get();
+        }
+        return DataTables::of($data)
+            ->addColumn('produk', function ($row){
+                $produk = $row->produk->nama_produk ?? '';
+                $cover = $row->produk->cover ?? '';
+                $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
+                return $produk.'<br>'.$cover.'-'.$kat_harga;
+            })
+            ->make(true);
     }
 
     /**

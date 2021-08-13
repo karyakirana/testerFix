@@ -16,6 +16,15 @@ Route::put('/stock/masuk', [\App\Http\Controllers\Stock\StockMasukController::cl
 Route::get('/stock/masuk/new', [\App\Http\Controllers\Stock\StockMasukController::class, 'create'])->name('stockMasukNew');
 Route::get('/stock/masuk/edit/{id}', [\App\Http\Controllers\Stock\StockMasukController::class, 'edit']);
 
+// Stock Akhir
+Route::get('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'index'])->name('stockAkhir');
+Route::post('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'store']);
+Route::put('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'update']);
+Route::get('/stock/akhir/new', [\App\Http\Controllers\Stock\StockAkhirController::class, 'create']);
+Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'edit']);
+Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
+Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show']);
+
 // Stock Real
 Route::get('/stock/real', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'index']);
 Route::get('/stock/real/branch/{id}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'indexyByBranch']);
