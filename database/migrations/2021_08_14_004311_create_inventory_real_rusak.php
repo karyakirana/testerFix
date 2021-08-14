@@ -14,7 +14,11 @@ class CreateInventoryRealRusak extends Migration
     public function up()
     {
         Schema::create('inventory_real_rusak', function (Blueprint $table) {
-            $table->id();
+            $table->string('idProduk');
+            $table->bigInteger('branchId');
+            $table->bigInteger('stockIn')->default('0');
+            $table->bigInteger('stockOut')->default('0');
+            $table->bigInteger('stockNow')->default('0');
             $table->timestamps();
         });
     }

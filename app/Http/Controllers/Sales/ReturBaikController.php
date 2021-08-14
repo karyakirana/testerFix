@@ -9,12 +9,17 @@ class ReturBaikController extends Controller
 {
     public function index()
     {
-        //
+        return view('pages.sales.returBaik');
     }
 
     public function kode()
     {
         //
+    }
+
+    public function create()
+    {
+        return view('pages.sales.returBaikTrans');
     }
 
     public function store(Request $request)
