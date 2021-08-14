@@ -124,7 +124,7 @@ class StockTable {
             $data = StockAkhirDetil::leftJoin('stockakhir_master', 'stockakhir.id_stock_master', '=', 'stockakhir_master.id')
                 ->where('stockakhir_master.branchId', $branch)
                 ->where('activeCash', session('ClosedCash'))
-                ->with(['produk'])
+                ->with(['stockAkhir'])
                 ->get();
         }
         return DataTables::of($data)
@@ -134,6 +134,10 @@ class StockTable {
                 $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
                 return $produk.'<br>'.$cover.'-'.$kat_harga;
             })
+            ->addColumn('branch', function ($row){
+                return $row->stockAkhir->branchId;
+            })
+            ->rawColumns(['produk'])
             ->make(true);
     }
 

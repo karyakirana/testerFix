@@ -20,10 +20,10 @@ Route::get('/stock/masuk/edit/{id}', [\App\Http\Controllers\Stock\StockMasukCont
 Route::get('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'index'])->name('stockAkhir');
 Route::post('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'store']);
 Route::put('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'update']);
-Route::get('/stock/akhir/new', [\App\Http\Controllers\Stock\StockAkhirController::class, 'create']);
+Route::get('/stock/akhir/new', [\App\Http\Controllers\Stock\StockAkhirController::class, 'create'])->name('stockAkhirNew');
 Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'edit']);
 Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
-Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show']);
+Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show'])->name('stockAkhirDetil');
 
 // Stock Real
 Route::get('/stock/real', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'index']);

@@ -30,6 +30,10 @@
     @push('scripts')
         <script>
 
+            jQuery(document).ready(function (){
+                listTable();
+            });
+
             // button table by gudang
             $('body').on('click', '#btnTableSelect', function (){
                 let id = $(this).data('value');
@@ -48,19 +52,21 @@
 
             function listTable(id = null)
             {
+                let url = id ?? '';
                 $('#listTable').DataTable({
                     order : [],
                     ordering : false,
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ url('/') }}'+'/data/stock/akhir/detil/'+branch,
+                        url : '{{ url('/') }}'+'/data/stock/akhir/detil/'+url,
                         method : 'PATCH'
                     },
                     columns : [
-                        {data : 'DT_RowIndex', orderable : false},
+                        {data : 'id_produk', orderable : false},
+                        {data : 'branch'},
                         {data : 'produk'},
-                        {data : 'jumlah', className: "text-center"},
+                        {data : 'jumlah_stock', className: "text-center"},
                     ],
                     columnDefs: [
                         {

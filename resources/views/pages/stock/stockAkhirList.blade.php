@@ -4,7 +4,8 @@
 
         <x-slot name="title">Daftar Stock Keluar</x-slot>
         <x-slot name="toolbar">
-            <a href="{{  }}" class="btn btn-primary font-weight-bolder">Stock Akhir Detail</a>
+            <a href="{{ route('stockAkhirDetil') }}" class="btn btn-success font-weight-bolder m-5">Stock Akhir Detail</a>
+            <a href="{{ route('stockAkhirNew') }}" class="btn btn-primary font-weight-bolder">Stock Akhir Baru</a>
         </x-slot>
 
         <x-nano.table-standart id="listTable">
@@ -40,6 +41,10 @@
 
     @push('scripts')
         <script>
+
+            jQuery(document).ready(function (){
+                listable();
+            });
 
             function listable()
             {

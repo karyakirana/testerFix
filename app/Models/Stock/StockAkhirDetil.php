@@ -19,4 +19,9 @@ class StockAkhirDetil extends Model
     {
         return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');
     }
+
+    public function stockAkhir()
+    {
+        return $this->belongsTo(StockAkhir::class, 'id_stock_akhir');
+    }
 }

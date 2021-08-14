@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StockAkhir extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     protected $table = 'stockakhir_master';
 
     protected $fillable =[
