@@ -2,7 +2,7 @@
 
     <x-mikro.card-custom>
 
-        <x-slot name="title">Transaksi Stock Masuk</x-slot>
+        <x-slot name="title">Transaksi Stock Akhir</x-slot>
         <x-slot name="toolbar">{{ $kode ?? '' }}</x-slot>
 
         <div class="row">
@@ -11,9 +11,9 @@
                     <input type="text" name="id" value="{{ $id ?? '' }}" hidden>
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
                     <div class="form-group row">
-                        <label class="col-lg-2 col-form-label text-lg-right" for="customer">Supplier</label>
+                        <label class="col-lg-2 col-form-label text-lg-right" for="pembuat">Pembuat</label>
                         <div class="col-lg-4">
-                            <input type="text" class="form-control" name="pembuat" id="pembuat" value="{{ $pembuat ?? '' }}" readonly>
+                            <input type="text" class="form-control" name="pembuat" id="pembuat" value="{{ $pembuat ?? '' }}">
                         </div>
                         <label for="jenisBayar" class="col-lg-2 col-form-label text-lg-right">Gudang</label>
                         <div class="col-lg-4">
@@ -34,7 +34,7 @@
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label text-lg-right">Tgl Input</label>
                         <div class="col-lg-4">
-                            <x-nano.input-datepicker name="tgl_akhir" id="tgl_akhir" value="{{ tgl_keluar ?? date('d-M-Y') }}" autocomplete="off"/>
+                            <x-nano.input-datepicker name="tgl_akhir" id="tgl_akhir" value="{{ $tgl_keluar ?? date('d-M-Y') }}" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group row">

@@ -12,7 +12,7 @@
                     <input type="text" name="idSupplier" value="{{$supplier ?? ''}}" hidden autocomplete="off">
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
                     <div class="form-group row">
-                        <label class="col-lg-2 col-form-label text-lg-right" for="customer">Supplier</label>
+                        <label class="col-lg-2 col-form-label text-lg-right" for="supplier">Supplier</label>
                         <div class="col-lg-4">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="supplier" id="supplier" value="{{ $namaSupplier ?? '' }}" readonly>

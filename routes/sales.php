@@ -17,4 +17,4 @@ Route::get('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::
 Route::delete('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'destroy']);
 
 // printing
-Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'printRaw']);
+Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceipt']);

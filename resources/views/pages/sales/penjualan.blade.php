@@ -84,7 +84,13 @@
             $('body').on('click', '#btnEdit', function(){
                 let editData = $(this).data("value");
                 window.location.href = '{{ url('/') }}'+'/sales/edit/'+editData;
-            })
+            });
+
+            // sales
+            $('body').on('click', '#btnPrint', function (){
+                let printData = $(this).data("value");
+                window.location.href = '{{url('/')}}'+'/sales/print/'+printData;
+            });
 
             jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
                 return this.flatten().reduce( function ( a, b ) {
