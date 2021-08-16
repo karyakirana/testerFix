@@ -97,7 +97,7 @@ class SalesController extends Controller
             }
         } else {
             // buat session baru, dengan check temporary yg lama
-            $penjualanTemp = PenjualanTemp::whereNull('id_jual')->where('idSales', Auth::id())->latest()->first();
+            $penjualanTemp = PenjualanTemp::whereNull('id_jual')->where('jenisTemp', 'Penjualan')->where('idSales', Auth::id())->latest()->first();
             if (!$penjualanTemp){
                 // jika tidak ada data, maka buat session baru
                 $penjualanTemp = $this->createTemp();
