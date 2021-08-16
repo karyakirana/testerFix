@@ -3,6 +3,7 @@
 namespace App\Models\Sales;
 
 use App\Models\Master\Customer;
+use App\Models\Stock\BranchStock;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class ReturBaik extends Model
 
     protected $fillable = [
         'id_return',
+        'id_branch',
         'id_user',
         'id_cust',
         'tgl_nota',
@@ -36,5 +38,10 @@ class ReturBaik extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'id_cust', 'id_cust');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(BranchStock::class, 'id_branch');
     }
 }
