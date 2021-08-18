@@ -425,7 +425,8 @@ class SalesController extends Controller
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
             $jsonData = [
-                'status'=>true
+                'status'=>false,
+                'keterangan'=>$e
             ];
         }
         return response()->json($jsonData);

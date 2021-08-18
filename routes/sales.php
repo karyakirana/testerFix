@@ -2,19 +2,34 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/sales/list', [\App\Http\Controllers\Sales\SalesController::class, 'index'])->name('daftarSales');
-Route::post('/sales/list', [\App\Http\Controllers\Sales\SalesController::class, 'store']);
-Route::put('/sales/list', [\App\Http\Controllers\Sales\SalesController::class, 'update']);
-Route::get('/sales/list/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'show']);
-Route::get('/sales/new', [\App\Http\Controllers\Sales\SalesController::class, 'create'])->name('salesNew');
-Route::get('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'edit']);
-Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'show']);
-Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
+Route::middleware(['auth'])->group(function (){
 
-// temp transaction
-Route::post('sales/temp/', [\App\Http\Controllers\Sales\DetilTempController::class, 'store']);
-Route::get('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'edit']);
-Route::delete('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'destroy']);
+    Route::get('/sales/list', [\App\Http\Controllers\Sales\SalesController::class, 'index'])->name('daftarSales');
+    Route::post('/sales/list', [\App\Http\Controllers\Sales\SalesController::class, 'store']);
+    Route::put('/sales/list', [\App\Http\Controllers\Sales\SalesController::class, 'update']);
+    Route::get('/sales/list/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'show']);
+    Route::get('/sales/new', [\App\Http\Controllers\Sales\SalesController::class, 'create'])->name('salesNew');
+    Route::get('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'edit']);
+    Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'show']);
+    Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
 
-// printing
-Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceipt']);
+    // Retur Baik
+    Route::get('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'index'])->name('returBaik');
+    Route::put('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'update']);
+    Route::post('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'store']);
+    Route::get('/retur/baik/new', [\App\Http\Controllers\Sales\SalesReturController::class, 'create'])->name('returBaikNew');
+    Route::get('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'show']);
+    Route::get('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'print']);
+    Route::delete('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'destroy']);
+
+    // temp transaction
+    Route::post('sales/temp/', [\App\Http\Controllers\Sales\DetilTempController::class, 'store']);
+    Route::get('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'edit']);
+    Route::delete('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'destroy']);
+
+    // printing
+    Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceipt']);
+
+});
+
+

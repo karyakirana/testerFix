@@ -13,7 +13,7 @@ class StockMasuk extends Model
     protected $table = 'stockmasuk';
     protected $fillable = [
         'activeCash', 'kode', 'idBranch', 'idSupplier', 'idUser', 'tglMasuk',
-        'nomotPo', 'keterangan'
+        'nomotPo', 'keterangan', 'id_penjualan', 'jenis_masuk'
     ];
     protected $casts = [
         'tglMasuk'=>'date:d-M-Y'

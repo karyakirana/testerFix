@@ -22,6 +22,7 @@ Route::post('data/customer', [\App\Http\Datatables\CustomerTable::class, 'list']
 Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'listcrud']);
 
 Route::patch('data/penjualan', [\App\Http\Datatables\SalesTransTable::class, 'penjualanList'])->name('penjualanList');
+Route::patch('data/retur/baik', [\App\Http\Datatables\ReturTable::class, 'returBaik'])->name('returBaikList');
 
 Route::patch('data/stock/keluar', [\App\Http\Datatables\StockTable::class, 'stockKeluarList'])->name('stockKeluarList');
 Route::patch('data/stock/keluar/detil/{id}', [\App\Http\Datatables\StockDetilTable::class, 'stockKeluarDetil']);
