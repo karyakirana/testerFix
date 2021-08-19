@@ -27,4 +27,9 @@ class InventoryReal extends Model
     {
         return $this->belongsTo(Produk::class, 'idProduk', 'id_produk');
     }
+
+    public function scopeReverseStock($query, $data)
+    {
+        return;
+    }
 }

@@ -97,12 +97,6 @@ class SalesReturController extends Controller
         //
     }
 
-    // store penjualan Retur Baik
-    private function storeReturBaik($dataRetur)
-    {
-        return ReturBaik::create($dataRetur);
-    }
-
     // store Retur Baik detil from detil_penjualan_temp
     // store stock_masuk_detil from detil_penjualan_temp
     // update or create inventory_real
@@ -157,8 +151,9 @@ class SalesReturController extends Controller
                 // update
                 $stockMasuk = StockMasuk::where('id_penjualan', $idRetur)->first();
                 $update = StockMasuk::where('id', $stockMasuk->id)->update([
-                    'idBranch'=>$dataStockMasuk->idBranch,
-                    'idUser'=>Auth::id()
+                    'idBranch'=>$dataStockMasuk->id_branch,
+                    'idUser'=>Auth::id(),
+                    'tglMasuk'=>$dataStockMasuk->tgl_nota,
                 ]);
             } else {
                 // create
@@ -189,6 +184,18 @@ class SalesReturController extends Controller
 
         DB::beginTransaction();
         try {
+            $returBaik = ReturBaik::create([
+                'id_return'=>$idRetur,
+                'id_branch'=>$request->branch,
+                'id_user'=>Auth::id(),
+                'id_cust'=>$request->idCustomer,
+                'tgl_nota'=>$tglRetur,
+                'total_jumlah'=>0,
+                'ppn'=>$request->ppn,
+                'biaya_lain'=>$request->biayaLain,
+                'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain, // total semua subtotal atau $request->hiddenTotalSemuanya,
+                'keterangan'=>$request->keterangan
+            ]);
             $this->storeFromDetilTemp($idTemp, $idRetur, $kodeStockMasuk, $request->branch);
             PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
             PenjualanTemp::destroy($idTemp);
@@ -214,7 +221,7 @@ class SalesReturController extends Controller
     public function update(Request $request)
     {
         // variable dasar
-        $idRetur = $this->idReturBaik();
+        $idRetur = $request->id;
         $kodeStockMasuk = $this->kode();
         $idTemp = $request->idTemp;
         $tglRetur = date('Y-m-d', strtotime($request->tglNota));
@@ -251,6 +258,15 @@ class SalesReturController extends Controller
                 'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
                 'keterangan'=>$request->keterangan
             ]);
+            $stockMasuk = StockMasuk::where('id_penjualan', $idRetur)->update([
+                'id_branch'=>$request->branch,
+                'id_user'=>Auth::id(),
+                'id_cust'=>$request->idCustomer,
+                'tglMasuk'=>$tglRetur,
+                'keterangan'=>$request->keterangan
+            ]);
+            // delete stockmasuk_detil
+            StockMasukDetil::where('idStockMasuk', $stockMasuk->id)->delete();
             // simpan dari detil Temp
             $this->storeFromDetilTemp($idTemp, $idRetur, $kodeStockMasuk, $request->branch);
             DB::commit();
@@ -258,7 +274,6 @@ class SalesReturController extends Controller
                 'status'=>true
             ];
         } catch (ModelNotFoundException $e){
-            DB::rollBack();
             DB::rollBack();
             $jsonData = [
                 'status'=>false,
