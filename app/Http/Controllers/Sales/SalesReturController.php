@@ -90,79 +90,6 @@ class SalesReturController extends Controller
         //
     }
 
-    // store nota_retur_baik
-    // satu nota_retur lebih dari satu nota jual
-    public function storeNotaReturBaik(Request $request)
-    {
-        //
-    }
-
-    // store Retur Baik detil from detil_penjualan_temp
-    // store stock_masuk_detil from detil_penjualan_temp
-    // update or create inventory_real
-    private function storeFromDetilTemp($idTemp, $idRetur, $idStockMasuk, $idBranch)
-    {
-        $detil_penjualan_temp = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->get();
-        foreach ($detil_penjualan_temp as $row)
-        {
-            ReturBaikDetil::create([
-                'id_return'=>$idRetur,
-                'id_produk'=>$row->idBarang,
-                'jumlah'=>$row->jumlah,
-                'harga'=>$row->harga,
-                'diskon'=>$row->diskon,
-                'sub_total'=>$row->sub_total,
-            ]);
-
-            StockMasukDetil::create([
-                'idStockMasuk'=>$idStockMasuk,
-                'idProduk'=>$row->idBarang,
-                'jumlah'=>$row->jumlah
-            ]);
-
-            $inventory_real = InventoryReal::where('idProduk', $row->idBarang)->where('branchId', $idBranch);
-            if ($inventory_real->get()->count() > 0)
-            {
-                // insert
-                InventoryReal::create([
-                    'idProduk'=>$row->idBarang,
-                    'branchId'=>$idBranch,
-                    'stockIn'=>$row->jumlah,
-                    'stockNow'=>DB::raw('stockNow +'.$row->jumlah)
-                ]);
-            } else {
-                // update
-                $inventory_real->update([
-                    'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
-                    'stockNow'=>DB::raw('stockNow +'.$row->jumlah)
-                ]);
-            }
-        }
-    }
-
-
-    // belum kelar
-    public function storeStockMasuk($idRetur, $dataStockMasuk,$idStockMasuk = null)
-    {
-        try {
-            // insert atau update
-            if ($idStockMasuk)
-            {
-                // update
-                $stockMasuk = StockMasuk::where('id_penjualan', $idRetur)->first();
-                $update = StockMasuk::where('id', $stockMasuk->id)->update([
-                    'idBranch'=>$dataStockMasuk->id_branch,
-                    'idUser'=>Auth::id(),
-                    'tglMasuk'=>$dataStockMasuk->tgl_nota,
-                ]);
-            } else {
-                // create
-            }
-        } catch (ModelNotFoundException $e) {
-            //
-        }
-    }
-
     /**
      * store Penjualan Return Baik
      * store nota_retur_baik
@@ -184,7 +111,8 @@ class SalesReturController extends Controller
 
         DB::beginTransaction();
         try {
-            $returBaik = ReturBaik::create([
+            // insert return_bersih
+            $insertRetur = ReturBaik::create([
                 'id_return'=>$idRetur,
                 'id_branch'=>$request->branch,
                 'id_user'=>Auth::id(),
@@ -193,12 +121,67 @@ class SalesReturController extends Controller
                 'total_jumlah'=>0,
                 'ppn'=>$request->ppn,
                 'biaya_lain'=>$request->biayaLain,
-                'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain, // total semua subtotal atau $request->hiddenTotalSemuanya,
-                'keterangan'=>$request->keterangan
+                'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLainß,
+                'keterangan'=>$request->keterangan,
+                'activeCash'=>session('ClosedCash')
             ]);
-            $this->storeFromDetilTemp($idTemp, $idRetur, $kodeStockMasuk, $request->branch);
+
+            // insert stockmasuk
+            $insertStockMasuk = StockMasuk::create([
+                'activeCash'=>session('ClosedCash'),
+                'kode'=>$kodeStockMasuk,
+                'idBranch'=>$request->branch,
+                'idSupplier'=>null,
+                'idUser'=>Auth::id(),
+                'tglMasuk'=>$tglRetur,
+                'keterangan'=>$request->keterangan,
+                'id_penjualan'=>$idRetur,
+                'jenis_masuk'=>'Retur'
+            ]);
+
+            // insert detail from detil_penjualan_temp
+            foreach ($detilTemp as $row)
+            {
+                // insert rb_detail
+                ReturBaikDetil::create([
+                    'id_return'=>$idRetur,
+                    'id_produk'=>$row->idBarang,
+                    'jumlah'=>$row->jumlah,
+                    'harga'=>$row->harga,
+                    'diskon'=>$row->diskon,
+                    'sub_total'=>$row->sub_total
+                ]);
+
+                // insert stockmasuk_detil
+                StockMasukDetil::create([
+                    'idStockMasuk'=>$insertStockMasuk->id,
+                    'idProduk'=>$row->idBarang,
+                    'jumlah'=>$row->jumlah
+                ]);
+
+                // insert or update inventory real
+                $inventory_real = InventoryReal::where('idProduk', $row->idBarang)
+                    ->where('branchId', $request->branch)->get();
+                if ($inventory_real->count() > 0){
+                    // update
+                    InventoryReal::where('idProduk', $row->idBarang)
+                        ->where('branchId', $request->branch)
+                        ->update([
+                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                        ]);
+                } else {
+                    InventoryReal::create([
+                        'idProduk'=>$row->idBarang,
+                        'branchId'=>$request->branch,
+                        'stockIn'=>$row->jumlah,
+                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                    ]);
+                }
+            }
+            // delete temp
+            PenjualanTemp::where('id', $idTemp)->delete();
             PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
-            PenjualanTemp::destroy($idTemp);
             DB::commit();
             $data = [
                 'status'=>true,
@@ -230,6 +213,7 @@ class SalesReturController extends Controller
         $detilTemp = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->get();
 
         $dataLama = ReturBaik::where('id_return', $idRetur)->first();
+        $dataLamaStockMasuk = StockMasuk::where('id_penjualan', $idRetur)->first();
 
         DB::beginTransaction();
         try {
@@ -258,7 +242,7 @@ class SalesReturController extends Controller
                 'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
                 'keterangan'=>$request->keterangan
             ]);
-            $stockMasuk = StockMasuk::where('id_penjualan', $idRetur)->update([
+            $stockMasuk = StockMasuk::where('id', $dataLamaStockMasuk->id)->update([
                 'id_branch'=>$request->branch,
                 'id_user'=>Auth::id(),
                 'id_cust'=>$request->idCustomer,
@@ -266,9 +250,48 @@ class SalesReturController extends Controller
                 'keterangan'=>$request->keterangan
             ]);
             // delete stockmasuk_detil
-            StockMasukDetil::where('idStockMasuk', $stockMasuk->id)->delete();
+            StockMasukDetil::where('idStockMasuk', $dataLamaStockMasuk->id)->delete();
             // simpan dari detil Temp
-            $this->storeFromDetilTemp($idTemp, $idRetur, $kodeStockMasuk, $request->branch);
+            // insert detail from detil_penjualan_temp
+            foreach ($detilTemp as $row)
+            {
+                // insert rb_detail
+                ReturBaikDetil::create([
+                    'id_return'=>$idRetur,
+                    'id_produk'=>$row->idBarang,
+                    'jumlah'=>$row->jumlah,
+                    'harga'=>$row->harga,
+                    'diskon'=>$row->diskon,
+                    'sub_total'=>$row->sub_total
+                ]);
+
+                // insert stockmasuk_detil
+                StockMasukDetil::create([
+                    'idStockMasuk'=>$dataLamaStockMasuk->id,
+                    'idProduk'=>$row->idBarang,
+                    'jumlah'=>$row->jumlah
+                ]);
+
+                // insert or update inventory real
+                $inventory_real = InventoryReal::where('idProduk', $row->idBarang)
+                    ->where('branchId', $request->branch)->get();
+                if ($inventory_real->count() > 0){
+                    // update
+                    InventoryReal::where('idProduk', $row->idBarang)
+                        ->where('branchId', $request->branch)
+                        ->update([
+                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                        ]);
+                } else {
+                    InventoryReal::create([
+                        'idProduk'=>$row->idBarang,
+                        'branchId'=>$request->branch,
+                        'stockIn'=>$row->jumlah,
+                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
+                    ]);
+                }
+            }
             DB::commit();
             $jsonData = [
                 'status'=>true
