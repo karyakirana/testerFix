@@ -71,9 +71,51 @@ class StockOrderController extends Controller
         //
     }
 
-    public function edit()
+    public function checkSessionEdit($id)
     {
-        return view('pages.stock.stockOrderTrans');
+        //check temp
+        $checkTemp = StockTemp::where('stockMasuk', $id)->where('jenisTemp', 'StockOrder')->where('idUser', Auth::id());
+        if ($checkTemp->get()->count() > 0){
+            // jika temp sebelumnya ada, dipakai saja
+            $temp = $checkTemp->latest()->first();
+            // delete detil_temp stock lama
+            StockDetilTemp::where('stockTemp', $temp->id)->delete();
+        } else {
+            // jika temp tidak ada, buat baru
+            $temp = $this->stockTemp($id);
+        }
+        // insert detil
+        $stock_preorder = StockOrderDetil::where('stock_preorder', $id)->get();
+        if ($stock_preorder->count() > 0)
+        {
+            foreach ($stock_preorder as $row)
+            {
+                StockDetilTemp::create([
+                    'stockTemp'=>$temp->id,
+                    'idProduk'=>$row->idProduk,
+                    'jumlah'=>$row->jumlah
+                ]);
+            }
+        }
+        return $temp;
+    }
+
+    public function edit($id)
+    {
+        // get data from stock_keluar
+        $stock_order = StockOrder::with(['suppliers', 'user'])->find($id);
+        $stock = $this->checkSessionEdit($id);
+        $data = [
+            'idTemp'=>$stock->id,
+            'idUser'=>$stock->idUser,
+            'id'=>$id,
+            'kode'=>$stock_order->kode,
+            'supplier'=>$stock_order->supplier,
+            'namaSupplier'=>$stock_order->supplier->namaSupplier,
+            'tgl_keluar'=>$stock_order->tgl_order->format('d-M-Y'),
+            'update'=>true
+        ];
+        return view('pages.stock.stockOrderTrans', $data);
     }
 
     private function kodeStockOrder()
@@ -129,9 +171,32 @@ class StockOrderController extends Controller
         $idTemp = $request->idTemp;
         $tglOrder = date('Y-m-d', strtotime($request->tglOrder));
 
-        $detilLama = StockDetilTemp::where('stockTemp', $idTemp);
+        $dataLama = StockOrder::find($request->id);
         DB::beginTransaction();
         try {
+            // delete stock_detil_temp
+            StockOrderDetil::where('stock_preorder', $dataLama->id)->delete();
+            // update data
+            $update = StockOrder::where('id', $request->id)->update([
+                'supplier'=>$request->idSupplier,
+                'tgl_order'=>$tglOrder,
+                'status'=>'dibuat',
+                'status_bayar'=>'belum',
+                'pembuat'=>Auth::id(),
+                'keterangan'=>$request->keterangan
+            ]);
+            // insert detil
+            $stockTemp = StockDetilTemp::where('stockTemp', $idTemp)->get();
+            foreach ($stockTemp as $row){
+                StockOrderDetil::create([
+                    'stock_preorder'=>$idTemp,
+                    'id_produk'=>$row->idProduk,
+                    'jumlah'=>$row->jumlah
+                ]);
+            }
+            // delete temp
+            StockDetilTemp::where('stockTemp', $idTemp)->delete();
+            StockTemp::destroy($idTemp);
             DB::commit();
         } catch (ModelNotFoundException $e){
             DB::rollBack();
