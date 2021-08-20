@@ -37,6 +37,10 @@ Route::patch('data/stock/akhir/list/{id}', [\App\Http\Datatables\StockTable::cla
 Route::patch('data/stock/akhir/detil/', [\App\Http\Datatables\StockTable::class, 'stockAkhirDetil']); // all Gudang
 Route::patch('data/stock/akhir/detil/{id}', [\App\Http\Datatables\StockTable::class, 'stockAkhirDetil']); // salah satu gudang
 
+// stock_preorder
+Route::patch('data/stock/preorder', [\App\Http\Datatables\StockOrderTable::class, 'stockOrderList']);
+Route::patch('data/stock/preorder/{id}', [\App\Http\Datatables\StockOrderTable::class, 'stockOrderDetilList']);
+
 // inventory_real
 Route::patch('data/stock/real', [\App\Http\Datatables\StockAllTable::class, 'StockAllBranch']);
 Route::patch('data/stock/real/branch/{id}', [\App\Http\Datatables\StockAllTable::class, 'StockByBranch']);
