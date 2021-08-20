@@ -4,23 +4,26 @@ namespace App\Http\Datatables;
 
 use App\Models\Stock\StockOrder;
 use App\Models\Stock\StockOrderDetil;
+use Dflydev\DotAccessData\Data;
 use Yajra\DataTables\DataTables;
 
 class StockOrderTable {
 
     public function stockOrderList()
     {
-        $data = StockOrder::with(['suppliers'])->where('activeCash', session('ClosedCash'))->get();
+        $data = StockOrder::with(['suppliers', 'user'])->where('activeCash', session('ClosedCash'))->get();
         return DataTables::of($data)
-            ->addColumn('suppliers', function($row){
+            ->addColumn('suppliers', function ($row){
                 return $row->suppliers->namaSupplier ?? '';
             })
+            ->addColumn('user', function ($row){
+                return $row->user->name ?? '';
+            })
             ->addColumn('Action', function($row){
-                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.str_replace('/', '-', $row->id_jual).'" title="edit"><i class="la la-edit"></i></a>';
-                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.str_replace('/', '-', $row->id_jual).'" title="show"><i class="flaticon2-indent-dots"></i></a>';
-                $delete = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btndelete" data-value="'.$row->id_jual.'" title="delete"><i class="flaticon2-trash"></i></a>';
-                $print = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnPrint" data-value="'.str_replace('/', '-', $row->id_jual).'" title="print"><i class="flaticon-technology"></i></a>';
-                return $edit.$show.$delete.$print;
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.$row->id.'" title="show"><i class="flaticon2-indent-dots"></i></a>';
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
+                $soft = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></a>';
+                return $show.$edit.$soft;
             })
             ->rawColumns(['Action'])
             ->make(true);
@@ -28,10 +31,11 @@ class StockOrderTable {
 
     public function stockOrderDetilList($idStockOrder)
     {
-        $data = StockOrderDetil::with('produk')->latest()->get();
+        $data = StockOrderDetil::with('produk')
+            ->where('kodePreorder', $idStockOrder)
+            ->get();
         return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('produk', function ($row){
+            ->addColumn('produk', function($row){
                 $produk = $row->produk->nama_produk ?? '';
                 $cover = $row->produk->cover ?? '';
                 $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';

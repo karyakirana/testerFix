@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Stock;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sales\PenjualanTemp;
+use App\Models\Stock\StockDetilTemp;
 use App\Models\Stock\StockOrder;
+use App\Models\Stock\StockOrderDetil;
 use App\Models\Stock\StockTemp;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -18,21 +19,20 @@ class StockOrderController extends Controller
         return view('pages.stock.stockOrder');
     }
 
-    public function createTemp($idStockOrder)
+    private function stockTemp($idStockOrder)
     {
-        $create = StockTemp::create([
-            'jenisTemp' => 'StockOrder',
-            'idSales' => Auth::id(),
-            'stockMasuk'=> $idStockOrder,
+        // insert stock_temp
+        return StockTemp::create([
+            'jenisTemp'=>'StockOrder',
+            'idUser'=>Auth::id(),
+            'stockMasuk'=>$idStockOrder
         ]);
-
-        return $create;
     }
 
     private function checkLastCart()
     {
         // check session stock
-        if (session('stockMasuk'))
+        if (session('stockOrder'))
         {
             // jika ada langsung ambil data stock
             $stock = StockTemp::find(session('stockOrder'));
@@ -44,7 +44,7 @@ class StockOrderController extends Controller
                 // jika ada
                 $stock = $lastTemp->latest()->first();
             } else {
-                $stock = $this->createTemp();
+                $stock = $this->stockTemp();
             }
             session()->put(['stockOrder'=>$stock->id]);
         }
@@ -76,9 +76,9 @@ class StockOrderController extends Controller
         return view('pages.stock.stockOrderTrans');
     }
 
-    public function kodeStockOrder()
+    private function kodeStockOrder()
     {
-        $data = StockOrder::where('activeCash', session('ClosedCash'))->latest('kode')->first();
+        $data = StockOrder::where('activeCash', session('ClosedCash'))->latest()->first();
         $num = null;
         if(!$data){
             $num = 1;
@@ -93,13 +93,31 @@ class StockOrderController extends Controller
     public function store(Request $request)
     {
         $idTemp = $request->idTemp;
-        $kode = $this->kode();
+        $kode = $this->kodeStockOrder();
         $tglOrder = date('Y-m-d', strtotime($request->tglOrder));
 
         DB::beginTransaction();
         try {
-            // insert stock Order
-
+            $stockOrder = StockOrder::create([
+                'kode'=>$kode,
+                'supplier'=>$request->idSupplier,
+                'tgl_order'=>$tglOrder,
+                'status'=>'dibuat',
+                'status_bayar'=>'belum',
+                'pembuat'=>Auth::id(),
+                'keterangan'=>$request->keterangan
+            ]);
+            $stockTemp = StockDetilTemp::where('stockTemp', $idTemp)->get();
+            foreach ($stockTemp as $row){
+                StockOrderDetil::create([
+                    'stock_preorder'=>$idTemp,
+                    'id_produk'=>$row->idProduk,
+                    'jumlah'=>$row->jumlah
+                ]);
+            }
+            // delete temp
+            StockDetilTemp::where('stockTemp', $idTemp)->delete();
+            StockTemp::destroy($idTemp);
             DB::commit();
         } catch (ModelNotFoundException $e){
             DB::rollBack();
@@ -108,7 +126,16 @@ class StockOrderController extends Controller
 
     public function update(Request $request)
     {
-        //
+        $idTemp = $request->idTemp;
+        $tglOrder = date('Y-m-d', strtotime($request->tglOrder));
+
+        $detilLama = StockDetilTemp::where('stockTemp', $idTemp);
+        DB::beginTransaction();
+        try {
+            DB::commit();
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+        }
     }
 
     public function destroy($id)
