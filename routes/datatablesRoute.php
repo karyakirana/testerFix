@@ -23,6 +23,7 @@ Route::patch('data/customer', [\App\Http\Datatables\CustomerTable::class, 'listc
 
 Route::patch('data/penjualan', [\App\Http\Datatables\SalesTransTable::class, 'penjualanList'])->name('penjualanList');
 Route::patch('data/retur/baik', [\App\Http\Datatables\ReturTable::class, 'returBaik'])->name('returBaikList');
+Route::patch('data/retur/rusak', [\App\Http\Datatables\ReturTable::class, 'returRusak'])->name('returRusakList');
 
 Route::patch('data/stock/keluar', [\App\Http\Datatables\StockTable::class, 'stockKeluarList'])->name('stockKeluarList');
 Route::patch('data/stock/keluar/detil/{id}', [\App\Http\Datatables\StockDetilTable::class, 'stockKeluarDetil']);
@@ -38,12 +39,16 @@ Route::patch('data/stock/akhir/detil/', [\App\Http\Datatables\StockTable::class,
 Route::patch('data/stock/akhir/detil/{id}', [\App\Http\Datatables\StockTable::class, 'stockAkhirDetil']); // salah satu gudang
 
 // stock_preorder
-Route::patch('data/stock/preorder', [\App\Http\Datatables\StockOrderTable::class, 'stockOrderList']);
+Route::patch('data/stock/preorder', [\App\Http\Datatables\StockOrderTable::class, 'stockOrderList'])->name('stockOrderList');
 Route::patch('data/stock/preorder/{id}', [\App\Http\Datatables\StockOrderTable::class, 'stockOrderDetilList']);
 
 // inventory_real
 Route::patch('data/stock/real', [\App\Http\Datatables\StockAllTable::class, 'StockAllBranch']);
 Route::patch('data/stock/real/branch/{id}', [\App\Http\Datatables\StockAllTable::class, 'StockByBranch']);
+
+// inventory_rusak
+Route::patch('data/stock/rusak', [\App\Http\Datatables\StockAllTable::class, 'stockRusakAllBranch']);
+Route::patch('data/stock/rusak/branch/{id}', [\App\Http\Datatables\StockAllTable::class, 'StockRusakByBranch']);
 
 // temporary
 Route::post('data/penjualan/trans/{id}', [\App\Http\Datatables\SalesTransTable::class, 'detilTemp'])->name('detilTemp');

@@ -31,7 +31,7 @@ class SalesReturController extends Controller
         if(!$data){
             $num = 1;
         } else {
-            $urutan = (int) substr($data->id_jual, 0, 4);
+            $urutan = (int) substr($data->id_return, 0, 4);
             $num = $urutan + 1;
         }
         $id = sprintf("%04s", $num)."/RB/".date('Y');
@@ -303,7 +303,7 @@ class SalesReturController extends Controller
                 'keterangan'=>$e
             ];
         }
-        return response()->json();
+        return response()->json($jsonData);
     }
 
     public function destroy($id)

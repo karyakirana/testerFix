@@ -19,7 +19,7 @@ class StockOrderController extends Controller
         return view('pages.stock.stockOrder');
     }
 
-    private function stockTemp($idStockOrder)
+    private function stockTemp($idStockOrder=null)
     {
         // insert stock_temp
         return StockTemp::create([
@@ -161,9 +161,17 @@ class StockOrderController extends Controller
             StockDetilTemp::where('stockTemp', $idTemp)->delete();
             StockTemp::destroy($idTemp);
             DB::commit();
+            $data = [
+                'status'=>true,
+            ];
         } catch (ModelNotFoundException $e){
             DB::rollBack();
+            $data = [
+                'status'=>false,
+                'keterangan'=>$e
+            ];
         }
+        return response()->json($data);
     }
 
     public function update(Request $request)

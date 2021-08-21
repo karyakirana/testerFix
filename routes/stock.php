@@ -25,9 +25,19 @@ Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirCont
 Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
 Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show'])->name('stockAkhirDetil');
 
+// Stock Order
+Route::get('/stock/order', [\App\Http\Controllers\Stock\StockOrderController::class, 'index'])->name('stockOrder');
+Route::post('/stock/order', [\App\Http\Controllers\Stock\StockOrderController::class, 'store']);
+Route::put('/stock/order', [\App\Http\Controllers\Stock\StockOrderController::class, 'update']);
+Route::get('/stock/order/new', [\App\Http\Controllers\Stock\StockOrderController::class, 'create'])->name('stockOrderNew');
+
 // Stock Real
 Route::get('/stock/real', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'index']);
 Route::get('/stock/real/branch/{id}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'indexyByBranch']);
+
+// Stock Rusak
+Route::get('/stock/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index']);
+Route::get('/stock/rusak/{id}', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'byBranch']);
 
 // Stock Temp Trans
 Route::post('/stock/temp', [\App\Http\Controllers\Stock\StockTempController::class, 'store']);

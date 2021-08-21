@@ -2,13 +2,13 @@
 
     <x-mikro.card-custom>
 
-        <x-slot name="title">Transaksi Retur Baik</x-slot>
-        <x-slot name="toolbar">{{ $id_return ?? '' }}</x-slot>
+        <x-slot name="title">Transaksi Penjualan</x-slot>
+        <x-slot name="toolbar">{{ $id_jual ?? '' }}</x-slot>
 
         <div class="row">
             <div class="col-lg-8">
                 <form action="#" id="formGlobal" class="form">
-                    <input type="text" name="id" value="{{ $id_return ?? '' }}" hidden>
+                    <input type="text" name="id" value="{{ $id_jual ?? '' }}" hidden>
                     <input type="text" name="idCustomer" value="{{ $idCustomer ?? '' }}" hidden>
                     <input type="text" name="diskonHidden" hidden>
                     <input type="text" name="idTemp" id="idTemp" value="{{ $idTemp ?? '' }}" hidden>
@@ -22,9 +22,40 @@
                                 </div>
                             </div>
                         </div>
+                        <label for="jenisBayar" class="col-lg-2 col-form-label text-lg-right">Jenis Bayar</label>
+                        <div class="col-lg-4 col-form-label">
+                            @if(isset($status_bayar))
+                                <div class="radio-inline">
+                                    <label class="radio radio-success">
+                                        <input type="radio" name="jenisBayar" value="Tempo" checked="{{ ($status_bayar == 'Tempo') ? 'checked' : ''}}"><span></span>Tempo
+                                    </label>
+                                    <label class="radio radio-success">
+                                        <input type="radio" name="jenisBayar" value="Tunai" checked="{{ ($status_bayar == 'Tempo') ? 'checked' : ''}}"><span></span>Tunai
+                                    </label>
+                                </div>
+                            @else
+                                <div class="radio-inline">
+                                    <label class="radio radio-success">
+                                        <input type="radio" name="jenisBayar" value="Tempo" checked="checked"><span></span>Tempo
+                                    </label>
+                                    <label class="radio radio-success">
+                                        <input type="radio" name="jenisBayar" value="Tunai"><span></span>Tunai
+                                    </label>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-lg-2 col-form-label text-lg-right">Tgl Nota</label>
                         <div class="col-lg-4">
                             <x-nano.input-datepicker name="tglNota" id="tglNota" value="{{ $tgl_nota ?? date('d-M-Y') }}" autocomplete="off"/>
+                        </div>
+                        <label class="col-lg-2 col-form-label text-lg-right">Tgl Tempo</label>
+                        <div class="col-lg-4">
+                            @php
+                                $tglTempo = $tgl_tempo ?? date('d-M-Y', strtotime(" +2 months"));
+                            @endphp
+                            <x-nano.input-datepicker name="tglTempo" id="tglTempo" value="{{ $tglTempo }}" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -422,13 +453,13 @@
             $('#btnSave').on('click', function(){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{route('returBaik')}}',
+                    url : '{{ url('/') }}'+'/sales/list/',
                     method: "POST",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("returBaik") }}';
+                            window.location.href = '{{ route("daftarSales") }}';
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
@@ -447,13 +478,13 @@
             $('#btnUpdate').on('click', function (){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{route('returBaik')}}',
+                    url : '{{ url('/') }}'+'/sales/list/',
                     method: "PUT",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("returBaik") }}';
+                            window.location.href = '{{ route("daftarSales") }}';
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){

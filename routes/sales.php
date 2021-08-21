@@ -22,6 +22,14 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'print']);
     Route::delete('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'destroy']);
 
+    // Retur Rusak
+    Route::get('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'index'])->name('returRusak');
+    Route::put('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'update']);
+    Route::post('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'store']);
+    Route::get('/retur/rusak/new', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'create'])->name('returRusakNew');
+    Route::get('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'create']);
+    Route::delete('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'destroy']);
+
     // temp transaction
     Route::post('sales/temp/', [\App\Http\Controllers\Sales\DetilTempController::class, 'store']);
     Route::get('sales/temp/{id}', [\App\Http\Controllers\Sales\DetilTempController::class, 'edit']);
