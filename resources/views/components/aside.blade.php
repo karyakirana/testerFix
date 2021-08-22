@@ -207,8 +207,8 @@
                     </ul>
                 </div>
             </li>
-            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
-                <a href="javascript:;" class="menu-link menu-toggle">
+            <li class="menu-item menu-item-submenu {{ (request()->is('retur*')) ? 'menu-item-open menu-item-here' : '' }}" aria-haspopup="true" data-menu-toggle="hover">
+                <a href="javascript:" class="menu-link menu-toggle">
 										<span class="svg-icon menu-icon">
 											<!--begin::Svg Icon | path:assets/media/svg/icons/Design/Bucket.svg-->
 											<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -231,36 +231,36 @@
 													<span class="menu-text">Retur Penjualan</span>
 												</span>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="layout/themes/aside-light.html" class="menu-link">
-                                <i class="menu-bullet menu-bullet-dot">
-                                    <span></span>
-                                </i>
-                                <span class="menu-text">Retur List</span>
-                            </a>
-                        </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="layout/themes/header-dark.html" class="menu-link">
-                                <i class="menu-bullet menu-bullet-dot">
-                                    <span></span>
-                                </i>
-                                <span class="menu-text">Retur Baru</span>
-                            </a>
-                        </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="layout/themes/header-dark.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('retur/baik')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="/retur/baik" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
                                 <span class="menu-text">Retur Baik</span>
                             </a>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="layout/themes/header-dark.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('retur/baik/new')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="retur/baik/new" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Retur Baik Baru</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (request()->is('retur/rusak')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="/retur/rusak" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
                                 <span class="menu-text">Retur Rusak</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (request()->is('retur/rusak/new')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="/retur/rusak/new" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Retur Rusak Baru</span>
                             </a>
                         </li>
                     </ul>
@@ -313,6 +313,22 @@
                         </li>
                             @endforeach
                         @endif
+                        <li class="menu-item {{ (request()->is('stock/mutasi')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="/stock/mutasi" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Data Stock Mutasi</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (request()->is('stock/mutasi/new')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="/stock/mutasi" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Stock Mutasi Baru</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>

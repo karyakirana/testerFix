@@ -24,10 +24,10 @@ class ReturTable {
                 return $row->branch->branchName ?? '';
             })
             ->addColumn('Action', function($row){
-                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.str_replace('/', '-', $row->id_jual).'" title="edit"><i class="la la-edit"></i></a>';
-                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.str_replace('/', '-', $row->id_jual).'" title="show"><i class="flaticon2-indent-dots"></i></a>';
-                $delete = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btndelete" data-value="'.$row->id_jual.'" title="delete"><i class="flaticon2-trash"></i></a>';
-                $print = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnPrint" data-value="'.str_replace('/', '-', $row->id_jual).'" title="print"><i class="flaticon-technology"></i></a>';
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.str_replace('/', '-', $row->id_return).'" title="edit"><i class="la la-edit"></i></a>';
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.str_replace('/', '-', $row->id_return ?? $row->id_rr).'" title="show"><i class="flaticon2-indent-dots"></i></a>';
+                $delete = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btndelete" data-value="'.($row->id_return ?? $row->id_rr).'" title="delete"><i class="flaticon2-trash"></i></a>';
+                $print = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnPrint" data-value="'.str_replace('/', '-', $row->id_return ?? $row->id_rr).'" title="print"><i class="flaticon-technology"></i></a>';
                 return $edit.$show.$delete.$print;
             })
             ->rawColumns(['Action'])

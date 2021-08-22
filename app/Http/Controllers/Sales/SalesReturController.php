@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
-use App\Models\ReturBaikDetil;
+use App\Models\Sales\ReturBaikDetil;
 use App\Models\Sales\PenjualanDetil;
 use App\Models\Sales\PenjualanDetilTemp;
 use App\Models\Sales\PenjualanTemp;
@@ -34,14 +34,14 @@ class SalesReturController extends Controller
             $urutan = (int) substr($data->id_return, 0, 4);
             $num = $urutan + 1;
         }
-        $id = sprintf("%04s", $num)."/RB/".date('Y');
+        $id = sprintf("%04s", $num)."/RBB/".date('Y');
         return $id;
     }
 
     // generate kode stockmasuk
     private function kode()
     {
-        $data = StockMasuk::where('active_cash', session('ClosedCash'))->latest()->first();
+        $data = StockMasuk::where('activeCash', session('ClosedCash'))->latest()->first();
         if(!$data){
             $num = 1;
         } else {
@@ -198,7 +198,49 @@ class SalesReturController extends Controller
 
     public function edit($id)
     {
-        return view('pages.sales.returBaikTrans');
+        // check temp for edit
+        $id_jual = str_replace('-', '/', $id);
+        $checkTemp = PenjualanTemp::where('id_jual', $id_jual)->first();
+        $penjualan = ReturBaik::with('customer')->find($id_jual);
+        if ($checkTemp){
+            // jika temp edit sebelumnya ada
+            // delete detil_temp where id_temp
+            PenjualanDetilTemp::where('idPenjualanTemp', $checkTemp->id)->delete();
+            $idTemp = $checkTemp->id;
+        } else {
+            $idTemp = $this->createTemp($id_jual)->id;
+        }
+        $detil = ReturBaikDetil::where('id_return', $id_jual)->get();
+        // insert detil to detil_temporary
+        if ($detil->count() > 0){
+            foreach ($detil as $row)
+            {
+                // insert
+                PenjualanDetilTemp::create([
+                    'idPenjualanTemp'=> $idTemp,
+                    'idBarang'=>$row->id_produk,
+                    'harga'=>$row->harga,
+                    'jumlah'=>$row->jumlah,
+                    'diskon'=>$row->diskon,
+                    'sub_total'=>$row->sub_total,
+                ]);
+            }
+        }
+        $data = [
+            'idTemp'=>$idTemp,
+            'id_jual'=>$penjualan->id_return,
+            'idCustomer'=>$penjualan->id_cust,
+            'nama_customer'=>$penjualan->customer->nama_cust,
+            'status_bayar'=>$penjualan->status_bayar,
+            'tgl_nota'=> date('d-M-Y', strtotime($penjualan->tgl_nota)),
+            'ppn' => $penjualan->ppn,
+            'biaya_lain'=>$penjualan->biaya_lain,
+            'total_bayar'=>$penjualan->total_bayar,
+            'keterangan'=>$penjualan->keterangan,
+            'branch'=>$penjualan->id_branch,
+            'update'=>true
+        ];
+        return view('pages.sales.returBaikTrans', $data);
     }
 
     public function update(Request $request)
@@ -243,9 +285,8 @@ class SalesReturController extends Controller
                 'keterangan'=>$request->keterangan
             ]);
             $stockMasuk = StockMasuk::where('id', $dataLamaStockMasuk->id)->update([
-                'id_branch'=>$request->branch,
-                'id_user'=>Auth::id(),
-                'id_cust'=>$request->idCustomer,
+                'idBranch'=>$request->branch,
+                'idUser'=>Auth::id(),
                 'tglMasuk'=>$tglRetur,
                 'keterangan'=>$request->keterangan
             ]);

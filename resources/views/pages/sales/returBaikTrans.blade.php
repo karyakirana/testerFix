@@ -22,47 +22,6 @@
                                 </div>
                             </div>
                         </div>
-                        <label for="jenisBayar" class="col-lg-2 col-form-label text-lg-right">Jenis Bayar</label>
-                        <div class="col-lg-4 col-form-label">
-                            @if(isset($status_bayar))
-                                <div class="radio-inline">
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tempo" checked="{{ ($status_bayar == 'Tempo') ? 'checked' : ''}}"><span></span>Tempo
-                                    </label>
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tunai" checked="{{ ($status_bayar == 'Tempo') ? 'checked' : ''}}"><span></span>Tunai
-                                    </label>
-                                </div>
-                            @else
-                                <div class="radio-inline">
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tempo" checked="checked"><span></span>Tempo
-                                    </label>
-                                    <label class="radio radio-success">
-                                        <input type="radio" name="jenisBayar" value="Tunai"><span></span>Tunai
-                                    </label>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label text-lg-right">Tgl Nota</label>
-                        <div class="col-lg-4">
-                            <x-nano.input-datepicker name="tglNota" id="tglNota" value="{{ $tgl_nota ?? date('d-M-Y') }}" autocomplete="off"/>
-                        </div>
-                        <label class="col-lg-2 col-form-label text-lg-right">Tgl Tempo</label>
-                        <div class="col-lg-4">
-                            @php
-                                $tglTempo = $tgl_tempo ?? date('d-M-Y', strtotime(" +2 months"));
-                            @endphp
-                            <x-nano.input-datepicker name="tglTempo" id="tglTempo" value="{{ $tglTempo }}" autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label text-lg-right">Keterangan</label>
-                        <div class="col-lg-4">
-                            <input type="text" class="form-control" name="keterangan" value="{{ $keterangan ?? '' }}">
-                        </div>
                         <label class="col-lg-2 col-form-label text-lg-right">Gudang</label>
                         <div class="col-lg-4">
                             <select name="branch" id="branch" class="form-control" autocomplete="off">
@@ -78,6 +37,19 @@
                                 @endif
                             </select>
                         </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label text-lg-right">Tgl Nota</label>
+                        <div class="col-lg-4">
+                            <x-nano.input-datepicker name="tglNota" id="tglNota" value="{{ $tgl_nota ?? date('d-M-Y') }}" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label text-lg-right">Keterangan</label>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" name="keterangan" value="{{ $keterangan ?? '' }}">
+                        </div>
+
                     </div>
                 </form>
                 <div class="example">
@@ -453,13 +425,13 @@
             $('#btnSave').on('click', function(){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{ url('/') }}'+'/sales/list/',
+                    url : '{{ url('/') }}'+'/retur/baik/',
                     method: "POST",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("daftarSales") }}';
+                            window.location.href = '{{ route("returBaik") }}';
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
@@ -478,13 +450,13 @@
             $('#btnUpdate').on('click', function (){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{ url('/') }}'+'/sales/list/',
+                    url : '{{ url('/') }}'+'/retur/baik/',
                     method: "PUT",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("daftarSales") }}';
+                            window.location.href = '{{ route("returBaik") }}';
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){

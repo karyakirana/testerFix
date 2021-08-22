@@ -15,6 +15,7 @@ class ReturBaik extends Model
 
     protected $table = 'return_bersih';
     protected $primaryKey = 'id_return';
+    protected $keyType = 'string';
 
     protected $fillable = [
         'id_return',
@@ -28,6 +29,10 @@ class ReturBaik extends Model
         'total_bayar',
         'keterangan',
         'activeCash'
+    ];
+
+    protected $casts = [
+        'tgl_nota'=>'datetime:d-M-Y'
     ];
 
     public function user()

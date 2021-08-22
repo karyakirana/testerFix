@@ -19,6 +19,8 @@ class ReturBaikDetil extends Model
         'sub_total'
     ];
 
+    protected $primaryKey = 'id_return_detail';
+
     public function produk()
     {
         return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');

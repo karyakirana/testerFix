@@ -12,15 +12,13 @@
             <tr>
                 <td width="10%" class="text-center">ID</td>
                 <td width="20%" class="text-center">Customer</td>
-                <td class="none">Cabang</td>
+                <td class="text-center">Cabang</td>
                 <td class="text-center">Tgl retur</td>
-                <td class="none">Status</td>
                 <td class="text-center">Total Bayar</td>
                 <td class="none text-center">Pembuat</td>
                 <td class="none text-center">PPN</td>
                 <td class="none text-center">Biaya Lain</td>
                 <td class="none text-center">Keterangan</td>
-                <td width="10%">Print</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -143,7 +141,7 @@
                     autoWidth: false,
                     ajax : {
                         header : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),"id": id},
-                        url : '{{url('/')}}'+'/api/data/penjualandetil/'+id,
+                        url : '{{url('/')}}'+'/data/retur/baik/'+id,
                         method : 'POST',
                     },
                     columns : [
@@ -182,13 +180,12 @@
                         {data : 'id_return'},
                         {data : 'customer'},
                         {data : 'branch'},
-                        {data : 'tgl_nota'},
-                        {data : 'total_bayar', className: "text-right"},
+                        {data : 'tgl_nota', className: "text-center"},
+                        {data : 'total_bayar', render : $.fn.dataTable.render.number( '.', ',', 0, ''),  className: "text-right"},
                         {data : 'user'},
                         {data : 'ppn'},
                         {data : 'biaya_lain'},
                         {data : 'keterangan'},
-                        {data : 'print', className: "text-center"},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],
                     columnDefs: [
@@ -202,7 +199,7 @@
 
             $('body').on('click', '#btnEdit', function (){
                 let editData = $(this).data("value");
-                window.location.href = '{{url('/')}}'+'/sales/edit/'+editData;
+                window.location.href = '{{url('/')}}'+'/retur/baik/edit/'+editData;
             })
 
             jQuery(document).ready(function (){

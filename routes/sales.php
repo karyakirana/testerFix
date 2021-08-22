@@ -10,7 +10,6 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/sales/list/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'show']);
     Route::get('/sales/new', [\App\Http\Controllers\Sales\SalesController::class, 'create'])->name('salesNew');
     Route::get('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'edit']);
-    Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'show']);
     Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
 
     // Retur Baik
@@ -18,8 +17,8 @@ Route::middleware(['auth'])->group(function (){
     Route::put('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'update']);
     Route::post('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'store']);
     Route::get('/retur/baik/new', [\App\Http\Controllers\Sales\SalesReturController::class, 'create'])->name('returBaikNew');
-    Route::get('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'show']);
-    Route::get('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'print']);
+    Route::get('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'edit']);
+    Route::get('/retur/baik/print/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'print']);
     Route::delete('/retur/baik/edit/{id}', [\App\Http\Controllers\Sales\SalesReturController::class, 'destroy']);
 
     // Retur Rusak
@@ -37,6 +36,7 @@ Route::middleware(['auth'])->group(function (){
 
     // printing
     Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceipt']);
+    Route::get('/retur/baik/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'returBaikReceipt']);
 
 });
 
