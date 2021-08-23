@@ -2,7 +2,7 @@
 
     <x-mikro.card-custom>
 
-        <x-slot name="title">Daftar Stock Keluar</x-slot>
+        <x-slot name="title">Daftar Stock Akhir</x-slot>
         <x-slot name="toolbar">
             <a href="{{ route('stockAkhirDetil') }}" class="btn btn-success font-weight-bolder m-5">Stock Akhir Detail</a>
             <a href="{{ route('stockAkhirNew') }}" class="btn btn-primary font-weight-bolder">Stock Akhir Baru</a>

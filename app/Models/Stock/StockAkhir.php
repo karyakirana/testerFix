@@ -17,7 +17,7 @@ class StockAkhir extends Model
         'activeCash',
         'kode',
         'branchId',
-        'tglinput',
+        'tglInput',
         'pencatat',
         'idPembuat',
         'keterangan'

@@ -2,7 +2,7 @@
 
     <x-mikro.card-custom>
 
-        <x-slot name="title">Daftar Stock Keluar</x-slot>
+        <x-slot name="title">Daftar Stock Akhir</x-slot>
         <x-slot name="toolbar">
             @if(isset($branch))
                 <a href="#" id="btnTableAll" class="btn btn-primary font-weight-bolder">Stock Semua</a>

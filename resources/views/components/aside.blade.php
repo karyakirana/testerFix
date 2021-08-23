@@ -240,7 +240,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{ (request()->is('retur/baik/new')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
-                            <a href="retur/baik/new" class="menu-link">
+                            <a href="/retur/baik/new" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>

@@ -89,7 +89,7 @@ class StockAkhirController extends Controller
         try {
             // insert to stock_keluar
             $stockKeluar = StockAkhir::create([
-                'active_cash'=>session('ClosedCash'),
+                'activeCash'=>session('ClosedCash'),
                 'tglInput'=>$tglAkhir,
                 'kode'=>$kode,
                 'branchId'=>$request->branch,
@@ -104,7 +104,7 @@ class StockAkhirController extends Controller
                     StockAkhirDetil::create([
                         'id_stock_akhir'=>$stockKeluar->id,
                         'id_produk'=>$row->idProduk,
-                        'jumlah_stock'=>$row->jumlah_stock
+                        'jumlah_stock'=>$row->jumlah
                     ]);
 
                     // update or create inventory_real

@@ -216,7 +216,7 @@ class SalesBadReturController extends Controller
             'branch'=>$returRusak->idBranch,
             'update'=>true
         ];
-        return view('pages.sales.returRusakTrans');
+        return view('pages.sales.returRusakTrans', $data);
     }
 
     public function update(Request $request)
