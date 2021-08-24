@@ -27,7 +27,7 @@ class SalesBadReturController extends Controller
     {
         $create = PenjualanTemp::create([
             'jenisTemp' => 'ReturRusak',
-            'idSales' => Auth::user()->id,
+            'idSales' => Auth::id(),
             'id_jual'=> $id_retur,
         ]);
         return $create;
