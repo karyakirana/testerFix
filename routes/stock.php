@@ -26,6 +26,7 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'edit']);
     Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
     Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show'])->name('stockAkhirDetil');
+    Route::get('/stock/akhir/detil/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'stockByBranch']);
 
     // Stock Order
     Route::get('/stock/order', [\App\Http\Controllers\Stock\StockOrderController::class, 'index'])->name('stockOrder');

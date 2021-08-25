@@ -92,7 +92,7 @@ class StockOrderController extends Controller
             {
                 StockDetilTemp::create([
                     'stockTemp'=>$temp->id,
-                    'idProduk'=>$row->idProduk,
+                    'idProduk'=>$row->id_produk,
                     'jumlah'=>$row->jumlah
                 ]);
             }
@@ -111,7 +111,7 @@ class StockOrderController extends Controller
             'id'=>$id,
             'kode'=>$stock_order->kode,
             'supplier'=>$stock_order->supplier,
-            'namaSupplier'=>$stock_order->supplier->namaSupplier,
+            'namaSupplier'=>$stock_order->suppliers->namaSupplier,
             'tgl_keluar'=>$stock_order->tgl_order->format('d-M-Y'),
             'update'=>true
         ];
@@ -142,6 +142,7 @@ class StockOrderController extends Controller
         try {
             $stockOrder = StockOrder::create([
                 'kode'=>$kode,
+                'activeCash'=>session('ClosedCash'),
                 'supplier'=>$request->idSupplier,
                 'tgl_order'=>$tglOrder,
                 'status'=>'dibuat',
@@ -152,7 +153,7 @@ class StockOrderController extends Controller
             $stockTemp = StockDetilTemp::where('stockTemp', $idTemp)->get();
             foreach ($stockTemp as $row){
                 StockOrderDetil::create([
-                    'stock_preorder'=>$idTemp,
+                    'stock_preorder'=>$stockOrder->id,
                     'id_produk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
@@ -197,7 +198,7 @@ class StockOrderController extends Controller
             $stockTemp = StockDetilTemp::where('stockTemp', $idTemp)->get();
             foreach ($stockTemp as $row){
                 StockOrderDetil::create([
-                    'stock_preorder'=>$idTemp,
+                    'stock_preorder'=>$dataLama->id,
                     'id_produk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
@@ -206,9 +207,17 @@ class StockOrderController extends Controller
             StockDetilTemp::where('stockTemp', $idTemp)->delete();
             StockTemp::destroy($idTemp);
             DB::commit();
+            $data = [
+                'status'=>true,
+            ];
         } catch (ModelNotFoundException $e){
             DB::rollBack();
+            $data = [
+                'status'=>false,
+                'keterangan'=>$e
+            ];
         }
+        return response()->json($data);
     }
 
     public function destroy($id)

@@ -32,9 +32,10 @@ class StockOrderTable {
     public function stockOrderDetilList($idStockOrder)
     {
         $data = StockOrderDetil::with('produk')
-            ->where('kodePreorder', $idStockOrder)
+            ->where('stock_preorder', $idStockOrder)
             ->get();
         return DataTables::of($data)
+            ->addIndexColumn()
             ->addColumn('produk', function($row){
                 $produk = $row->produk->nama_produk ?? '';
                 $cover = $row->produk->cover ?? '';

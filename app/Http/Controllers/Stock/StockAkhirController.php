@@ -288,4 +288,10 @@ class StockAkhirController extends Controller
     {
         // delete
     }
+
+    public function stockByBranch($branch)
+    {
+        $data = ['gudang'=>$branch];
+        return view('pages.stock.stockAkhirBranchDetil', $data);
+    }
 }

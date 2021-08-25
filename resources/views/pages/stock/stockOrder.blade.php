@@ -43,7 +43,7 @@
             // direct to edit
             $('body').on('click', '#btnEdit', function (){
                 let editData = $(this).data("value");
-                window.location.href = '{{ url('/') }}'+'/stock/masuk/edit/'+editData;
+                window.location.href = '{{ url('/') }}'+'/stock/order/edit/'+editData;
             })
 
             let listTable = function (){

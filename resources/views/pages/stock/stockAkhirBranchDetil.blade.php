@@ -5,11 +5,11 @@
         <x-slot name="title">Daftar Stock Akhir</x-slot>
         <x-slot name="toolbar">
             @php
-            $branch = \App\Models\Stock\BranchStock::all();
+                $branch = \App\Models\Stock\BranchStock::all();
             @endphp
             @if(isset($branch))
                 <a href="#" id="btnTableAll" class="btn btn-primary font-weight-bolder mr-2">Stock Semua</a>
-            @foreach($branch as $row)
+                @foreach($branch as $row)
                     <a href="#" id="btnTableSelect" class="btn btn-primary font-weight-bolder mr-2" data-value="{{ $row->id }}">Stock {{ $row->branchName }}</a>
                 @endforeach
             @endif
@@ -33,7 +33,7 @@
         <script>
 
             jQuery(document).ready(function (){
-                listTable();
+                listTable({{$gudang}});
             });
 
             // button table by gudang

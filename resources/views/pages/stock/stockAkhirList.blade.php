@@ -102,7 +102,7 @@
                     columns : [
                         {data : 'DT_RowIndex', orderable : false},
                         {data : 'produk'},
-                        {data : 'jumlah', className: "text-center"},
+                        {data : 'jumlah_stock', className: "text-center"},
                     ],
                     columnDefs: [
                         {

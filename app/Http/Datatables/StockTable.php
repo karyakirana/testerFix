@@ -111,22 +111,18 @@ class StockTable {
                 $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
                 return $produk.'<br>'.$cover.'-'.$kat_harga;
             })
+            ->rawColumns(['produk'])
             ->make(true);
     }
 
-    public function stockAkhirDetil($branch = null)
+    public function stockAkhirDetil()
     {
-        $data = StockAkhirDetil::where('activeCash', session('ClosedCash'))
-            ->with('produk')
+        $data = StockAkhirDetil::leftJoin('stockakhir_master', 'stockakhir.id_stock_akhir', '=', 'stockakhir_master.id')
+            ->leftJoin('branch_stock', 'branch_stock.id', '=', 'stockakhir_master.branchId')
+            ->where('stockakhir.activeCash', session('ClosedCash'))
+            ->with(['stockAkhir', 'stockAkhir.branch'])
+            ->orderBy('id_produk', 'ASC')
             ->get();
-        if ($branch)
-        {
-            $data = StockAkhirDetil::leftJoin('stockakhir_master', 'stockakhir.id_stock_master', '=', 'stockakhir_master.id')
-                ->where('stockakhir_master.branchId', $branch)
-                ->where('activeCash', session('ClosedCash'))
-                ->with(['stockAkhir'])
-                ->get();
-        }
         return DataTables::of($data)
             ->addColumn('produk', function ($row){
                 $produk = $row->produk->nama_produk ?? '';
@@ -135,7 +131,30 @@ class StockTable {
                 return $produk.'<br>'.$cover.'-'.$kat_harga;
             })
             ->addColumn('branch', function ($row){
-                return $row->stockAkhir->branchId;
+                return $row->branchName;
+            })
+            ->rawColumns(['produk'])
+            ->make(true);
+    }
+
+    public function stockAkhirByBranch($branch)
+    {
+        $data = StockAkhirDetil::leftJoin('stockakhir_master', 'stockakhir.id_stock_akhir', '=', 'stockakhir_master.id')
+            ->leftJoin('branch_stock', 'branch_stock.id', '=', 'stockakhir_master.branchId')
+            ->where('stockakhir_master.activeCash', session('ClosedCash'))
+            ->where('stockakhir_master.branchId', $branch)
+            ->with(['stockAkhir', 'stockAkhir.branch'])
+            ->orderBy('id_produk', 'ASC')
+            ->get();
+        return DataTables::of($data)
+            ->addColumn('produk', function ($row){
+                $produk = $row->produk->nama_produk ?? '';
+                $cover = $row->produk->cover ?? '';
+                $kat_harga = $row->produk->kategoriHarga->nama_kat ?? '';
+                return $produk.'<br>'.$cover.'-'.$kat_harga;
+            })
+            ->addColumn('branch', function ($row){
+                return $row->branchName;
             })
             ->rawColumns(['produk'])
             ->make(true);

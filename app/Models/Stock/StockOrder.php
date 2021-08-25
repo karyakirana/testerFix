@@ -22,6 +22,10 @@ class StockOrder extends Model
         'activeCash'
     ];
 
+    protected $casts = [
+        'tgl_order'=>'date:d-M-Y',
+    ];
+
     public function suppliers()
     {
         return $this->belongsTo(Supplier::class, 'supplier');

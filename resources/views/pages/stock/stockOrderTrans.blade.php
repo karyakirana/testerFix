@@ -278,7 +278,7 @@
             $('#btnSave').on('click', function(){
                 $.ajax({
                     headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url : '{{ url('/') }}'+'/stock/masuk/',
+                    url : '{{ route("stockOrder") }}',
                     method: "POST",
                     dataType : "JSON",
                     data : $('#formGlobal, #formTable').serialize(),
@@ -310,7 +310,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("stokMasuk") }}';
+                            window.location.href = '{{ route("stockOrder") }}';
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
