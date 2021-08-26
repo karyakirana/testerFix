@@ -48,8 +48,8 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/real/branch/{id}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'indexyByBranch']);
 
     // Stock Rusak
-    Route::get('/stock/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index']);
-    Route::get('/stock/rusak/{id}', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'byBranch']);
+    Route::get('/stock/real/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index']);
+    Route::get('/stock/real/rusak/{id}', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'byBranch']);
 
     // Stock Temp Trans
     Route::post('/stock/temp', [\App\Http\Controllers\Stock\StockTempController::class, 'store']);
