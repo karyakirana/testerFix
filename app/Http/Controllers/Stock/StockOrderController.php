@@ -68,7 +68,11 @@ class StockOrderController extends Controller
 
     public function print($id)
     {
-        //
+        $data = [
+            'master'=>StockOrder::with(['suppliers', 'user'])->find($id),
+            'detil'=>StockOrderDetil::with('produk')->where('stock_preorder', $id)->get(),
+        ];
+        return view('pages.stock.stockOrderReceipt', $data);
     }
 
     public function checkSessionEdit($id)
@@ -162,6 +166,7 @@ class StockOrderController extends Controller
             StockDetilTemp::where('stockTemp', $idTemp)->delete();
             StockTemp::destroy($idTemp);
             DB::commit();
+            session()->forget('stockOrder');
             $data = [
                 'status'=>true,
             ];
