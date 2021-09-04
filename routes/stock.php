@@ -36,6 +36,9 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/order/edit/{id}', [\App\Http\Controllers\Stock\StockOrderController::class, 'edit']);
     Route::delete('/stock/order/edit/{id}', [\App\Http\Controllers\Stock\StockOrderController::class, 'destroy']);
 
+    // Stock Order Report
+    Route::get('/stock/order/receipt/{id}', [\App\Http\Controllers\Stock\StockOrderController::class, 'print']);
+
     // Stock Mutasi
     Route::get('/stock/mutasi', [\App\Http\Controllers\Stock\MutasiGudangController::class, 'index'])->name('mutasiStock');
     Route::post('/stock/mutasi', [\App\Http\Controllers\Stock\MutasiGudangController::class, 'store']);
@@ -57,7 +60,7 @@ Route::middleware(['auth'])->group(function(){
     Route::delete('/stock/temp/{id}', [\App\Http\Controllers\Stock\StockTempController::class, 'destroy']);
 
     // Stock generate
-    Route::post('generate/penjualan/to/stock', [\App\Http\Controllers\Generator\GenerateSalesToStockController::class, 'store'])->name('generateSalesToStock');
+    Route::post('/generate/penjualan/to/stock', [\App\Http\Controllers\Generator\GenerateSalesToStockController::class, 'store'])->name('generateSalesToStock');
 
 });
 
