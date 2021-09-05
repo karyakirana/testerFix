@@ -18,4 +18,9 @@ class StockMasukDetil extends Model
     {
         return $this->belongsTo(Produk::class, 'idProduk', 'id_produk');
     }
+
+    public function stockMasuk()
+    {
+        return $this->belongsTo(StockMasuk::class, 'idStockMasuk');
+    }
 }

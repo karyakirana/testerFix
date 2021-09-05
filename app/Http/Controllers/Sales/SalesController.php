@@ -201,14 +201,12 @@ class SalesController extends Controller
                         ->where('branchId', $request->branch)
                         ->update([
                             'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                         ]);
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idBarang,
                         'branchId'=>$request->branch,
                         'stockOut'=>$row->jumlah,
-                        'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                     ]);
                 }
             }
@@ -336,7 +334,6 @@ class SalesController extends Controller
                     ->where('branchId', $data_lama->idBranch)
                     ->update([
                         'stockOut'=>DB::raw('stockOut -'.$row->jumlah),
-                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                     ]);
             }
             $deleteDetil->delete();
@@ -399,14 +396,12 @@ class SalesController extends Controller
                         if($update_inventory->get()->count() > 0){
                             $update_inventory->update([
                                 'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
-                                'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                             ]);
                         } else {
                             InventoryReal::create([
                                 'idProduk'=>$row->idBarang,
                                 'branchId'=>$request->branch,
                                 'stockOut'=>$row->jumlah,
-                                'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                             ]);
                         }
                     }

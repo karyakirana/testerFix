@@ -118,14 +118,12 @@ class StockKeluarController extends Controller
                             ->where('branchId', $request->branch)
                             ->update([
                                 'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
-                                'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                             ]);
                     } else {
                         InventoryReal::create([
                             'idProduk'=>$row->idProduk,
                             'branchId'=>$request->branch,
                             'stockOut'=>$row->jumlah,
-                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                         ]);
                     }
                 }
@@ -224,7 +222,6 @@ class StockKeluarController extends Controller
                     ->where('branchId', $data_lama->branch)
                     ->update([
                         'stockOut'=>DB::raw('stockOut -'.$row->jumlah),
-                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                     ]);
             }
             $delete_detil->delete();
@@ -256,14 +253,12 @@ class StockKeluarController extends Controller
                     if($update_inventory->get()->count() > 0){
                         $update_inventory->update([
                             'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                         ]);
                     } else {
                         InventoryReal::create([
                             'idProduk'=>$row->idProduk,
                             'branchId'=>$request->branch,
                             'stockOut'=>$row->jumlah,
-                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                         ]);
                     }
                 }
@@ -291,5 +286,41 @@ class StockKeluarController extends Controller
     {
         $action = StockKeluar::destroy($id);
         return response()->json(['status'=>true, 'action'=>$action]);
+    }
+
+    public function resetStockKeluarToReal()
+    {
+        $update = InventoryReal::whereNotNull('idProduk')->update(['stockOut'=>0]);
+    }
+
+    public function stockKeluarToReal()
+    {
+        // get stock opname with branch
+        $stockAll = StockKeluarDetil::with(['stockKeluar'=>function($query){
+            $query->where('active_cash', session('ClosedCash'));
+        }])
+            ->get();
+        DB::beginTransaction();
+        try {
+            // update or insert to stock real
+            $this->resetStockKeluarToReal();
+            foreach ($stockAll as $row){
+                InventoryReal::updateOrInsert(
+                    [
+                        'idProduk'=>$row->id_produk,
+                        'branchId'=>$row->stockKeluar->branch,
+                    ],
+                    [
+                        'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
+                    ]
+                );
+            }
+            DB::commit();
+            $hasil = ['status'=>true];
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+            $hasil = ['status'=>false, 'keterangan'=>$e];
+        }
+        return $hasil;
     }
 }

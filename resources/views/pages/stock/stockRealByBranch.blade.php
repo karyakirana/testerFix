@@ -9,6 +9,7 @@
             <tr>
                 <td width="10%" class="text-center">ID</td>
                 <td width="50%" class="text-center">Produk</td>
+                <td class="text-center">Opname</td>
                 <td class="text-center">Masuk</td>
                 <td class="text-center">Keluar</td>
                 <td class="text-center">Tersedia</td>
@@ -40,9 +41,10 @@
                     columns : [
                         {data : 'idProduk', orderable : false},
                         {data : 'produk'},
+                        {data : 'stockOpname', className: "text-center"},
                         {data : 'stockIn', className: "text-center"},
                         {data : 'stockOut', className: "text-center"},
-                        {data : 'stockNow', className: "text-center"},
+                        {data : 'tersedia', className: "text-center"},
                     ],
                     columnDefs: [
                         {

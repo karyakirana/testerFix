@@ -115,14 +115,14 @@ class StockAkhirController extends Controller
                         InventoryReal::where('idProduk', $row->idProduk)
                             ->where('branchId', $request->branch)
                             ->update([
-                                'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                                'stockOpname'=>DB::raw('stockOpname +'.$row->jumlah),
                                 'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                             ]);
                     } else {
                         InventoryReal::create([
                             'idProduk'=>$row->idProduk,
                             'branchId'=>$request->branch,
-                            'stockIn'=>$row->jumlah,
+                            'stockOpname'=>$row->jumlah,
                             'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                     }
@@ -223,7 +223,7 @@ class StockAkhirController extends Controller
                 InventoryReal::where('idProduk', $row->id_produk)
                     ->where('branchId', $data_lama->branchId)
                     ->update([
-                        'stockIn'=>DB::raw('stockIn -'.$row->jumlah_stock),
+                        'stockOpname'=>DB::raw('stockOpname -'.$row->jumlah_stock),
                         'stockNow'=>DB::raw('stockNow -'.$row->jumlah_stock),
                     ]);
             }
@@ -252,14 +252,14 @@ class StockAkhirController extends Controller
                         ->where('branchId', $request->branch);
                     if($update_inventory->get()->count() > 0){
                         $update_inventory->update([
-                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                            'stockOpname'=>DB::raw('stockOpname +'.$row->jumlah),
                             'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                     } else {
                         InventoryReal::create([
                             'idProduk'=>$row->idProduk,
                             'branchId'=>$request->branch,
-                            'stockIn'=>$row->jumlah,
+                            'stockOpname'=>$row->jumlah,
                             'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                     }
@@ -293,5 +293,42 @@ class StockAkhirController extends Controller
     {
         $data = ['gudang'=>$branch];
         return view('pages.stock.stockAkhirBranchDetil', $data);
+    }
+
+    protected function resetStockAkhirToReal()
+    {
+        $update = InventoryReal::whereNotNull('idProduk')->update(['stockOpname'=>0]);
+    }
+
+    public function stockAkhirToReal()
+    {
+        // get stock opname with branch
+        $stockAll = StockAkhirDetil::with(['stockAkhir'=>function($query){
+            $query->where('activeCash', session('ClosedCash'));
+        }])
+            ->get();
+        DB::beginTransaction();
+        try {
+            // update or insert to stock real
+            $this->resetStockAkhirToReal();
+            foreach ($stockAll as $row){
+                InventoryReal::updateOrInsert(
+                    [
+                        'idProduk'=>$row->id_produk,
+                        'branchId'=>$row->stockAkhir->branchId,
+                    ],
+                    [
+                        'stockOpname'=>DB::raw('stockOpname +'.$row->jumlah_stock),
+                    ]
+                );
+            }
+            DB::commit();
+            $hasil = ['status'=>true];
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+            $hasil = ['status'=>false, 'keterangan'=>$e];
+        }
+        return $hasil;
+
     }
 }

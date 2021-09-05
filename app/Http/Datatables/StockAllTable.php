@@ -22,6 +22,9 @@ class StockAllTable {
             ->addColumn('branch', function($row){
                 return $row->branch->branchName ?? '';
             })
+            ->addColumn('tersedia', function($row){
+                return $row->stockOpname + $row->stockIn - $row->stockOut;
+            })
             ->rawColumns(['produk'])
             ->make(true);
 
@@ -40,6 +43,9 @@ class StockAllTable {
             })
             ->addColumn('branch', function($row){
                 return $row->branch->branchName ?? '';
+            })
+            ->addColumn('tersedia', function($row){
+                return $row->stockOpname + $row->stockIn - $row->stockOut;
             })
             ->rawColumns(['produk'])
             ->make(true);

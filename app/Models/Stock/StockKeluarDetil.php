@@ -17,4 +17,9 @@ class StockKeluarDetil extends Model
     public function produk(){
         return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');
     }
+
+    public function stockKeluar()
+    {
+        return $this->belongsTo(StockKeluar::class, 'stock_keluar');
+    }
 }

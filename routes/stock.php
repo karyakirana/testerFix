@@ -11,12 +11,16 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/keluar/edit/{id}', [\App\Http\Controllers\Stock\StockKeluarController::class, 'edit']);
     Route::get('/stock/keluar/new', [\App\Http\Controllers\Stock\StockKeluarController::class, 'create'])->name('stockKeluarNew');
 
+    Route::get('/stock/keluar/coba', [\App\Http\Controllers\Stock\StockKeluarController::class, 'stockKeluarToReal']);
+
     // Stock Masuk
     Route::get('/stock/masuk', [\App\Http\Controllers\Stock\StockMasukController::class, 'index'])->name('stokMasuk');
     Route::post('/stock/masuk', [\App\Http\Controllers\Stock\StockMasukController::class, 'store']);
     Route::put('/stock/masuk', [\App\Http\Controllers\Stock\StockMasukController::class, 'update']);
     Route::get('/stock/masuk/new', [\App\Http\Controllers\Stock\StockMasukController::class, 'create'])->name('stockMasukNew');
     Route::get('/stock/masuk/edit/{id}', [\App\Http\Controllers\Stock\StockMasukController::class, 'edit']);
+
+    Route::get('stock/masuk/coba', [\App\Http\Controllers\Stock\StockMasukController::class, 'stockMasukToReal']);
 
     // Stock Akhir
     Route::get('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'index'])->name('stockAkhir');
@@ -27,6 +31,8 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
     Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show'])->name('stockAkhirDetil');
     Route::get('/stock/akhir/detil/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'stockByBranch']);
+
+    Route::get('stock/akhir/coba', [\App\Http\Controllers\Stock\StockAkhirController::class, 'stockAkhirToReal']);
 
     // Stock Order
     Route::get('/stock/order', [\App\Http\Controllers\Stock\StockOrderController::class, 'index'])->name('stockOrder');

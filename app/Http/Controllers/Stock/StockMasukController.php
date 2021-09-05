@@ -123,7 +123,6 @@ class StockMasukController extends Controller
                             'idProduk'=>$row->idProduk,
                             'branchId'=>$request->branch,
                             'stockIn'=>$row->jumlah,
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                     }
                 }
@@ -217,7 +216,6 @@ class StockMasukController extends Controller
                     ->where('branchId', $data_lama->idBranch)
                     ->update([
                         'stockIn'=>DB::raw('stockIn -'.$row->jumlah),
-                        'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                     ]);
             }
             // update stock_keluar
@@ -247,14 +245,12 @@ class StockMasukController extends Controller
                     if($update_inventory->get()->count() > 0){
                         $update_inventory->update([
                             'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                     } else {
                         InventoryReal::create([
                             'idProduk'=>$row->idProduk,
                             'branchId'=>$request->branch,
                             'stockIn'=>$row->jumlah,
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                     }
                 }
@@ -282,5 +278,40 @@ class StockMasukController extends Controller
     {
         $action = StockMasuk::destroy($id);
         return response()->json(['status'=>true, 'action'=>$action]);
+    }
+
+    protected function resetStockMasukToReal()
+    {
+        $update = $update = InventoryReal::whereNotNull('idProduk')->update(['stockIn'=>0]);
+    }
+
+    public function stockMasukToReal()
+    {
+        $stockMasukDetil = StockMasukDetil::with(['stockMasuk'=>function($query){
+            $query->where('activeCash', session('ClosedCash'));
+        }])
+            ->get();
+        DB::beginTransaction();
+        try {
+            $this->resetStockMasukToReal();
+            foreach ($stockMasukDetil as $row)
+            {
+                InventoryReal::updateOrInsert(
+                    [
+                        'idProduk'=>$row->idProduk,
+                        'branchId'=>$row->stockMasuk->idBranch,
+                    ],
+                    [
+                        'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
+                    ]
+                );
+            }
+            DB::commit();
+            $hasil = ['status'=>true];
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+            $hasil = ['status'=>false, 'keterangan'=>$e];
+        }
+        return $hasil;
     }
 }

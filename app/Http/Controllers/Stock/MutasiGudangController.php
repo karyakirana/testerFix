@@ -196,14 +196,12 @@ class MutasiGudangController extends Controller
                         ->where('branchId', $request->branch)
                         ->update([
                             'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                         ]);
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idProduk,
                         'branchId'=>$request->branch,
                         'stockOut'=>$row->jumlah,
-                        'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                     ]);
                 }
 
@@ -215,14 +213,12 @@ class MutasiGudangController extends Controller
                         ->where('branchId', $request->branch)
                         ->update([
                             'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                         ]);
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idProduk,
                         'branchId'=>$request->branch,
                         'stockIn'=>$row->jumlah,
-                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                     ]);
                 }
             }
