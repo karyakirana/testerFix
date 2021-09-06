@@ -114,7 +114,7 @@
                                             <label class="col-form-label">PPN</label>
                                         </td>
                                         <td colspan="2">
-                                            <input type="text" class="form-control" name="ppn" id="ppn" value="{{ $ppn ?? '' }}" autocomplete="off">
+                                            <input type="number" class="form-control" name="ppn" id="ppn" value="{{ $ppn ?? '0' }}" autocomplete="off">
                                         </td>
                                     </tr>
                                     <tr>
@@ -123,7 +123,7 @@
                                             <label class="col-form-label">Biaya Lain</label>
                                         </td>
                                         <td colspan="2">
-                                            <input type="text" class="form-control" name="biayaLain" id="biayaLain" value="{{ $biaya_lain ?? '' }}" autocomplete="off">
+                                            <input type="number" class="form-control" name="biayaLain" id="biayaLain" value="{{ $biaya_lain ?? '0' }}" autocomplete="off">
                                         </td>
                                     </tr>
                                     <tr>
@@ -459,7 +459,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("daftarSales") }}';
+                            window.location.href = '{{ url('/') }}'+'/sales/print/'+data.nomorPenjualan;
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
@@ -484,7 +484,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("daftarSales") }}';
+                            window.location.href = '{{ url('/') }}'+'/sales/print/'+data.nomorPenjualan;
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){

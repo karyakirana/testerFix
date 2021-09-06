@@ -415,7 +415,8 @@ class SalesController extends Controller
             session()->forget('penjualan');
             DB::commit();
             $jsonData = [
-                'status'=>true
+                'status'=>true,
+                'nomorPenjualan'=>str_replace('/', '-', $idPenjualan)
             ];
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
