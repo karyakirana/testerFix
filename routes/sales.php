@@ -36,6 +36,8 @@ Route::middleware(['auth'])->group(function (){
 
     // printing
     Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceipt']);
+    Route::get('/sales/print/{id}/pdf', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceiptPdf']);
+
     Route::get('/retur/baik/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'returBaikReceipt']);
 
 });

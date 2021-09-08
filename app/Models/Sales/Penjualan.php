@@ -45,4 +45,9 @@ class Penjualan extends Model
     {
         return $this->belongsTo(BranchStock::class, 'idBranch');
     }
+
+    public function detilPenjualan()
+    {
+        return $this->hasMany(PenjualanDetil::class, 'id_jual', 'id_jual');
+    }
 }

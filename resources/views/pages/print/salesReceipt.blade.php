@@ -40,12 +40,14 @@
                 console.log(element.id_detil);
             })
 
-            var set_font_1 = '\x1B' + '\x6B' + '\x31';
+            var set_font_1 = '\x1B' + '\x53' + '\x49';
             var condensed_on = '\x0F';
             var condesed_off = '\x12';
-            var esc_p = '\x1B' + '\x50';
+            var esc_p = '\x1B' + '\x78' + '\x31';
+            // var alt_cond_on = '';
             var alt_cond_on = '\x1B'+'\x21' + '\x04';
             var alt_cond_off = '\x1B'+'\x21' + '\x00';
+            // var alt_cond_off = '';
             var bold_on = '\x1B'+'\x45';
             var bold_off = '\x1B'+'\x46';
             var italic_on = '\x1B'+'\x34';

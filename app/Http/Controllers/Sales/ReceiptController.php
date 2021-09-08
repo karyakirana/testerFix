@@ -7,7 +7,9 @@ use App\Models\Sales\Penjualan;
 use App\Models\Sales\PenjualanDetil;
 use App\Models\Sales\ReturBaik;
 use App\Models\Sales\ReturBaikDetil;
+use PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class ReceiptController extends Controller
 {
@@ -79,6 +81,20 @@ class ReceiptController extends Controller
             'dataDetail' => $dataPenjualanDetail
         ];
         return view('pages.print.salesReceipt', $data);
+    }
+
+    public function salesReceiptPdf($id)
+    {
+        $idPenjualan = str_replace('-', '/', $id);
+        $penjualan = Penjualan::with(['customer', 'pengguna', 'detilPenjualan', 'detilPenjualan.produk'])->where('id_jual', $idPenjualan)->first();
+//        return view('pages.print.salesReceiptPdf', ['data'=>$penjualan]);
+        $pdf = PDF::loadView('pages.print.ReceiptPrintPDF', ['data'=>$penjualan]);
+        $pdf->setOptions([
+            'page-size'=>'letter',
+//            'page-width'=>'215.9',
+//            'page-height'=>'139.7',
+        ]);
+        return $pdf->inline();
     }
 
     public function returBaikReceipt($id)
