@@ -27,6 +27,11 @@ class StockAkhir extends Model
         'tglInput'=>'date:d-M-Y'
     ];
 
+    public function stockAkhirDetil()
+    {
+        return $this->hasMany(StockAkhirDetil::class, 'id_stock_akhir');
+    }
+
     public function branch()
     {
         return $this->belongsTo(BranchStock::class, 'branchId');

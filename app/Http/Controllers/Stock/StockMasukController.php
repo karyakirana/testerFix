@@ -27,7 +27,7 @@ class StockMasukController extends Controller
 
     public function kode()
     {
-        $data = StockMasuk::where('activeCash', session('ClosedCash'))->latest()->first();
+        $data = StockMasuk::where('activeCash', session('ClosedCash'))->latest('kode')->first();
         $num = null;
         if(!$data){
             $num = 1;

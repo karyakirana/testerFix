@@ -55,6 +55,9 @@ Route::middleware(['auth'])->group(function(){
     // Stock Real
     Route::get('/stock/real', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'index']);
     Route::get('/stock/real/branch/{id}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'indexyByBranch']);
+    Route::patch('/stock/real/out/branch/{produk}/{branch}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'stockKeluarByProduk']);
+    Route::patch('/stock/real/opname/branch/{produk}/{branch}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'stockOpnameByProduk']);
+    Route::patch('/stock/real/in/branch/{produk}/{branch}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'stockMasukByProduk']);
 
     // Stock Rusak
     Route::get('/stock/real/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index']);

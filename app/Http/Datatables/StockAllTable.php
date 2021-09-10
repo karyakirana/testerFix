@@ -47,7 +47,16 @@ class StockAllTable {
             ->addColumn('tersedia', function($row){
                 return $row->stockOpname + $row->stockIn - $row->stockOut;
             })
-            ->rawColumns(['produk'])
+            ->addColumn('stockKeluar', function($row){
+                return '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnStockKeluar" data-value="'.$row->idProduk.'" title="show">'.$row->stockOut.'</a>';
+            })
+            ->addColumn('stockAkhir', function($row){
+                return '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnStockOpname" data-value="'.$row->idProduk.'" title="show">'.$row->stockOpname.'</a>';
+            })
+            ->addColumn('stockMasuk', function($row){
+                return '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnStockIn" data-value="'.$row->idProduk.'" title="show">'.$row->stockIn.'</a>';
+            })
+            ->rawColumns(['produk', 'stockKeluar', 'stockAkhir', 'stockMasuk'])
             ->make(true);
     }
 
