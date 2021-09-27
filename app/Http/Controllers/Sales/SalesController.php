@@ -32,7 +32,7 @@ class SalesController extends Controller
 
     public function idPenjualan()
     {
-        $data = Penjualan::where('activeCash', session('ClosedCash'))->orderBy('id_jual', 'DESC')->first();
+        $data = Penjualan::where('activeCash', session('ClosedCash'))->latest('id_jual')->first();
         $num = null;
         if(!$data){
             $num = 1;
