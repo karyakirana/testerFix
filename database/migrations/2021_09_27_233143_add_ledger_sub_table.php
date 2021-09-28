@@ -15,8 +15,6 @@ class AddLedgerSubTable extends Migration
     {
         Schema::create('ledger_sub', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('account_sub_id');
-            $table->unsignedBigInteger('ledger_id');
             $table->bigInteger('debit');
             $table->bigInteger('kredit');
             $table->softDeletes();
@@ -26,12 +24,12 @@ class AddLedgerSubTable extends Migration
             $table->foreignId('account_sub_id')
                 ->constrained('accounting_account_sub')
                 ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onDelete('cascade')->after('id');
 
             $table->foreignId('ledger_id')
                 ->constrained('ledger')
                 ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onDelete('cascade')->after('account_sub_id');
         });
     }
 

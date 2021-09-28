@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLedgerTable extends Migration
+class CreateJurnalTempDetilTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +13,13 @@ class AddLedgerTable extends Migration
      */
     public function up()
     {
-        Schema::create('ledger', function (Blueprint $table) {
+        Schema::create('jurnal_temp_detil', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('journal_id');
-            $table->string('activeCash');
-            $table->unsignedBigInteger('journal_ref');
-            $table->bigInteger('debet');
+            $table->unsignedBigInteger('account');
+            $table->bigInteger('debit');
             $table->bigInteger('kredit');
-            $table->softDeletes();
             $table->timestamps();
-
-            //foreign key
-            $table->foreignId('account_id')
-                ->constrained('accounting_account')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')->after('id');
         });
     }
 
@@ -38,6 +30,6 @@ class AddLedgerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ledger');
+        Schema::dropIfExists('jurnal_temp_detil');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJurnalPembayaranDetilTable extends Migration
+class CreateJurnalTempMasterTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateJurnalPembayaranDetilTable extends Migration
      */
     public function up()
     {
-        Schema::create('jurnal_pembayaran_detil', function (Blueprint $table) {
+        Schema::create('jurnal_temp_master', function (Blueprint $table) {
             $table->id();
+            $table->string('jenis_jurnal');
+            $table->unsignedBigInteger('jurnal_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
-
-            $table->foreignId('jurnal_pembayaran_id')
-                ->constrained('jurnal_pembayaran_master')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')->after('id');
         });
     }
 
@@ -31,6 +29,6 @@ class CreateJurnalPembayaranDetilTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jurnal_pembayaran_detil');
+        Schema::dropIfExists('jurnal_temp_master');
     }
 }

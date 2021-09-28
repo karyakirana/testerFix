@@ -15,7 +15,6 @@ class AddAccountingAccountSubTable extends Migration
     {
         Schema::create('accounting_account_sub', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('account_id');
             $table->integer('kode_account_sub')->unique();
             $table->string('sub_name');
             $table->text('keterangan')->nullable();
@@ -26,7 +25,7 @@ class AddAccountingAccountSubTable extends Migration
             $table->foreignId('account_id')
                 ->constrained('accounting_account')
                 ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onDelete('cascade')->after('id');
         });
     }
 

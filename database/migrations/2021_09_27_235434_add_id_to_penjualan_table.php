@@ -14,11 +14,15 @@ class AddIdToPenjualanTable extends Migration
     public function up()
     {
         Schema::table('penjualan', function (Blueprint $table) {
+            // drop primary
+            $table->dropPrimary('id_jual');
+        });
+
+        Schema::table('penjualan', function (Blueprint $table) {
             $table->id()->first();
 
             // drop primary
-            $table->dropPrimary('id_jual');
-            $table->primary('id');
+
             $table->unique('id_jual');
         });
     }
@@ -31,9 +35,7 @@ class AddIdToPenjualanTable extends Migration
     public function down()
     {
         Schema::table('penjualan', function (Blueprint $table) {
-            $table->dropColumn('id');
-            $table->dropUnique('id_jual');
-            $table->primary('id_jual');
+            //
         });
     }
 }
