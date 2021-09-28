@@ -18,6 +18,11 @@ class CreateJurnalPembayaranDetilTable extends Migration
             $table->unsignedBigInteger('jurnal_pembayaran_id');
             $table->unsignedBigInteger('penjualan_id');
             $table->timestamps();
+
+            $table->foreignId('penjualan_id')
+                ->constrained('penjualan')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

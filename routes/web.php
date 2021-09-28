@@ -37,3 +37,4 @@ require __DIR__.'/sales.php';
 require __DIR__.'/master.php';
 require __DIR__.'/stock.php';
 require __DIR__.'/datatablesRoute.php';
+require __DIR__.'/accounting.php';

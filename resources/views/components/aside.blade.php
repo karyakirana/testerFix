@@ -519,10 +519,10 @@
                 </div>
             </li>
             <li class="menu-section">
-                <h4 class="menu-text">Keungan</h4>
+                <h4 class="menu-text">Keuangan</h4>
                 <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
             </li>
-            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+            <li class="menu-item menu-item-submenu {{ (request()->is('accounting/master*')) ? 'menu-item-open menu-item-here' : '' }}" aria-haspopup="true" data-menu-toggle="hover">
                 <a href="javascript:;" class="menu-link menu-toggle">
 										<span class="svg-icon menu-icon">
 											<!--begin::Svg Icon | path:assets/media/svg/icons/Shopping/Box2.svg-->
@@ -546,28 +546,44 @@
 													<span class="menu-text">Master Akuntansi</span>
 												</span>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="features/bootstrap/typography.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('accounting/master/kategori')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('accountingKategori') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
-                                <span class="menu-text">Kode Akun</span>
+                                <span class="menu-text">Kategori</span>
                             </a>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="features/bootstrap/buttons.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('accounting/master/kategorisub')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('accountingSubKategori') }}" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Sub Kategori</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (request()->is('accounting/master/account')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('accountingAccount') }}" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Akun</span>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ (request()->is('accounting/master/sub')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('accountingSubAccount') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
                                 <span class="menu-text">Sub Akun</span>
                             </a>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="features/bootstrap/button-group.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('accounting/master/jurnalref')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('accountingJournalRef') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
-                                <span class="menu-text">Akun Pembantu</span>
+                                <span class="menu-text">Jurnal Referensi</span>
                             </a>
                         </li>
                     </ul>
