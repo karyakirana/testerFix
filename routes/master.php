@@ -15,6 +15,7 @@ Route::middleware(['auth'])->group(function (){
     Route::delete('master/kategori/harga/{id}', [\App\Http\Controllers\Master\KategoriHargaController::class, 'destroy']);
 
     Route::get('/master/produk/list', [\App\Http\Controllers\Master\ProdukController::class, 'index'])->name('produkList');
+    Route::patch('/master/produk/list', [\App\Http\Controllers\Master\ProdukController::class, 'listData']);
     Route::post('/master/produk/list', [\App\Http\Controllers\Master\ProdukController::class, 'store']);
     Route::get('/master/produk/list/{id}', [\App\Http\Controllers\Master\ProdukController::class, 'edit']);
     Route::delete('/master/produk/list/{id}', [\App\Http\Controllers\Master\ProdukController::class, 'destroy'])->name('produkAction');

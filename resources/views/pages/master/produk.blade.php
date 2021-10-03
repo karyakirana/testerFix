@@ -11,14 +11,14 @@
                 <tr>
                     <td width="10%" class="text-center">ID</td>
                     <td width="10%" class="text-center">Lokal</td>
-                    <td width="25%" class="text-center">Produk</td>
+                    <td width="40%" class="text-center">Produk</td>
                     <td class="text-center">Harga</td>
-                    <td class="text-center">Kategori</td>
-                    <td class="text-center">Kat Harga</td>
+                    <td class="none">Kategori</td>
+                    <td class="none">Kat Harga</td>
                     <td class="none text-center">Penerbit</td>
                     <td class="none text-center">Cover</td>
-                    <td class="none text-center">Hal</td>
-                    <td class="none text-center">Size</td>
+                    <td class="text-center">Hal</td>
+                    <td class="text-center">Size</td>
                     <td class="none text-center">Deksripsi</td>
                     <td width="10%">Action</td>
                 </tr>
@@ -131,19 +131,19 @@
                     responsive : true,
                     ajax : {
                         headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        url : '{{ route("produkcrud") }}',
+                        url : '{{ route("produkList") }}',
                         method : 'PATCH'
                     },
                     columns : [
                         {data : 'id_produk'},
-                        {data : 'kode_lokal'},
-                        {data : 'nama_produk'},
+                        {data : 'kode_lokal', className: "text-center"},
+                        {data : 'produk' ?? 'nama_produk'},
                         {data : 'harga', render : $.fn.dataTable.render.number( '.', ',', 0, ''), className: "text-right"},
-                        {data : 'cover'},
-                        {data : 'kategoriHarga', className: "text-center"},
+                        {data : 'kategori.nama', className: "text-center"},
+                        {data : 'kategori_harga.nama_kat', className: "text-center"},
                         {data : 'penerbit'},
-                        {data : 'produk'},
-                        {data : 'hal'},
+                        {data : 'cover'},
+                        {data : 'hal', className: "text-center"},
                         {data : 'size'},
                         {data : 'deskripsi'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},

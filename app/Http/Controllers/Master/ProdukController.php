@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Master;
 use App\Http\Controllers\Controller;
 use App\Models\Master\Produk;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class ProdukController extends Controller
 {
@@ -16,6 +17,25 @@ class ProdukController extends Controller
     public function index()
     {
         return view('pages.master.produk');
+    }
+
+    public function listData()
+    {
+        $data = Produk::with(['kategori', 'kategoriHarga'])->get();
+        return DataTables::of($data)
+            ->addColumn('produk', function ($row){
+                $produk = $row->nama_produk;
+                $cover = $row->cover.' ' ?? '';
+                $kategoriHarga =  $row->kategoriHarga->nama_kat ?? '';
+                return $produk.'<br>'.$cover.$kategoriHarga;
+            })
+            ->addColumn('Action', function ($row){
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id_produk.'" title="Edit"><i class="la la-edit"></i></a>';
+                $soft = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id_produk.'" title="Delete"><i class="la la-trash"></i></a>';
+                return $edit.$soft;
+            })
+            ->rawColumns(['produk', 'Action'])
+            ->make(true);
     }
 
     /**
