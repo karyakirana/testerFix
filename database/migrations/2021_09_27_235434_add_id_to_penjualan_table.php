@@ -35,7 +35,9 @@ class AddIdToPenjualanTable extends Migration
     public function down()
     {
         Schema::table('penjualan', function (Blueprint $table) {
-            //
+            $table->dropColumn('id');
+            $table->dropUnique('id_jual');
+            $table->primary('id_jual');
         });
     }
 }

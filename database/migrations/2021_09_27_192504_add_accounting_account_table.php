@@ -15,17 +15,12 @@ class AddAccountingAccountTable extends Migration
     {
         Schema::create('accounting_account', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('kategori_sub_id');
             $table->integer('kode_account')->unique();
             $table->string('account_name');
             $table->text('keterangan')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // foreign key
-            $table->foreignId('kategori_sub_id')
-                ->constrained('accounting_kategori_sub')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')->after('id');
         });
     }
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Accounting;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class JurnalPembayaranNota extends Controller
+class JurnalPembayaranNotaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class JurnalPembayaranNota extends Controller
      */
     public function index()
     {
-        //
+        return view('pages.accounting.jurnalPembayaranNota');
     }
 
     /**
@@ -24,7 +24,7 @@ class JurnalPembayaranNota extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.accounting.jurnalPembayaranNotaTransaksi');
     }
 
     /**

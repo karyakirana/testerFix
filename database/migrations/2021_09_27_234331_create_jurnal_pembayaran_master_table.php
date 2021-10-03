@@ -20,6 +20,7 @@ class CreateJurnalPembayaranMasterTable extends Migration
             $table->string('jenis_pembayaran');
             $table->date('tgl_pembayaran');
             $table->string('customer_id');
+            $table->bigInteger('total_bayar');
             $table->text('keterangan');
             $table->softDeletes();
             $table->timestamps();

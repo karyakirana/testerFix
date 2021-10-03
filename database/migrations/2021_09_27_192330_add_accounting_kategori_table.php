@@ -17,7 +17,7 @@ class AddAccountingKategoriTable extends Migration
             $table->id();
             $table->integer('kode_kategori')->unique();
             $table->string('deskripsi');
-            $table->text('keterangan');
+            $table->text('keterangan')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

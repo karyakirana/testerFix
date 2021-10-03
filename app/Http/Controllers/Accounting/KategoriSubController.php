@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
+use App\Models\Accounting\AccountKategori;
+use App\Models\Accounting\AccountKategoriSub;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
-class KategoriSubController extends Controller
+class KategoriSubController extends AccountingController
 {
     /**
      * Display a listing of the resource.
@@ -15,6 +18,12 @@ class KategoriSubController extends Controller
     public function index()
     {
         return view('pages.accounting.kategoriSub');
+    }
+
+    public function dataList()
+    {
+        $data = AccountKategoriSub::with('kategori')->get();
+        return $this->listDatatables($data);
     }
 
     /**
@@ -35,7 +44,21 @@ class KategoriSubController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'kode'=>'required|unique:accounting_kategori_sub,kode_kategori_sub',
+            'kategori'=> 'required',
+            'namaSubKategori'=>'required'
+        ]);
+
+        $data = [
+            'kode_kategori_sub'=>$request->kode,
+            'deskripsi'=>$request->namaSubKategori,
+            'keterangan'=>$request->keterangan,
+            'kategori_id'=>$request->kategori
+        ];
+
+        $store = AccountKategoriSub::updateOrCreate(['id'=>$request->id], $data);
+        return response()->json(['status'=>true, 'keterangan'=>$store]);
     }
 
     /**
@@ -57,7 +80,8 @@ class KategoriSubController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = AccountKategoriSub::find($id);
+        return response()->json($data);
     }
 
     /**
@@ -80,6 +104,7 @@ class KategoriSubController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $delete = AccountKategoriSub::destroy($id);
+        return response()->json(['status'=>true, 'keterangan'=>$delete]);
     }
 }

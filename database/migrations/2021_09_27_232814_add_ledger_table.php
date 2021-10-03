@@ -15,6 +15,7 @@ class AddLedgerTable extends Migration
     {
         Schema::create('ledger', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('account_id');
             $table->unsignedBigInteger('journal_id');
             $table->string('activeCash');
             $table->unsignedBigInteger('journal_ref');
@@ -22,12 +23,6 @@ class AddLedgerTable extends Migration
             $table->bigInteger('kredit');
             $table->softDeletes();
             $table->timestamps();
-
-            //foreign key
-            $table->foreignId('account_id')
-                ->constrained('accounting_account')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')->after('id');
         });
     }
 

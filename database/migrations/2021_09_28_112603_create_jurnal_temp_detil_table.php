@@ -16,7 +16,7 @@ class CreateJurnalTempDetilTable extends Migration
         Schema::create('jurnal_temp_detil', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('journal_id');
-            $table->unsignedBigInteger('account');
+            $table->unsignedBigInteger('account_id');
             $table->bigInteger('debit');
             $table->bigInteger('kredit');
             $table->timestamps();

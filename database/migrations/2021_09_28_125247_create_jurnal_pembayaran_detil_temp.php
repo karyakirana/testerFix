@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLedgerSubTable extends Migration
+class CreateJurnalPembayaranDetilTemp extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class AddLedgerSubTable extends Migration
      */
     public function up()
     {
-        Schema::create('ledger_sub', function (Blueprint $table) {
+        Schema::create('jp_detil_temp', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('account_sub_id');
-            $table->unsignedBigInteger('ledger_id');
-            $table->bigInteger('debit');
-            $table->bigInteger('kredit');
-            $table->softDeletes();
+            $table->unsignedBigInteger('jp_temp');
+            $table->unsignedBigInteger('penjualan_id');
+            $table->unsignedBigInteger('total_bayar');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class AddLedgerSubTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ledger_sub');
+        Schema::dropIfExists('jp_detil_temp');
     }
 }

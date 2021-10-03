@@ -15,17 +15,12 @@ class AddAccountingKategoriSubTable extends Migration
     {
         Schema::create('accounting_kategori_sub', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('kategori_id');
             $table->integer('kode_kategori_sub')->unique();
             $table->string('deskripsi');
-            $table->text('keterangan');
+            $table->text('keterangan')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // foreign key
-            $table->foreignId('kategori_id')
-                ->constrained('accounting_kategori')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')->after('id');
         });
     }
 

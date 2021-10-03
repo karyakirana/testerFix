@@ -15,12 +15,10 @@ class CreateJurnalPembayaranDetilTable extends Migration
     {
         Schema::create('jurnal_pembayaran_detil', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('penjualan_id');
+            $table->unsignedBigInteger('jurnal_pembayaran_id');
+            $table->unsignedBigInteger('jumlah_bayar');
             $table->timestamps();
-
-            $table->foreignId('jurnal_pembayaran_id')
-                ->constrained('jurnal_pembayaran_master')
-                ->onUpdate('cascade')
-                ->onDelete('cascade')->after('id');
         });
     }
 

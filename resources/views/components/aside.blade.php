@@ -589,7 +589,7 @@
                     </ul>
                 </div>
             </li>
-            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+            <li class="menu-item menu-item-submenu {{ (request()->is('kasir*')) ? 'menu-item-open menu-item-here' : '' }}" aria-haspopup="true" data-menu-toggle="hover">
                 <a href="javascript:;" class="menu-link menu-toggle">
 										<span class="svg-icon menu-icon">
 											<!--begin::Svg Icon | path:assets/media/svg/icons/Shopping/Box2.svg-->
@@ -613,20 +613,20 @@
 													<span class="menu-text">Kasir</span>
 												</span>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="features/bootstrap/typography.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('kasir/pembayarannota')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('jurnalPembayaranNota') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
-                                <span class="menu-text">Pemasukan List</span>
+                                <span class="menu-text">Pembayaran Nota</span>
                             </a>
                         </li>
-                        <li class="menu-item" aria-haspopup="true">
-                            <a href="features/bootstrap/buttons.html" class="menu-link">
+                        <li class="menu-item {{ (request()->is('kasir/pembayarannota/baru')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('jurnalPembayaranNotaBaru') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
-                                <span class="menu-text">Pemasukan Baru</span>
+                                <span class="menu-text">Pembayaran Nota Baru</span>
                             </a>
                         </li>
                         <li class="menu-item" aria-haspopup="true">
