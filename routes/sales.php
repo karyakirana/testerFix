@@ -38,7 +38,8 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/sales/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceipt']);
     Route::get('/sales/print/{id}/pdf', [\App\Http\Controllers\Sales\ReceiptController::class, 'salesReceiptPdf']);
 
-    Route::get('/retur/baik/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'returBaikReceipt']);
+    // retur baik printing
+    Route::get('/retur/baik/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'returBaikReceipt'])->name('returBaikReceipt');
 
 });
 

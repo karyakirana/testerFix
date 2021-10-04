@@ -189,7 +189,7 @@ class StockAkhirController extends Controller
 
     public function edit($id)
     {
-        $stock_akhir = StockAkhir::with(['user', 'branchs'])->find($id);
+        $stock_akhir = StockAkhir::with(['user', 'branch'])->find($id);
         $stock = $this->checkSessionEdit($id);
         $data = [
             'idTemp'=>$stock->id,
@@ -198,7 +198,7 @@ class StockAkhirController extends Controller
             'kode'=>$stock_akhir->kode,
             'pembuat'=>$stock_akhir->pembuat,
             'branch'=>$stock_akhir->branchId,
-            'tgl_keluar'=>$stock_akhir->tgl_keluar->format('d-M-Y'),
+            'tgl_keluar'=>$stock_akhir->tglInput->format('d-M-Y'),
             'update'=>true,
             'keterangan'=>$stock_akhir->keterangan
         ];
@@ -231,7 +231,6 @@ class StockAkhirController extends Controller
             // update stock_keluar
             $update = StockAkhir::where('id', $id_stock_akhir)
                 ->update([
-                    'active_cash'=>session('ClosedCash'),
                     'tglInput'=>$tglAkhir,
                     'branchId'=>$request->branch,
                     'pencatat'=>$request->pencatat,

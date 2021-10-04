@@ -102,7 +102,6 @@ class ReceiptController extends Controller
         $idPenjualan = str_replace('-', '/', $id);
 
         $dataPen = ReturBaik::leftJoin('user as u', 'return_bersih.id_user', '=', 'u.id_user')
-            ->leftJoin('users', 'return_bersih.id_user', '=', 'users.idUserOld')
             ->leftJoin('customer as c', 'return_bersih.id_cust', '=', 'c.id_cust')
             ->select(
                 'return_bersih.id_return as penjualanId',
@@ -115,7 +114,6 @@ class ReceiptController extends Controller
                 'total_bayar',
                 'return_bersih.keterangan as penket',
                 'u.username as namaSales1',
-                'users.name as namaSales2',
                 'return_bersih.updated_at as update', // last print
             )
             ->where('id_return', $idPenjualan)
@@ -141,7 +139,7 @@ class ReceiptController extends Controller
         // $dataPenjualan = Penjualan::where('id_jual', $idPenjualan)->first();
         // $dataPenjualanDetail = PenjualanDetail::where('id_jual', $idPenjualan)->get();
         $dataPenjualanDetail = ReturBaikDetil::leftJoin('produk', 'rb_detail.id_produk', '=', 'produk.id_produk')
-            ->where('id_return_detail', $idPenjualan)
+            ->where('id_return', $idPenjualan)
             ->get();
 //        dd($dataPenjualanDetail);
         $data = [

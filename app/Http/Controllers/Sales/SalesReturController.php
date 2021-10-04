@@ -182,9 +182,11 @@ class SalesReturController extends Controller
             // delete temp
             PenjualanTemp::where('id', $idTemp)->delete();
             PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
+            session()->forget('ReturBaik');
             DB::commit();
             $data = [
                 'status'=>true,
+                'nomorRetur' => str_replace('/', '-', $idRetur)
             ];
         } catch (ModelNotFoundException $e){
             DB::rollBack();
@@ -333,9 +335,12 @@ class SalesReturController extends Controller
                     ]);
                 }
             }
+            PenjualanTemp::where('id', $idTemp)->delete();
+            PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
             DB::commit();
             $jsonData = [
-                'status'=>true
+                'status'=>true,
+                'nomorRetur' => str_replace('/', '-', $idRetur)
             ];
         } catch (ModelNotFoundException $e){
             DB::rollBack();

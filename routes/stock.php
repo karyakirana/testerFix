@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function(){
     Route::put('/stock/akhir', [\App\Http\Controllers\Stock\StockAkhirController::class, 'update']);
     Route::get('/stock/akhir/new', [\App\Http\Controllers\Stock\StockAkhirController::class, 'create'])->name('stockAkhirNew');
     Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'edit']);
-    Route::get('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
+    Route::delete('/stock/akhir/edit/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'destroy']);
     Route::get('/stock/akhir/detil', [\App\Http\Controllers\Stock\StockAkhirController::class, 'show'])->name('stockAkhirDetil');
     Route::get('/stock/akhir/detil/{id}', [\App\Http\Controllers\Stock\StockAkhirController::class, 'stockByBranch']);
 

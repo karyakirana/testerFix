@@ -431,7 +431,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("returBaik") }}';
+                            window.location.href = '{{ url('/') }}'+'/retur/baik/print/'+data.nomorRetur;
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
@@ -456,7 +456,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("returBaik") }}';
+                            window.location.href = '{{ url('/') }}'+'/retur/baik/print/'+data.nomorRetur;
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
