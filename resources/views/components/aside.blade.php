@@ -469,7 +469,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{ (request()->is('stock/mutasi/new')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
-                            <a href="/stock/mutasi" class="menu-link">
+                            <a href="/stock/mutasi/new" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>

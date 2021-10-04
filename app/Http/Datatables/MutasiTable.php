@@ -23,6 +23,13 @@ class MutasiTable {
             ->addColumn('user', function($row){
                 return $row->user->username ?? '';
             })
+            ->addColumn('Action', function($row){
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
+                $show = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnShow" data-value="'.$row->id.'" title="show"><i class="flaticon2-indent-dots"></i></a>';
+                $soft = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></a>';
+                return $edit.$show.$soft;
+            })
+            ->rawColumns(['Action'])
             ->make(true);
     }
 

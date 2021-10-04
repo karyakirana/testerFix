@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function(){
     Route::post('/stock/mutasi', [\App\Http\Controllers\Stock\MutasiGudangController::class, 'store']);
     Route::put('/stock/mutasi', [\App\Http\Controllers\Stock\MutasiGudangController::class, 'update']);
     Route::get('/stock/mutasi/new', [\App\Http\Controllers\Stock\MutasiGudangController::class, 'create'])->name('mutasiGudangNew');
+    Route::get('/stock/mutasi/edit/{id}', [\App\Http\Controllers\Stock\MutasiGudangController::class, 'edit']);
 
 
     // Stock Real

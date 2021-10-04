@@ -62,7 +62,7 @@
                         },
                         columns : [
                             {data : 'kode'},
-                            {data : 'tgl_masuk', className: "text-center"},
+                            {data : 'tgl_mutasi', className: "text-center"},
                             {data : 'branchAsal', className: "text-center"},
                             {data : 'branchTujuan', className: "text-center"},
                             {data : 'user', className: "text-center"},

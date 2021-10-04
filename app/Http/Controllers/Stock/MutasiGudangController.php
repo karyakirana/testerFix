@@ -42,7 +42,7 @@ class MutasiGudangController extends Controller
         if (session('mutasi'))
         {
             // jika ada langsung ambil data stock
-            $stock = StockTemp::find(session('mtasi'));
+            $stock = StockTemp::find(session('mutasi'));
         } else {
             // check last temp
             $lastTemp = StockTemp::where('idUser', Auth::id())->where('jenisTemp', 'mutasi')->whereNull('stockMasuk');
@@ -69,7 +69,7 @@ class MutasiGudangController extends Controller
 
     public function kodeMutasi()
     {
-        $data = MutasiGudang::where('active_cash', session('ClosedCash'))->latest()->first();
+        $data = MutasiGudang::where('activeCash', session('ClosedCash'))->latest()->first();
         $num = null;
         if(!$data){
             $num = 1;
@@ -153,7 +153,7 @@ class MutasiGudangController extends Controller
                 'activeCash'=>session('ClosedCash'),
                 'tglMasuk'=>$tglMutasi,
                 'kode'=>$kodeStockMasuk,
-                'idBranch'=>$request->branch,
+                'idBranch'=>$request->branchTujuan,
                 'idSupplier'=>$request->idSupplier,
                 'keterangan'=>$request->keterangan,
                 'idUser'=>Auth::id(),
@@ -162,27 +162,27 @@ class MutasiGudangController extends Controller
             ]);
 
             // insert detil
-            $detilTemp = StockTemp::where('stockTemp', $idTemp)->get();
+            $detilTemp = StockDetilTemp::where('stockTemp', $idTemp)->get();
             foreach ($detilTemp as $row)
             {
                 // insert mutasi_gudang_detil
                 MutasiGudangDetil::create([
                     'id_mutasi_gudang'=>$insertMutasi->id,
-                    'id_produk'=>$row->idBarang,
+                    'id_produk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
 
                 // insert stock_keluar_detil
                 StockKeluarDetil::create([
                     'stock_keluar'=>$insertStockKeluar->id,
-                    'id_produk'=>$row->idBarang,
+                    'id_produk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
 
                 // insert stockmasuk_detil
                 StockMasukDetil::create([
                     'idStockMasuk'=>$insertStockMasuk->id,
-                    'idProduk'=>$row->idBarang,
+                    'idProduk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
 
@@ -193,14 +193,14 @@ class MutasiGudangController extends Controller
                 if ($inventory_real_asal->count() > 0){
                     // update
                     InventoryReal::where('idProduk', $row->idProduk)
-                        ->where('branchId', $request->branch)
+                        ->where('branchId', $request->branchAsal)
                         ->update([
                             'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
                         ]);
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idProduk,
-                        'branchId'=>$request->branch,
+                        'branchId'=>$request->branchAsal,
                         'stockOut'=>$row->jumlah,
                     ]);
                 }
@@ -210,21 +210,23 @@ class MutasiGudangController extends Controller
                 if ($inventory_real_tujuan->count() > 0){
                     // update
                     InventoryReal::where('idProduk', $row->idProduk)
-                        ->where('branchId', $request->branch)
+                        ->where('branchId', $request->branchTujuan)
                         ->update([
                             'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
                         ]);
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idProduk,
-                        'branchId'=>$request->branch,
+                        'branchId'=>$request->branchTujuan,
                         'stockIn'=>$row->jumlah,
                     ]);
                 }
             }
-            PenjualanDetilTemp::where('stockTemp',$idTemp)->delete();
-            PenjualanTemp::destroy($idTemp);
+            StockDetilTemp::where('stockTemp',$idTemp)->delete();
+            StockTemp::destroy($idTemp);
+            session()->forget('mutasi');
             DB::commit();
+            return response()->json(['status'=>true]);
         } catch (ModelNotFoundException $e){
             DB::rollBack();
         }
@@ -244,7 +246,7 @@ class MutasiGudangController extends Controller
             $temp = $this->createSessionStock($id);
         }
         // insert detil
-        $mutasi_detil = MutasiGudangDetil::where('id_mutasu_gudang', $id)->get();
+        $mutasi_detil = MutasiGudangDetil::where('id_mutasi_gudang', $id)->get();
         if ($mutasi_detil->count() > 0)
         {
             foreach ($mutasi_detil as $row)
@@ -271,11 +273,11 @@ class MutasiGudangController extends Controller
             'kode'=>$mutasi->kode,
             'branchAsal'=>$mutasi->branchAsal,
             'branchTujuan'=>$mutasi->branchTujuan,
-            'tgl_keluar'=>$mutasi->tgl_mutasi->format('d-M-Y'),
+            'tgl_keluar'=>$mutasi->tgl_mutasi,
             'keterangan'=>$mutasi->keterangan,
             'update'=>true
         ];
-        return view('pages.stock.stockMutasiGudangTrans', $$data);
+        return view('pages.stock.stockMutasiGudangTrans', $data);
     }
 
     public function update(Request $request)
@@ -285,6 +287,8 @@ class MutasiGudangController extends Controller
         $stockKeluar = StockKeluar::where('penjualan', $idMutasi)->where('jenis_keluar', 'mutasi')->first();
         $tglMutasi = date('Y-m-d', strtotime($request->tgl_mutasi));
         $idTemp = $request->idTemp;
+
+//        dd($stockKeluar);
 
         DB::beginTransaction();
         try {
@@ -302,7 +306,7 @@ class MutasiGudangController extends Controller
             }
             $deleteStockMasukDetil->delete();
             // recovery stock branch tujuan adn deleteStockKeluarDetil
-            $deleteStockKeluarDetil = StockKeluarDetil::where('stock_keluar', $stockKeluar)->id;
+            $deleteStockKeluarDetil = StockKeluarDetil::where('stock_keluar', $stockKeluar->id);
             foreach ($deleteStockKeluarDetil->get() as $row){
                 // update inventory_real
                 InventoryReal::where('idProduk', $row->idProduk)
@@ -326,7 +330,7 @@ class MutasiGudangController extends Controller
             // update data Stock Masuk
             StockMasuk::where('id', $stockMasuk->id)->update([
                 'tglMasuk'=>$tglMutasi,
-                'idBranch'=>$request->branch,
+                'idBranch'=>$request->branchTujuan,
                 'idSupplier'=>$request->idSupplier,
                 'keterangan'=>$request->keterangan,
                 'idUser'=>Auth::id(),
@@ -343,28 +347,32 @@ class MutasiGudangController extends Controller
                 'users'=>Auth::id(),
                 'keterangan'=>$request->keterangan,
             ]);
+
+            // delete mutasi_detil first
+            MutasiGudangDetil::where('id_mutasi_gudang', $idMutasi)->delete();
+
             // insert detil
-            $detilTemp = StockTemp::where('stockTemp', $idTemp)->get();
+            $detilTemp = StockDetilTemp::where('stockTemp', $idTemp)->get();
             foreach ($detilTemp as $row)
             {
                 // insert mutasi_gudang_detil
                 MutasiGudangDetil::create([
                     'id_mutasi_gudang'=>$idMutasi,
-                    'id_produk'=>$row->idBarang,
+                    'id_produk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
 
                 // insert stock_keluar_detil
                 StockKeluarDetil::create([
                     'stock_keluar'=>$stockKeluar->id,
-                    'id_produk'=>$row->idBarang,
+                    'id_produk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
 
                 // insert stockmasuk_detil
                 StockMasukDetil::create([
                     'idStockMasuk'=>$stockMasuk->id,
-                    'idProduk'=>$row->idBarang,
+                    'idProduk'=>$row->idProduk,
                     'jumlah'=>$row->jumlah
                 ]);
 
@@ -375,7 +383,7 @@ class MutasiGudangController extends Controller
                 if ($inventory_real_asal->count() > 0){
                     // update
                     InventoryReal::where('idProduk', $row->idProduk)
-                        ->where('branchId', $request->branch)
+                        ->where('branchId', $request->branchAsal)
                         ->update([
                             'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
                             'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
@@ -383,7 +391,7 @@ class MutasiGudangController extends Controller
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idProduk,
-                        'branchId'=>$request->branch,
+                        'branchId'=>$request->branchAsal,
                         'stockOut'=>$row->jumlah,
                         'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
                     ]);
@@ -394,7 +402,7 @@ class MutasiGudangController extends Controller
                 if ($inventory_real_tujuan->count() > 0){
                     // update
                     InventoryReal::where('idProduk', $row->idProduk)
-                        ->where('branchId', $request->branch)
+                        ->where('branchId', $request->branchTujuan)
                         ->update([
                             'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
                             'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
@@ -402,15 +410,16 @@ class MutasiGudangController extends Controller
                 } else {
                     InventoryReal::create([
                         'idProduk'=>$row->idProduk,
-                        'branchId'=>$request->branch,
+                        'branchId'=>$request->branchTujuan,
                         'stockIn'=>$row->jumlah,
                         'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                     ]);
                 }
             }
-            PenjualanDetilTemp::where('stockTemp',$idTemp)->delete();
-            PenjualanTemp::destroy($idTemp);
+            StockDetilTemp::where('stockTemp',$idTemp)->delete();
+            StockTemp::destroy($idTemp);
             DB::commit();
+            return response()->json(['status'=>true]);
         } catch (ModelNotFoundException $e){
             DB::rollBack();
         }
