@@ -64,6 +64,9 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/real/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index']);
     Route::get('/stock/real/rusak/{id}', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'byBranch']);
 
+    // Input Barang Rusak
+    Route::get('/stock/rusak/masuk', [\App\Http\Controllers\Stock\StockMasukRusakController::class, 'index'])->name('stockRusakMasuk');
+
     // Stock Temp Trans
     Route::post('/stock/temp', [\App\Http\Controllers\Stock\StockTempController::class, 'store']);
     Route::get('/stock/temp/{id}', [\App\Http\Controllers\Stock\StockTempController::class, 'edit']);
