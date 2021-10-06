@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Stock;
 use App\Http\Controllers\Controller;
 use App\Models\Stock\StockMasukRusak;
 use App\Models\Stock\StockTemp;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class StockMasukRusakController extends Controller
@@ -97,7 +99,18 @@ class StockMasukRusakController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $id = null;
+        $idTemp = null;
+        DB::beginTransaction();
+        try {
+            // add stock masuk rusak
+            // update or add inventory real rusak
+            // delete stock temp
+            DB::commit();
+            return response()->json(['status'=>true]);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+        }
     }
 
     /**
