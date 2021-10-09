@@ -61,7 +61,8 @@ Route::middleware(['auth'])->group(function(){
     Route::patch('/stock/real/in/branch/{produk}/{branch}', [\App\Http\Controllers\Stock\StockRekonsiliasiController::class, 'stockMasukByProduk']);
 
     // Stock Rusak
-    Route::get('/stock/real/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index']);
+    Route::get('/stock/real/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'index'])->name('inventoryRealRusak');
+    Route::patch('/stock/real/rusak', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'datatable']);
     Route::get('/stock/real/rusak/{id}', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'byBranch']);
 
     // Input Barang Rusak
