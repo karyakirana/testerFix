@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repositories\Sales\SalesReturDetilRepository;
+use App\Http\Repositories\Sales\SalesReturRepository;
+use App\Http\Repositories\Stock\InventoryRealRepository;
+use App\Http\Repositories\Stock\StockMasukDetilRepository;
+use App\Http\Repositories\Stock\StockMasukRepository;
 use App\Models\Sales\ReturBaikDetil;
 use App\Models\Sales\PenjualanDetil;
 use App\Models\Sales\PenjualanDetilTemp;
@@ -23,33 +28,11 @@ class SalesReturController extends Controller
         return view('pages.sales.returBaik');
     }
 
-    // generate id_return
-    private function idReturBaik()
-    {
-        $data = ReturBaik::where('activeCash', session('ClosedCash'))->latest('id_return')->first();
-        $num = null;
-        if(!$data){
-            $num = 1;
-        } else {
-            $urutan = (int) substr($data->id_return, 0, 4);
-            $num = $urutan + 1;
-        }
-        $id = sprintf("%04s", $num)."/RBB/".date('Y');
-        return $id;
-    }
-
     // generate kode stockmasuk
-    private function kode()
+    private function kode(): string
     {
-        $data = StockMasuk::where('activeCash', session('ClosedCash'))->latest()->first();
-        if(!$data){
-            $num = 1;
-        } else {
-            $urutan = (int) substr($data->kode, 0, 4);
-            $num = $urutan + 1;
-        }
-        $id = sprintf("%04s", $num)."/SM/".date('Y');
-        return $id;
+        $salesReturRepo = new SalesReturRepository();
+        return $salesReturRepo->kode();
     }
 
     private function createTemp($id_retur = null)
@@ -101,87 +84,65 @@ class SalesReturController extends Controller
     public function store(Request $request)
     {
         // variable dasar
-        $idRetur = $this->idReturBaik();
-        $kodeStockMasuk = $this->kode();
+        $idRetur = $this->kode();
         $idTemp = $request->idTemp;
         $tglRetur = date('Y-m-d', strtotime($request->tglNota));
 
         // ambil data dari detil_penjualan_temp
         $detilTemp = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->get();
 
+        // data Request
+        $dataRequest = (object) [
+            'idRetur'=>$idRetur,
+            'branch_id'=>$request->branch,
+            'customer_id'=>$request->idCustomer,
+            'tgl_retur'=>$tglRetur,
+            'ppn'=>$request->ppn,
+            'biaya_lain'=>$request->biayaLain,
+            'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
+            'keterangan'=>$request->keterangan,
+        ];
+//        dd($dataRequest);
+
         DB::beginTransaction();
         try {
             // insert return_bersih
-            $insertRetur = ReturBaik::create([
-                'id_return'=>$idRetur,
-                'id_branch'=>$request->branch,
-                'id_user'=>Auth::id(),
-                'id_cust'=>$request->idCustomer,
-                'tgl_nota'=>$tglRetur,
-                'total_jumlah'=>0,
-                'ppn'=>$request->ppn,
-                'biaya_lain'=>$request->biayaLain,
-                'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLainß,
-                'keterangan'=>$request->keterangan,
-                'activeCash'=>session('ClosedCash')
-            ]);
+            $salesReturRepo = new SalesReturRepository();
+            $insertRetur = $salesReturRepo->create($dataRequest);
 
             // insert stockmasuk
-            $insertStockMasuk = StockMasuk::create([
-                'activeCash'=>session('ClosedCash'),
-                'kode'=>$kodeStockMasuk,
-                'idBranch'=>$request->branch,
-                'idSupplier'=>null,
-                'idUser'=>Auth::id(),
-                'tglMasuk'=>$tglRetur,
-                'keterangan'=>$request->keterangan,
-                'id_penjualan'=>$idRetur,
-                'jenis_masuk'=>'Retur'
-            ]);
+            $stockMasukRepo = new StockMasukRepository();
+            $insertStockMasuk = $stockMasukRepo->create($dataRequest);
 
             // insert detail from detil_penjualan_temp
             foreach ($detilTemp as $row)
             {
-                // insert rb_detail
-                ReturBaikDetil::create([
+                $dataDetilTemp = (object)[
                     'id_return'=>$idRetur,
+                    'id_stock_masuk'=>$insertStockMasuk->id,
+                    'branch_id'=>$request->branch,
                     'id_produk'=>$row->idBarang,
-                    'jumlah'=>$row->jumlah,
                     'harga'=>$row->harga,
+                    'jumlah'=>$row->jumlah,
                     'diskon'=>$row->diskon,
-                    'sub_total'=>$row->sub_total
-                ]);
+                    'sub_total'=>$row->sub_total,
+                ];
+                // insert rb_detail
+                $returDetil = new SalesReturDetilRepository();
+                $returDetil->create($dataDetilTemp);
 
                 // insert stockmasuk_detil
-                StockMasukDetil::create([
-                    'idStockMasuk'=>$insertStockMasuk->id,
-                    'idProduk'=>$row->idBarang,
-                    'jumlah'=>$row->jumlah
-                ]);
+                $stockMasukDetil = new StockMasukDetilRepository();
+                $stockMasukDetil->create($dataDetilTemp);
 
                 // insert or update inventory real
-                $inventory_real = InventoryReal::where('idProduk', $row->idBarang)
-                    ->where('branchId', $request->branch)->get();
-                if ($inventory_real->count() > 0){
-                    // update
-                    InventoryReal::where('idProduk', $row->idBarang)
-                        ->where('branchId', $request->branch)
-                        ->update([
-                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
-                        ]);
-                } else {
-                    InventoryReal::create([
-                        'idProduk'=>$row->idBarang,
-                        'branchId'=>$request->branch,
-                        'stockIn'=>$row->jumlah,
-                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
-                    ]);
-                }
+                $inventoryRealRepo = new InventoryRealRepository();
+                $inventoryRealRepo->insertOrUpdate($dataDetilTemp);
             }
             // delete temp
             PenjualanTemp::where('id', $idTemp)->delete();
             PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
+            // forget session
             session()->forget('ReturBaik');
             DB::commit();
             $data = [
@@ -249,7 +210,6 @@ class SalesReturController extends Controller
     {
         // variable dasar
         $idRetur = $request->id;
-        $kodeStockMasuk = $this->kode();
         $idTemp = $request->idTemp;
         $tglRetur = date('Y-m-d', strtotime($request->tglNota));
 
@@ -259,6 +219,17 @@ class SalesReturController extends Controller
         $dataLama = ReturBaik::where('id_return', $idRetur)->first();
         $dataLamaStockMasuk = StockMasuk::where('id_penjualan', $idRetur)->first();
 
+        $dataRequest = (object)[
+            'idRetur'=>$idRetur,
+            'branch_id'=>$request->branch,
+            'customer_id'=>$request->idCustomer,
+            'tgl_retur'=>$tglRetur,
+            'ppn'=>$request->ppn,
+            'biaya_lain'=>$request->biayaLain,
+            'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
+            'keterangan'=>$request->keterangan,
+        ];
+
         DB::beginTransaction();
         try {
             // hapus detil_retur
@@ -266,74 +237,42 @@ class SalesReturController extends Controller
             // mengembalikan inventory sebelumnya
             foreach ($deleteDetil->get() as $row){
                 // update inventory_real
-                InventoryReal::where('idProduk', $row->id_produk)
-                    ->where('branchId', $dataLama->id_branch)
-                    ->update([
-                        'stockIn'=>DB::raw('stockIn -'.$row->jumlah),
-                        'stockNow'=>DB::raw('stockNow -'.$row->jumlah),
-                    ]);
+                $inventoryRollback = new InventoryRealRepository();
+                $inventoryRollback->rollback($row, $dataLamaStockMasuk->idBranch);
             }
             // eksekusi hapus detil_retur
             $deleteDetil->delete();
-            ReturBaik::where('id_return', $idRetur)->update([
-                'id_branch'=>$request->branch,
-                'id_user'=>Auth::id(),
-                'id_cust'=>$request->idCustomer,
-                'tgl_nota'=>$tglRetur,
-                'total_jumlah'=>0,
-                'ppn'=>$request->ppn,
-                'biaya_lain'=>$request->biayaLain,
-                'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
-                'keterangan'=>$request->keterangan
-            ]);
-            $stockMasuk = StockMasuk::where('id', $dataLamaStockMasuk->id)->update([
-                'idBranch'=>$request->branch,
-                'idUser'=>Auth::id(),
-                'tglMasuk'=>$tglRetur,
-                'keterangan'=>$request->keterangan
-            ]);
             // delete stockmasuk_detil
             StockMasukDetil::where('idStockMasuk', $dataLamaStockMasuk->id)->delete();
-            // simpan dari detil Temp
-            // insert detail from detil_penjualan_temp
+            // update Retur
+            $updateRetur = new SalesReturRepository();
+            $updateRetur->update($idRetur, $dataRequest);
+            // update stock masuk
+            $updateStock = new StockMasukRepository();
+            $updateStock->update($dataLamaStockMasuk->id, $dataRequest);
             foreach ($detilTemp as $row)
             {
-                // insert rb_detail
-                ReturBaikDetil::create([
+                $dataDetilTemp = (object)[
                     'id_return'=>$idRetur,
+                    'id_stock_masuk'=>$dataLamaStockMasuk->id,
+                    'branch_id'=>$request->branch,
                     'id_produk'=>$row->idBarang,
-                    'jumlah'=>$row->jumlah,
                     'harga'=>$row->harga,
+                    'jumlah'=>$row->jumlah,
                     'diskon'=>$row->diskon,
-                    'sub_total'=>$row->sub_total
-                ]);
+                    'sub_total'=>$row->sub_total,
+                ];
+                // insert rb_detail
+                $returDetil = new SalesReturDetilRepository();
+                $returDetil->create($dataDetilTemp);
 
                 // insert stockmasuk_detil
-                StockMasukDetil::create([
-                    'idStockMasuk'=>$dataLamaStockMasuk->id,
-                    'idProduk'=>$row->idBarang,
-                    'jumlah'=>$row->jumlah
-                ]);
+                $stockMasukDetil = new StockMasukDetilRepository();
+                $stockMasukDetil->create($dataDetilTemp);
 
                 // insert or update inventory real
-                $inventory_real = InventoryReal::where('idProduk', $row->idBarang)
-                    ->where('branchId', $request->branch)->get();
-                if ($inventory_real->count() > 0){
-                    // update
-                    InventoryReal::where('idProduk', $row->idBarang)
-                        ->where('branchId', $request->branch)
-                        ->update([
-                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
-                        ]);
-                } else {
-                    InventoryReal::create([
-                        'idProduk'=>$row->idBarang,
-                        'branchId'=>$request->branch,
-                        'stockIn'=>$row->jumlah,
-                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
-                    ]);
-                }
+                $inventoryRealRepo = new InventoryRealRepository();
+                $inventoryRealRepo->insertOrUpdate($dataDetilTemp);
             }
             PenjualanTemp::where('id', $idTemp)->delete();
             PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();

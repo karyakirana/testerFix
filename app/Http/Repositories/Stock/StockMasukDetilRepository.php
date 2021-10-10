@@ -9,9 +9,9 @@ class StockMasukDetilRepository
     public function create($dataStockDetil)
     {
         return StockMasukDetil::create([
-            'idStockMasuk',
-            'idProduk',
-            'jumlah'
+            'idStockMasuk'=>$dataStockDetil->id_stock_masuk,
+            'idProduk'=>$dataStockDetil->id_produk,
+            'jumlah'=>$dataStockDetil->jumlah
         ]);
     }
 
