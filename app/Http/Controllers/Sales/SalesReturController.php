@@ -28,6 +28,16 @@ class SalesReturController extends Controller
         return view('pages.sales.returBaik');
     }
 
+    public function listData()
+    {
+        //
+    }
+
+    public function listDetilData($idRetur)
+    {
+        //
+    }
+
     // generate kode stockmasuk
     private function kode(): string
     {

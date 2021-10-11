@@ -14,7 +14,7 @@ class StockRusakMasukRepository
 
     public static function getKode() : string
     {
-        $data = StockMasukRusak::where('active_cash', session('ClosedCash'))->latest()->first();
+        $data = StockMasukRusak::where('activeCash', session('ClosedCash'))->latest()->first();
         if(!$data){
             $num = 1;
         } else {
@@ -41,9 +41,17 @@ class StockRusakMasukRepository
         ]);
     }
 
-    public function update($dataStockRusakIn)
+    public static function update($id, $dataStockRusakIn)
     {
-        //
+        return StockMasukRusak::where('id', $id)
+            ->update([
+            'branch_id'=>$dataStockRusakIn->branch_id,
+            'customer_id'=>$dataStockRusakIn->customer_id ?? null,
+            'user_id'=>$dataStockRusakIn->user_id,
+            'tgl_masuk_rusak'=>$dataStockRusakIn->tgl_nota,
+            'mutasi_id'=>null,
+            'keterangan'=>$dataStockRusakIn->keterangan
+        ]);
     }
 
     public function destroy($idStockRusakIn)

@@ -14,6 +14,7 @@ class InventoryRusak extends Model
     protected $fillable = [
         'idProduk',
         'branchId',
+        'stockOpname',
         'stockIn',
         'stockOut',
         'stockNow',

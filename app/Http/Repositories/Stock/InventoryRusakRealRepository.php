@@ -43,6 +43,7 @@ class InventoryRusakRealRepository
             InventoryRusak::create([
                 'idProduk'=>$dataDetil->produk_id,
                 'branchId'=>$branch,
+                'stockOpname'=>0,
                 'stockIn'=>$dataDetil->jumlah
             ]);
         }

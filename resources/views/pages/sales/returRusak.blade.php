@@ -14,9 +14,8 @@
                 <td width="20%" class="text-center">Customer</td>
                 <td class="none">Cabang</td>
                 <td class="text-center">Tgl retur</td>
-                <td class="none">Status</td>
-                <td class="text-center">Total Bayar</td>
                 <td class="none text-center">Pembuat</td>
+                <td class="text-center">Total Bayar</td>
                 <td class="none text-center">PPN</td>
                 <td class="none text-center">Biaya Lain</td>
                 <td class="none text-center">Keterangan</td>
@@ -182,12 +181,11 @@
                         {data : 'customer'},
                         {data : 'branch'},
                         {data : 'tgl_nota'},
-                        {data : 'total_bayar', className: "text-right"},
                         {data : 'user'},
+                        {data : 'total_bayar', className: "text-right"},
                         {data : 'ppn'},
                         {data : 'biaya_lain'},
                         {data : 'keterangan'},
-                        {data : 'print', className: "text-center"},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],
                     columnDefs: [

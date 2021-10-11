@@ -2,7 +2,7 @@
 
 namespace App\Http\Repositories\Stock;
 
-use App\Models\Stock\StockMasukRusak;
+use App\Models\Stock\StockMasukRusakDetil;
 
 class StockRusakMasukDetilRepository
 {
@@ -13,7 +13,7 @@ class StockRusakMasukDetilRepository
 
     public static function create($dataDetil)
     {
-        return StockMasukRusak::create([
+        return StockMasukRusakDetil::create([
             'stock_masuk_rusak_id'=>$dataDetil->stock_masuk_rusak_id,
             'produk_id'=>$dataDetil->produk_id,
             'jumlah'=>$dataDetil->jumlah
