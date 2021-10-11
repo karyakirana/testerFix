@@ -12,7 +12,19 @@ class StockMasukRusak extends Model
     use HasFactory;
 
     protected $table = 'stock_masuk_rusak';
-    protected $fillable = ['kode', 'retur_id', 'customer_id', 'supplier_id', 'user_id', 'tgl_masuk_rusak', 'keterangan'];
+    protected $fillable = [
+        'jenis',
+        'activeCash',
+        'kode',
+        'branch_id',
+        'retur_id',
+        'customer_id',
+        'supplier_id',
+        'user_id',
+        'tgl_masuk_rusak',
+        'mutasi_id',
+        'keterangan'
+    ];
 
     public function customer()
     {

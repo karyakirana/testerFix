@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
-use App\Models\ReturRusakDetil;
+use App\Http\Repositories\Sales\SalesReturRusakRepository;
+use App\Http\Repositories\Stock\StockRusakMasukRepository;
+use App\Models\Sales\ReturRusakDetil;
 use App\Models\Sales\PenjualanDetilTemp;
 use App\Models\Sales\PenjualanTemp;
 use App\Models\Sales\ReturRusak;
@@ -66,6 +68,7 @@ class SalesBadReturController extends Controller
             $num = $urutan + 1;
         }
         $id = sprintf("%04s", $num)."/RR/".date('Y');
+        return $id;
     }
 
     public function kodeStockRusak()
@@ -83,37 +86,37 @@ class SalesBadReturController extends Controller
 
     public function store(Request $request)
     {
-        $idRetur = $this->idReturRusak();
+        $idRetur = SalesReturRusakRepository::kode();
         $kodeStockMasuk = $this->kodeStockRusak();
         $idTemp = $request->idTemp;
         $tglRetur = date('Y-m-d', strtotime($request->tglNota));
+        // ambil data dari detil_penjualan_temp
+        $detilTemp = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->get();
+
+        $dataRequest = (object)[
+            'retur_id'=>$idRetur,
+            'branch_id'=>$request->branch,
+            'user_id'=>Auth::id(),
+            'customer_id'=>$request->idCustomer,
+            'tgl_nota'=>$request->tglRetur,
+            'total_jumlah'=>0,
+            'ppn'=>$request->nota,
+            'biaya_lain'=>$request->biaya_lain,
+            'total_bayar'=>$detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain,
+            'keterangan'=>$request->keterangan,
+            // for Stock Masuk Rusak
+            'jenis_masuk'=>'Retur Baik'
+        ];
 
         DB::beginTransaction();
         try {
             // insert Retur Rusak
-            $returRusak = ReturRusak::create([
-                'id_rr'=>$idRetur,
-                'id_branch'=>$request->branch,
-                'id_user'=>Auth::id(),
-                'id_cust'=>$request->idCustomer,
-                'tgl_nota'=>$tglRetur,
-                'total_jumlah'=>0,
-                'ppn'=>$request->ppn,
-                'biaya_lain'=>$request->biaya_lain,
-                'total_bayar'=>$request->total_bayar,
-                'keterangan'=>$request->keterangan,
-                'activeCash'=>session('ClosedCash')
-            ]);
+            $returRusakSave = new SalesReturRusakRepository();
+            $returRusakSave->create($dataRequest);
+
             // insert stockMasuk
-            $stockMasuk = StockMasuk::create([
-                'activeCash'=>session('ClosedCash'),
-                'id_penjualan'=>$idRetur,
-                'jenis_masuk'=>'Retur Rusak',
-                'kode'=>$kodeStockMasuk,
-                'idBranch'=>$request->branch,
-                'idUser'=>Auth::id(),
-                'tglMasuk'=>$tglRetur
-            ]);
+            $stockMasukRusak = new StockRusakMasukRepository();
+            $stockMasuk = $stockMasukRusak->create($dataRequest);
 
             // insert detail
             $detil = StockDetilTemp::where('idPenjualanTemp', $idTemp);
