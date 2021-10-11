@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repositories\Sales\SalesReturRusakDetilRepository;
 use App\Http\Repositories\Sales\SalesReturRusakRepository;
+use App\Http\Repositories\Stock\InventoryRusakRealRepository;
+use App\Http\Repositories\Stock\StockRusakMasukDetilRepository;
 use App\Http\Repositories\Stock\StockRusakMasukRepository;
 use App\Models\Sales\ReturRusakDetil;
 use App\Models\Sales\PenjualanDetilTemp;
@@ -121,42 +124,25 @@ class SalesBadReturController extends Controller
             // insert detail
             $detil = StockDetilTemp::where('idPenjualanTemp', $idTemp);
             foreach ($detil->get() as $row){
-                // insert rr_detail
-                ReturRusakDetil::create([
-                    'id_rr'=>$idRetur,
-                    'id_produk'=>$row->idBarang,
+
+                $dataDetil = (object)[
+                    'retur_rusak_id'=>$idRetur,
+                    'stock_masuk_rusak_id'=>$stockMasuk->id,
+                    'produk_id'=>$row->idBarang,
                     'jumlah'=>$row->jumlah,
                     'harga'=>$row->harga,
                     'diskon'=>$row->diskon,
                     'sub_total'=>$row->sub_total
-                ]);
+                ];
+
+                // insert rr_detail
+                SalesReturRusakDetilRepository::create($dataDetil);
 
                 // insert stockmasuk detil
-                StockMasukDetil::create([
-                    'idStockMasuk'=>$stockMasuk->id,
-                    'idProduk'=>$row->idBarang,
-                    'jumlah'=>$row->jumlah,
-                ]);
+                StockRusakMasukDetilRepository::create($dataDetil);
 
                 // insert or update inventory real
-                $inventory_real = InventoryRusak::where('idProduk', $row->idBarang)
-                    ->where('branchId', $request->branch)->get();
-                if ($inventory_real->count() > 0){
-                    // update
-                    InventoryRusak::where('idProduk', $row->idBarang)
-                        ->where('branchId', $request->branch)
-                        ->update([
-                            'stockIn'=>DB::raw('stockIn +'.$row->jumlah),
-                            'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
-                        ]);
-                } else {
-                    InventoryRusak::create([
-                        'idProduk'=>$row->idBarang,
-                        'branchId'=>$request->branch,
-                        'stockIn'=>$row->jumlah,
-                        'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
-                    ]);
-                }
+                InventoryRusakRealRepository::CreateStockIn($request->branch, $dataDetil);
             }
             $detil->delete();
             PenjualanTemp::destroy($idTemp);

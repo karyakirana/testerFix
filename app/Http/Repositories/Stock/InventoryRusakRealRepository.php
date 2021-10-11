@@ -28,20 +28,33 @@ class InventoryRusakRealRepository
             ->get();
     }
 
-    /**
-     * @param $data
-     * @return mixed
-     */
-    public function createOrUpdate($data)
+    public static function CreateStockIn($branch, $dataDetil)
     {
-        return InventoryRusak::updateOrInsert(
-            [
-                'idProduk'=>$data->idProduk,
-                'branchId'=>$data->branch,
-            ],
-            [
-                'stockOut'=>DB::raw('stockOut +'.$data->jumlah),
-            ]
-        );
+        $inventory = InventoryRusak::where('idProduk', $dataDetil->produk_id)
+            ->where('branchId', $branch)->get()->count();
+        if ($inventory > 0){
+            InventoryRusak::where('idProduk', $dataDetil->produk_id)
+                ->where('branchId', $branch)
+                ->update([
+                    'stockIn'=>DB::raw('stockIn +'.$dataDetil->jumlah),
+                    'stockNow'=>DB::raw('stockNow +'.$dataDetil->jumlah),
+                ]);
+        } else {
+            InventoryRusak::create([
+                'idProduk'=>$dataDetil->produk_id,
+                'branchId'=>$branch,
+                'stockIn'=>$dataDetil->jumlah
+            ]);
+        }
+    }
+
+    public static function rollbackStockIn($branch, $dataDetil)
+    {
+        InventoryRusak::where('idProduk', $dataDetil->produk_id)
+            ->where('branchId', $branch)
+            ->update([
+                'stockIn'=>DB::raw('stockIn -'.$dataDetil->jumlah),
+            ]);
     }
 }
+
