@@ -15,6 +15,7 @@ class ReturRusak extends Model
     protected $table = 'return_rusak';
     protected $fillable = [
         'id_rr',
+        'retur_rusak_id',
         'id_branch',
         'id_user',
         'id_cust',
@@ -26,6 +27,20 @@ class ReturRusak extends Model
         'keterangan',
         'activeCash'
     ];
+
+    protected $casts = [
+        'tgl_nota'=>'datetime:d-M-Y'
+    ];
+
+    protected function getTotalBayarAttribute($value)
+    {
+        return number_format($value, '0', ',', '.');
+    }
+
+    public function scopeRelation($query)
+    {
+        return $query->with(['user', 'customer', 'branch']);
+    }
 
     public function user()
     {

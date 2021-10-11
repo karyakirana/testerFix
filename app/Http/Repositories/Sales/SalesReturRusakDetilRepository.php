@@ -9,7 +9,7 @@ class SalesReturRusakDetilRepository
     public static function create($dataDetil)
     {
         return ReturRusakDetil::create([
-            'id_rr'=>$dataDetil->retur_rusak_id,
+            'retur_rusak_id'=>$dataDetil->retur_rusak_id,
             'id_produk'=>$dataDetil->produk_id,
             'jumlah'=>$dataDetil->jumlah,
             'harga'=>$dataDetil->harga,

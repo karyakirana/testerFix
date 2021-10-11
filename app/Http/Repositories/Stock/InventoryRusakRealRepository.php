@@ -37,7 +37,6 @@ class InventoryRusakRealRepository
                 ->where('branchId', $branch)
                 ->update([
                     'stockIn'=>DB::raw('stockIn +'.$dataDetil->jumlah),
-                    'stockNow'=>DB::raw('stockNow +'.$dataDetil->jumlah),
                 ]);
         } else {
             InventoryRusak::create([
@@ -51,7 +50,7 @@ class InventoryRusakRealRepository
 
     public static function rollbackStockIn($branch, $dataDetil)
     {
-        InventoryRusak::where('idProduk', $dataDetil->produk_id)
+        InventoryRusak::where('idProduk', $dataDetil->id_produk)
             ->where('branchId', $branch)
             ->update([
                 'stockIn'=>DB::raw('stockIn -'.$dataDetil->jumlah),

@@ -11,6 +11,7 @@ class ReturRusakDetil extends Model
     use HasFactory;
     protected $table = 'rr_detail';
     protected $fillable =[
+        'retur_rusak_id',
         'id_rr',
         'id_produk',
         'jumlah',
@@ -18,6 +19,11 @@ class ReturRusakDetil extends Model
         'diskon',
         'sub_total'
     ];
+
+    public function scopeRelation($query)
+    {
+        return $query->with(['produk']);
+    }
 
     public function produk()
     {

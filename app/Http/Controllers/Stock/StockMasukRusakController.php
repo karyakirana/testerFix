@@ -16,13 +16,17 @@ class StockMasukRusakController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
         return view('pages.stock.stockMasukRusak');
     }
 
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
     public function listData()
     {
         $data = StockMasukRusak::with(['customer', 'supplier'])->get();

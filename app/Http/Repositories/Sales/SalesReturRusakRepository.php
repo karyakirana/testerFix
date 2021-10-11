@@ -36,4 +36,20 @@ class SalesReturRusakRepository
             'activeCash'=>session('ClosedCash')
         ]);
     }
+
+    public static function update($id, $dataReturRusak)
+    {
+        return ReturRusak::where('id', $id)
+            ->update([
+                'id_branch'=>$dataReturRusak->branch_id,
+                'id_user'=>$dataReturRusak->user_id,
+                'id_cust'=>$dataReturRusak->customer_id,
+                'tgl_nota'=>$dataReturRusak->tgl_nota,
+                'total_jumlah'=>0,
+                'ppn'=>$dataReturRusak->ppn,
+                'biaya_lain'=>$dataReturRusak->biaya_lain,
+                'total_bayar'=>$dataReturRusak->total_bayar,
+                'keterangan'=>$dataReturRusak->keterangan,
+            ]);
+    }
 }

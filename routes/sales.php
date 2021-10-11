@@ -23,11 +23,15 @@ Route::middleware(['auth'])->group(function (){
 
     // Retur Rusak
     Route::get('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'index'])->name('returRusak');
+    Route::patch('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'listData']);
     Route::put('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'update']);
     Route::post('/retur/rusak/', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'store']);
     Route::get('/retur/rusak/new', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'create'])->name('returRusakNew');
-    Route::get('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'create']);
+    Route::get('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'edit']);
+    Route::put('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'show']);
+    Route::patch('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'listDataDetil']);
     Route::delete('/retur/rusak/edit/{id}', [\App\Http\Controllers\Sales\SalesBadReturController::class, 'destroy']);
+    Route::get('/retur/rusak/print/{id}', [\App\Http\Controllers\Sales\ReceiptController::class, 'returRusakReceipt']);
 
     // temp transaction
     Route::post('sales/temp/', [\App\Http\Controllers\Sales\DetilTempController::class, 'store']);

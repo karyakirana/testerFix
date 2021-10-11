@@ -25,14 +25,14 @@ class StockRusakMasukRepository
         return $id;
     }
 
-    public function create($dataStockRusakIn)
+    public function create($dataStockRusakIn, $idReturRusak=null)
     {
         return StockMasukRusak::create([
             'jenis'=>$dataStockRusakIn->jenis_masuk,
             'activeCash'=>session('ClosedCash'),
             'kode'=>$this->getKode(),
             'branch_id'=>$dataStockRusakIn->branch_id,
-            'retur_id'=>$dataStockRusakIn->retur_id ?? null,
+            'retur_id'=>$idReturRusak,
             'customer_id'=>$dataStockRusakIn->customer_id ?? null,
             'user_id'=>$dataStockRusakIn->user_id,
             'tgl_masuk_rusak'=>$dataStockRusakIn->tgl_nota,

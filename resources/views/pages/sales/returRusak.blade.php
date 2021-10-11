@@ -12,7 +12,7 @@
             <tr>
                 <td width="10%" class="text-center">ID</td>
                 <td width="20%" class="text-center">Customer</td>
-                <td class="none">Cabang</td>
+                <td class="text-center">Cabang</td>
                 <td class="text-center">Tgl retur</td>
                 <td class="none text-center">Pembuat</td>
                 <td class="text-center">Total Bayar</td>
@@ -79,13 +79,13 @@
 
             $('body').on('click', '#btnEdit', function(){
                 let editData = $(this).data("value");
-                window.location.href = '{{ url('/') }}'+'/retur/baik/edit/'+editData;
+                window.location.href = '{{ url('/') }}'+'/retur/rusak/edit/'+editData;
             });
 
             // sales
             $('body').on('click', '#btnPrint', function (){
                 let printData = $(this).data("value");
-                window.location.href = '{{url('/')}}'+'/retur/baik/print/'+printData;
+                window.location.href = '{{url('/')}}'+'/retur/rusak/print/'+printData;
             });
 
             jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
@@ -121,8 +121,8 @@
             function showData(id)
             {
                 $.ajax({
-                    url : '{{ url('/') }}'+'/retur/baik/list/'+id,
-                    method: "GET",
+                    url : '{{ url('/') }}'+'/retur/rusak/edit/'+id,
+                    method: "PUT",
                     dataType : "JSON",
                     success : function (data){
                         $('#ppn').html(data.ppn);
@@ -140,9 +140,9 @@
                     responsive : true,
                     autoWidth: false,
                     ajax : {
-                        header : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),"id": id},
-                        url : '{{url('/')}}'+'/data/retur/rusak/'+id,
-                        method : 'POST',
+                        header : $('meta[name="csrf-token"]').attr('content'),
+                        url : '{{url('/')}}'+'/retur/rusak/edit/'+id,
+                        method : 'PATCH',
                     },
                     columns : [
                         {data : 'DT_RowIndex', className: "text-center", width: '5%'},
@@ -173,15 +173,15 @@
                     responsive : true,
                     ajax : {
                         headers : tokenCsrf,
-                        url : '{{ route("returRusakList") }}',
+                        url : '{{ route("returRusak") }}',
                         method : 'PATCH'
                     },
                     columns : [
                         {data : 'id_rr'},
-                        {data : 'customer'},
-                        {data : 'branch'},
+                        {data : 'customer.nama_cust'},
+                        {data : 'branch.branchName'},
                         {data : 'tgl_nota'},
-                        {data : 'user'},
+                        {data : 'user.name'},
                         {data : 'total_bayar', className: "text-right"},
                         {data : 'ppn'},
                         {data : 'biaya_lain'},
@@ -196,11 +196,6 @@
                     ],
                 });
             }
-
-            $('body').on('click', '#btnEdit', function (){
-                let editData = $(this).data("value");
-                window.location.href = '{{url('/')}}'+'/retur/rusak/edit/'+editData;
-            })
 
             jQuery(document).ready(function (){
                 tablePenjualan();

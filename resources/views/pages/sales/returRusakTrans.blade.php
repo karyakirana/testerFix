@@ -431,7 +431,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("returRusak") }}';
+                            window.location.href = '{{ url('/') }}'+'/retur/rusak/print/'+data.id;
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
@@ -456,7 +456,7 @@
                     data : $('#formGlobal, #formTable').serialize(),
                     success : function (data){
                         if (data.status){
-                            window.location.href = '{{ route("returRusak") }}';
+                            window.location.href = '{{ url('/') }}'+'/retur/rusak/print/'+data.id;
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
