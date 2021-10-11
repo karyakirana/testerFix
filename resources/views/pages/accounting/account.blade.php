@@ -30,25 +30,19 @@
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Kode</label>
                     <div class="col-9">
-                        <input type="text" class="form-control" name="kode">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Kategori</label>
-                    <div class="col-9">
-                        <select name="kategori" id="kategori"></select>
+                        <input type="text" class="form-control" name="kodeAccount">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Sub Kategori</label>
                     <div class="col-9">
-                        <select name="subKategori" id="subKategori"></select>
+                        <select name="subKategori" id="kategoriSubId"></select>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Akun</label>
                     <div class="col-9">
-                        <input type="text" class="form-control" name="akun">
+                        <input type="text" class="form-control" name="namaAkun">
                     </div>
                 </div>
                 <div class="form-group row">

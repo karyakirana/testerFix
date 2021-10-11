@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
+use App\Models\Accounting\Account;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class AccountController extends Controller
 {
@@ -17,14 +19,17 @@ class AccountController extends Controller
         return view('pages.accounting.account');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function listData()
     {
-        //
+        $data = Account::all();
+        return DataTables::of($data)
+            ->addColumn('Action', function ($row){
+                $soft = '<button type="button" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></button>';
+                $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
+                return $edit.$soft;
+            })
+            ->rawColumns(['Action'])
+            ->make(true);
     }
 
     /**
@@ -35,18 +40,21 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'kategoriSubId'=>'required',
+            'kodeAccount'=>'required|unique:accounting_account',
+            'namaAkun'=>'required'
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        $data = [
+            'kategori_sub_id'=>$request->kategoriSubId,
+            'kode_account'=>$request->kodeAccount,
+            'account_name'=>$request->namaAkun,
+            'keterangan'=>$request->keterangan
+        ];
+
+        $store = Account::updateOrInsert([$request->id], $data);
+        return response()->json(['status'=>true, 'action'=>$store]);
     }
 
     /**
@@ -57,19 +65,8 @@ class AccountController extends Controller
      */
     public function edit($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        $data = Account::find($id);
+        return response()->json($data);
     }
 
     /**
@@ -80,6 +77,7 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $destroy=Account::destroy($id);
+        return response()->json(['status'=>true]);
     }
 }

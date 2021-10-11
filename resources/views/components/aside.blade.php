@@ -518,6 +518,7 @@
                     </ul>
                 </div>
             </li>
+            @can('Keuangan')
             <li class="menu-section">
                 <h4 class="menu-text">Keuangan</h4>
                 <i class="menu-icon ki ki-bold-more-hor icon-md"></i>
@@ -731,6 +732,7 @@
                     </ul>
                 </div>
             </li>
+            @endcan
         </ul>
         <!--end::Menu Nav-->
     </div>
