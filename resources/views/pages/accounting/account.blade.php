@@ -36,7 +36,14 @@
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Sub Kategori</label>
                     <div class="col-9">
-                        <select name="subKategori" id="kategoriSubId"></select>
+                        @php
+                            $kategori = \App\Models\Accounting\AccountKategoriSub::all();
+                        @endphp
+                        <select name="subKategori" class="form-control" id="kategoriSubId">
+                            @foreach($kategori as $row)
+                                <option value="{{$row->id}}">{{ $row->deskripsi }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -60,5 +67,58 @@
         </x-nano.modal-standart>
 
     </x-mikro.card-custom>
+
+    @push('scripts')
+        <script>
+            // add data
+            $('#btnNew').click(function () {
+                // reset form
+                $('#formModal').trigger('reset');
+                // reset validate
+                $('.invalid-feedback').remove();
+                $('.is-invalid').removeClass('is-invalid');
+                // show modal
+                $('#modalForm').modal('show');
+            });
+
+            // datatables
+            function listData ()
+            {
+                $('#listTable').DataTable({
+                    order : [],
+                    responsive : true,
+                    ajax : {
+                        headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url : '{{ route("accountingAccount") }}',
+                        method : 'PATCH'
+                    },
+                    columns : [
+                        {data : 'kode_account'},
+                        {data : 'kode_account'},
+                        {data : 'kategori_sub_id'},
+                        {data : 'account_name'},
+                        {data : 'keterangan'},
+                        {data : 'Action', responsivePriority: -1, className: "text-center"},
+                    ],
+                    columnDefs: [
+                        {
+                            targets : [-1],
+                            orderable: false
+                        }
+                    ],
+                });
+            }
+
+            // reload table
+            function reloadTable()
+            {
+                $('#listTable').DataTable().ajax.reload();
+            }
+
+            jQuery(document).ready(function() {
+                listData();
+            });
+        </script>
+    @endpush
 
 </x-makro.list-data>

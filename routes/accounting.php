@@ -20,6 +20,8 @@ Route::middleware(['auth'])->group(function(){
 
     // account
     Route::get('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'index'])->name('accountingAccount');
+    Route::patch('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'listData']);
+    Route::post('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'store']);
 
     // account-sub
     Route::get('accounting/master/accountsub', [\App\Http\Controllers\Accounting\AccountSubController::class, 'index'])->name('accountingSubAccount');
