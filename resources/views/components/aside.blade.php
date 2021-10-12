@@ -627,7 +627,7 @@
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>
-                                <span class="menu-text">Pembayaran Nota Baru</span>
+                                <span class="menu-text">Biaya Nota</span>
                             </a>
                         </li>
                         <li class="menu-item" aria-haspopup="true">
@@ -696,6 +696,14 @@
 												<span class="menu-link">
 													<span class="menu-text">Jurnal</span>
 												</span>
+                        </li>
+                        <li class="menu-item" aria-haspopup="true">
+                            <a href="features/bootstrap/typography.html" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Status Penjualan</span>
+                            </a>
                         </li>
                         <li class="menu-item" aria-haspopup="true">
                             <a href="features/bootstrap/typography.html" class="menu-link">

@@ -25,6 +25,7 @@ Route::middleware(['auth'])->group(function(){
 
     // account-sub
     Route::get('accounting/master/accountsub', [\App\Http\Controllers\Accounting\AccountSubController::class, 'index'])->name('accountingSubAccount');
+    Route::patch('accounting/master/accountsub', [\App\Http\Controllers\Accounting\AccountSubController::class, 'listData']);
 
     // journal ref
     Route::get('accounting/master/jurnalref', [\App\Http\Controllers\Accounting\JournalRefController::class, 'index'])->name('accountingJournalRef');

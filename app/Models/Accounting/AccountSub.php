@@ -9,7 +9,7 @@ class AccountSub extends Model
 {
     use HasFactory;
 
-    protected $table = 'account';
+    protected $table = 'accounting_account_sub';
     protected $fillable = [
         'kode_account_sub',
         'sub_name',

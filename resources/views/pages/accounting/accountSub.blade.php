@@ -11,10 +11,9 @@
             <thead>
             <tr>
                 <td width="10%" class="text-center">ID</td>
-                <td width="10%" class="text-center">Kategori</td>
                 <td width="10%" class="text-center">Akun Induk</td>
                 <td class="text-center">Deskripsi</td>
-                <td class="none">Keterangan</td>
+                <td class="text-center">Keterangan</td>
                 <td width="10%">Action</td>
             </tr>
             </thead>
@@ -72,5 +71,57 @@
         </x-nano.modal-standart>
 
     </x-mikro.card-custom>
+
+    @push('scripts')
+        <script>
+            // add data
+            $('#btnNew').click(function () {
+                // reset form
+                $('#formModal').trigger('reset');
+                // reset validate
+                $('.invalid-feedback').remove();
+                $('.is-invalid').removeClass('is-invalid');
+                // show modal
+                $('#modalForm').modal('show');
+            });
+
+            // datatables
+            function listData ()
+            {
+                $('#listTable').DataTable({
+                    order : [],
+                    responsive : true,
+                    ajax : {
+                        headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url : '{{ route("accountingSubAccount") }}',
+                        method : 'PATCH'
+                    },
+                    columns : [
+                        {data : 'account_id'},
+                        {data : 'kode_account_sub'},
+                        {data : 'sub_name'},
+                        {data : 'keterangan'},
+                        {data : 'Action', responsivePriority: -1, className: "text-center"},
+                    ],
+                    columnDefs: [
+                        {
+                            targets : [-1],
+                            orderable: false
+                        }
+                    ],
+                });
+            }
+
+            // reload table
+            function reloadTable()
+            {
+                $('#listTable').DataTable().ajax.reload();
+            }
+
+            jQuery(document).ready(function() {
+                listData();
+            });
+        </script>
+    @endpush
 
 </x-makro.list-data>
