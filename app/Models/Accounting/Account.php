@@ -21,4 +21,9 @@ class Account extends Model
     {
         return $this->belongsTo(AccountKategori::class, 'kategori_sub_id');
     }
+
+    public function accountSub()
+    {
+        return $this->hasMany(AccountSub::class, 'account_id');
+    }
 }

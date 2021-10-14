@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function(){
 
+    // Kasir
+
     // kategori
     Route::get('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'index'])->name('accountingKategori');
     Route::post('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'store']);

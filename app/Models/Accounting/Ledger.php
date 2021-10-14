@@ -13,6 +13,7 @@ class Ledger extends Model
     protected $fillable = [
         'journal_id',
         'activeCash',
+        'tgl_buat',
         'journal_ref',
         'debet',
         'kredit',

@@ -32,24 +32,7 @@
                         <input type="text" class="form-control" name="kode">
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Kategori</label>
-                    <div class="col-9">
-                        <select name="kategori" id="kategori"></select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Sub Kategori</label>
-                    <div class="col-9">
-                        <select name="subKategori" id="subKategori"></select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Akun</label>
-                    <div class="col-9">
-                        <select name="akun" id="akun"></select>
-                    </div>
-                </div>
+                @livewire('accounting.selected-account')
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Sub Akun</label>
                     <div class="col-9">
@@ -71,6 +54,10 @@
         </x-nano.modal-standart>
 
     </x-mikro.card-custom>
+
+    @push('styles')
+        @livewireStyles
+    @endpush
 
     @push('scripts')
         <script>
@@ -122,6 +109,7 @@
                 listData();
             });
         </script>
+        @livewireScripts
     @endpush
 
 </x-makro.list-data>
