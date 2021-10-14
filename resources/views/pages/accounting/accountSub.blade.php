@@ -55,10 +55,6 @@
 
     </x-mikro.card-custom>
 
-    @push('styles')
-        @livewireStyles
-    @endpush
-
     @push('scripts')
         <script>
             // add data
@@ -109,7 +105,6 @@
                 listData();
             });
         </script>
-        @livewireScripts
     @endpush
 
 </x-makro.list-data>

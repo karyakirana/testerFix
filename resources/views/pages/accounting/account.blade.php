@@ -81,6 +81,33 @@
                 $('#modalForm').modal('show');
             });
 
+            // store data
+            $('#btnSave').on('click', function (){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ route("accountingAccount") }}',
+                    method : "POST",
+                    dataType : "JSON",
+                    data : $('#formModal').serialize(),
+                    success : function (data){
+                        if (data.status){
+                            $('#modalForm').modal('hide');
+                            reloadTable();
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                });
+            })
+
             // datatables
             function listData ()
             {

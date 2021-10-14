@@ -11,7 +11,7 @@
             <thead>
             <tr>
                 <td width="10%" class="text-center">ID</td>
-                <td width="10%" class="text-center">Kategori</td>
+                <td width="20%" class="text-center">Kategori</td>
                 <td class="text-center">Deskripsi</td>
                 <td class="none">Keterangan</td>
                 <td width="10%">Action</td>

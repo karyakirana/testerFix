@@ -16,7 +16,7 @@
         <div class="col-9">
             <select wire:model="selectedKategoriSub" class="form-control" name="subKategori" id="subKategori">
                 <option value="" selected>Pilih Kategori</option>
-                @foreach($subKategori as $subKategori)
+                @foreach($kategoriSub as $subKategori)
                     <option value="{{ $subKategori->id }}">{{ $subKategori->kode_kategori_sub.' | '.$subKategori->deskripsi }}</option>
                 @endforeach
             </select>
