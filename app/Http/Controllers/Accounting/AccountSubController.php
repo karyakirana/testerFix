@@ -21,11 +21,13 @@ class AccountSubController extends Controller
 
     public function listData()
     {
-        $data = AccountSub::all();
+        $data = AccountSub::with(['account'])
+            ->get();
         return DataTables::of($data)
             ->addColumn('Action', function ($row){
                 $soft = '<button type="button" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></button>';
                 $edit = '<a href="#" class="btn btn-sm btn-clean btn-icon" id="btnEdit" data-value="'.$row->id.'" title="Edit"><i class="la la-edit"></i></a>';
+                return $edit.$soft;
             })
             ->rawColumns(['Action'])
             ->make(true);
@@ -50,10 +52,10 @@ class AccountSubController extends Controller
     public function store(Request $request)
     {
         $store = AccountSub::updateOrCreate([
-            'kode_account_sub'=>$request->kodeAccount,
-            'sub_name'=>$request->subName,
+            'kode_account_sub'=>$request->kode,
+            'sub_name'=>$request->subAkun,
             'keterangan'=>$request->keterangan,
-            'account_id'=>$request->accoundId
+            'account_id'=>$request->akun
         ]);
         $return = ['status'=>true, 'action'=>$store];
         return response()->json($return);
@@ -78,7 +80,7 @@ class AccountSubController extends Controller
      */
     public function edit($id)
     {
-        $data = AccountSub::find($id);
+        $data = AccountSub::where('id', $id)->first();
         return response()->json($data);
     }
 

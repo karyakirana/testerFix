@@ -212,8 +212,8 @@
                     },
                     columns : [
                         {data : 'kode_kategori_sub', className: 'text-center'},
-                        {data : 'deskripsi'},
                         {data : 'kategori.deskripsi'},
+                        {data : 'deskripsi'},
                         {data : 'keterangan'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},
                     ],

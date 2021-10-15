@@ -6,6 +6,7 @@ use App\Models\Accounting\Account;
 use App\Models\Accounting\AccountKategori;
 use App\Models\Accounting\AccountKategoriSub;
 use Livewire\Component;
+use function Symfony\Component\Translation\t;
 
 class SelectedAccount extends Component
 {
@@ -31,6 +32,7 @@ class SelectedAccount extends Component
                 $this->kategoriSub = AccountKategoriSub::where('kategori_id', $account->kategori->kategori_id)->get();
                 $this->selectedKategori = $account->kategori->kategori_id;
                 $this->selectedKategoriSub = $account->kategori_sub_id;
+                $this->selectedKategoriSub = $account->id;
             }
         }
     }
@@ -42,13 +44,13 @@ class SelectedAccount extends Component
 
     public function updatedSelectedKategori($kategori)
     {
-        $this->kategoriSub = AccountKategoriSub::where('kategori_id')->get();
+        $this->kategoriSub = AccountKategoriSub::where('kategori_id',$kategori)->get();
         $this->selectedKategoriSub = null;
     }
 
     public function updatedSelectedKategoriSub($kategoriSub)
     {
-        $this->account = Account::where('kategori_sub_id', $kategoriSub);
+        $this->account = Account::where('kategori_sub_id', $kategoriSub)->get();
         $this->selectedAccount = null;
     }
 }

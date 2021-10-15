@@ -68,6 +68,63 @@
                 $('#modalForm').modal('show');
             });
 
+            // store data
+            $('#btnSave').on('click', function (){
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ route("accountingSubAccount") }}',
+                    method : "POST",
+                    dataType : "JSON",
+                    data : $('#formModal').serialize(),
+                    success : function (data){
+                        if (data.status){
+                            $('#modalForm').modal('hide');
+                            reloadTable();
+                        }
+                    },
+                    error : function (jqXHR, textStatus, errorThrown){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        for (const property in jqXHR.responseJSON.errors) {
+                            // console.log(`${property}: ${jqXHR.responseJSON.errors[property]}`);
+                            $('[name="'+`${property}`+'"').addClass('is-invalid').after('<div class="invalid-feedback" style="display: block;">'+`${jqXHR.responseJSON.errors[property]}`+'</div>');
+                            $("#alertText").empty();
+                            $("#alertText").append("<li>"+`${jqXHR.responseJSON.errors[property]}`+"</li>");
+                        }
+                    }
+                });
+            })
+
+            // edit data
+            $('body').on('click', '#btnEdit', function ($row){
+                let dataEdit = $(this).data('value');
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/accounting/master/accountsub/'+dataEdit,
+                    method : "GET",
+                    dataType : "JSON",
+                    success : function (data){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('#formModal').trigger('reset'); // reset form on modals
+                        $('[name="id"]').val(data.id);
+                        $('[name="kode"]').val(data.kode_account_sub);
+                        // $('[name="kategori"]').val(data.account_kategori.kategori_id).change();
+                        // $('[name="subKategori"]').val(data.kategori_sub_id);
+                        $('[name="akun"]').val(data.account_id);
+                        $('[name="subAkun"]').val(data.sub_name);
+                        $('[name="keterangan"]').val(data.keterangan);
+                        $('#modalForm').modal('show');
+                    },
+                    error : function (jqXHR, textStatus, errorThrown)
+                    {
+                        swal.fire({
+                            html: jqXHR.responseJSON.message+"<br><br>"+jqXHR.responseJSON.file+"<br><br>Line: "+jqXHR.responseJSON.line,
+                        });
+                    }
+                })
+            })
+
             // datatables
             function listData ()
             {
@@ -80,8 +137,8 @@
                         method : 'PATCH'
                     },
                     columns : [
-                        {data : 'account_id'},
                         {data : 'kode_account_sub'},
+                        {data : 'account.account_name'},
                         {data : 'sub_name'},
                         {data : 'keterangan'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},

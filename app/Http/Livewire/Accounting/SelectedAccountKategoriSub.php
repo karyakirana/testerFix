@@ -36,7 +36,7 @@ class SelectedAccountKategoriSub extends Component
 
     public function updatedSelectedKategori($kategori)
     {
-        $this->kategoriSub = AccountKategoriSub::where('kategori_id')->get();
+        $this->kategoriSub = AccountKategoriSub::where('kategori_id',$kategori)->get();
         $this->selectedKategoriSub = null;
     }
 }

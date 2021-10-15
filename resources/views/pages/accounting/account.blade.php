@@ -30,22 +30,10 @@
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Kode</label>
                     <div class="col-9">
-                        <input type="text" class="form-control" name="kodeAccount">
+                        <input type="text" class="form-control" name="kode_account">
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-3 col-form-label">Sub Kategori</label>
-                    <div class="col-9">
-                        @php
-                            $kategori = \App\Models\Accounting\AccountKategoriSub::all();
-                        @endphp
-                        <select name="subKategori" class="form-control" id="kategoriSubId">
-                            @foreach($kategori as $row)
-                                <option value="{{$row->id}}">{{ $row->deskripsi }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+                @livewire('accounting.selected-account-kategori-sub')
                 <div class="form-group row">
                     <label class="col-3 col-form-label">Akun</label>
                     <div class="col-9">
@@ -108,6 +96,35 @@
                 });
             })
 
+            // edit data
+            $('body').on('click', '#btnEdit', function ($row){
+                let dataEdit = $(this).data('value');
+                $.ajax({
+                    headers : {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url : '{{ url('/') }}'+'/accounting/master/account/'+dataEdit,
+                    method : "GET",
+                    dataType : "JSON",
+                    success : function (data){
+                        $('.invalid-feedback').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('#formModal').trigger('reset'); // reset form on modals
+                        $('[name="id"]').val(data.id);
+                        $('[name="kode_account"]').val(data.kode_account);
+                        $('[name="kategori"]').val(data.account_kategori.kategori_id).change();
+                        $('[name="subKategori"]').val(data.kategori_sub_id);
+                        $('[name="namaAkun"]').val(data.account_name);
+                        $('[name="keterangan"]').val(data.keterangan);
+                        $('#modalForm').modal('show');
+                    },
+                    error : function (jqXHR, textStatus, errorThrown)
+                    {
+                        swal.fire({
+                            html: jqXHR.responseJSON.message+"<br><br>"+jqXHR.responseJSON.file+"<br><br>Line: "+jqXHR.responseJSON.line,
+                        });
+                    }
+                })
+            })
+
             // datatables
             function listData ()
             {
@@ -121,8 +138,8 @@
                     },
                     columns : [
                         {data : 'kode_account'},
-                        {data : 'kode_account'},
-                        {data : 'kategori_sub_id'},
+                        {data : 'account_kategori.kategori.deskripsi'},
+                        {data : 'account_kategori.deskripsi'},
                         {data : 'account_name'},
                         {data : 'keterangan'},
                         {data : 'Action', responsivePriority: -1, className: "text-center"},

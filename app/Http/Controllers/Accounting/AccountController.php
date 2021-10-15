@@ -22,7 +22,7 @@ class AccountController extends Controller
 
     public function listData()
     {
-        $data = Account::all();
+        $data = Account::with(['accountKategori', 'accountKategori.kategori'])->get();
         return DataTables::of($data)
             ->addColumn('Action', function ($row){
                 $soft = '<button type="button" class="btn btn-sm btn-clean btn-icon" id="btnSoft" data-value="'.$row->id.'" title="Delete"><i class="la la-trash"></i></button>';
@@ -41,20 +41,27 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->id) {
+            $request->validate([
+                'subKategori'=>'required',
+                'kode_account'=>'required|unique:accounting_account',
+                'namaAkun'=>'required'
+            ]);
+        }
+
         $request->validate([
-            'kategoriSubId'=>'required',
-            'kodeAccount'=>'required|unique:accounting_account',
+            'subKategori'=>'required',
             'namaAkun'=>'required'
         ]);
 
         $data = [
-            'kategori_sub_id'=>$request->kategoriSubId,
-            'kode_account'=>$request->kodeAccount,
+            'kategori_sub_id'=>$request->subKategori,
+            'kode_account'=>$request->kode_account,
             'account_name'=>$request->namaAkun,
             'keterangan'=>$request->keterangan
         ];
 
-        $store = Account::updateOrInsert([$request->id], $data);
+        $store = Account::updateOrCreate(['id'=>$request->id], $data);
         return response()->json(['status'=>true, 'action'=>$store]);
     }
 
@@ -66,7 +73,8 @@ class AccountController extends Controller
      */
     public function edit($id)
     {
-        $data = Account::find($id);
+        $data = Account::with(['accountKategori', 'accountKategori.kategori'])
+            ->where('id', $id)->first();
         return response()->json($data);
     }
 

@@ -19,7 +19,7 @@ class Account extends Model
 
     public function accountKategori()
     {
-        return $this->belongsTo(AccountKategori::class, 'kategori_sub_id');
+        return $this->belongsTo(AccountKategoriSub::class, 'kategori_sub_id');
     }
 
     public function accountSub()
