@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function(){
 
     // Kasir
+    Route::get('kasir/pemasukan/', [\App\Http\Controllers\Accounting\KasirPemasukanController::class, 'index'])->name('kasirPemasukan');
+    Route::get('kasir/pemasukan/transaksi', [\App\Http\Controllers\Accounting\KasirPemasukanController::class, 'create'])->name('kasirPemasukanTransaksi');
 
     // kategori
     Route::get('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'index'])->name('accountingKategori');

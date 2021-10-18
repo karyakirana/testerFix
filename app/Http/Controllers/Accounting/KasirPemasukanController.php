@@ -49,14 +49,14 @@ class KasirPemasukanController extends Controller
      */
     public function create()
     {
-        $kasTempRepo = new KasTempRepository();
-        if (session('pemasukan'))
-        {
-            $idTemp = session('pemasukan');
-        } else {
-            $idTemp = $kasTempRepo->createSession('pemasukan');
-        }
-        return view('pages.accounting.kasirPemasukanTrans')->with(['idTemp'=>$idTemp]);
+//        $kasTempRepo = new KasTempRepository();
+//        if (session('pemasukan'))
+//        {
+//            $idTemp = session('pemasukan');
+//        } else {
+//            $idTemp = $kasTempRepo->createSession('pemasukan');
+//        }
+        return view('pages.accounting.kasirPemasukanTrans');
     }
 
     /**
