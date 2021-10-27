@@ -3,7 +3,9 @@
 namespace App\Http\Repositories\Sales;
 
 use App\Models\Sales\Penjualan;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SalesRepository
 {
@@ -41,5 +43,15 @@ class SalesRepository
                 'keterangan' => $dataPenjualan->keterangan,
             ]
         );
+    }
+
+    public function commitPenjualan($data)
+    {
+        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+        }
     }
 }

@@ -35,36 +35,6 @@ class SalesController extends Controller
         return view('pages.sales.penjualan');
     }
 
-    public function kode()
-    {
-        $data = StockKeluar::where('active_cash', session('ClosedCash'))->latest()->first();
-        $num = null;
-        if(!$data){
-            $num = 1;
-        } else {
-            $urutan = (int) substr($data->kode, 0, 4);
-            $num = $urutan + 1;
-        }
-        $id = sprintf("%04s", $num)."/SK/".date('Y');
-        return $id;
-    }
-
-    /**
-     * membuat session untuk Penjualan Baru
-     *
-     * @return integer session('penjualan')
-     */
-    protected function createTemp($id_jual = null)
-    {
-        $create = PenjualanTemp::create([
-            'jenisTemp' => 'Penjualan',
-            'idSales' => Auth::user()->id,
-            'id_jual'=> $id_jual,
-        ]);
-
-        return $create;
-    }
-
     /**
      * Show the form for creating a new resource.
      *
