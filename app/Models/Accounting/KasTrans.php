@@ -23,6 +23,16 @@ class KasTrans extends Model
         'keterangan'
     ];
 
+    public function scopePemasukan($query)
+    {
+        return $query->where('jenis', 'pemasukan');
+    }
+
+    public function scopePengeluaran($query)
+    {
+        return $query->where('jenis', 'pengeluaran');
+    }
+
     public function kasTransDetail()
     {
         return $this->hasMany(KasTransDetil::class, 'kas_id');

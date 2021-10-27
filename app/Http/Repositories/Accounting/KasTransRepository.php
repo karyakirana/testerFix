@@ -28,9 +28,30 @@ class KasTransRepository
         }
     }
 
-    public static function getData($id)
+    /**
+     * @return mixed
+     */
+    public static function getPemasukan()
     {
-        return KasTrans::find($id);
+        return KasTrans::with(['account', 'user'])
+            ->where('activeCash', session('ClosedCash'))
+            ->pemasukan()->get();
+    }
+
+    public static function getPengeluaran()
+    {
+        return KasTrans::with(['account', 'user'])
+            ->where('activeCash', session('ClosedCash'))
+            ->pengeluaran()->get();
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public static function getSingleData($id)
+    {
+        return KasTrans::with(['account', 'user'])->where('id', $id)->first();
     }
 
     public static function kode($jenis)

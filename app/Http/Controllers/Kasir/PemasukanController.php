@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Kasir;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repositories\Accounting\KasTransRepository;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class PemasukanController extends Controller
 {
@@ -15,6 +17,22 @@ class PemasukanController extends Controller
     public function index()
     {
         //
+    }
+
+    public function listData()
+    {
+        $dataPemasukan = KasTransRepository::getPemasukan();
+        return DataTables::of($dataPemasukan)
+            ->addColumn('action', function($row){
+                //
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+    public function create()
+    {
+        return view('pages.accounting.kasirPemasukanTrans');
     }
 
     /**
