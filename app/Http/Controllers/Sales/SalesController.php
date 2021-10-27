@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Stock\StockKeluarController;
+use App\Http\Repositories\Sales\SalesRepository;
+use App\Http\Repositories\Sales\SalesTempRepository;
+use App\Http\Repositories\Stock\StockKeluarRepository;
 use App\Models\Master\Produk;
 use App\Models\Sales\Penjualan;
 use App\Models\Sales\PenjualanDetil;
@@ -13,7 +16,9 @@ use App\Models\Stock\InventoryReal;
 use App\Models\Stock\StockKeluar;
 use App\Models\Stock\StockKeluarDetil;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,25 +28,11 @@ class SalesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\View
+     * @return View
      */
     public function index()
     {
         return view('pages.sales.penjualan');
-    }
-
-    public function idPenjualan()
-    {
-        $data = Penjualan::where('activeCash', session('ClosedCash'))->latest('id_jual')->first();
-        $num = null;
-        if(!$data){
-            $num = 1;
-        } else {
-            $urutan = (int) substr($data->id_jual, 0, 4);
-            $num = $urutan + 1;
-        }
-        $id = sprintf("%04s", $num)."/PJ/".date('Y');
-        return $id;
     }
 
     public function kode()
@@ -77,37 +68,15 @@ class SalesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function create()
     {
         $sessionTemp = session('penjualan');
         $penjualanTemp = null;
 
-        // check session baru atau edit, check pembuat adalah yg login saat ini
-        if ($sessionTemp)
-        {
-            $penjualanTemp = PenjualanTemp::find($sessionTemp);
-            // jika ada id_jual atau idSales tidak sesuai dengan user yg sedang login
-            // maka buat session baru
-            if ($penjualanTemp->id_jual || $penjualanTemp->idSales != Auth::id()){
-                // jika id_jual ada, maka buat temporary baru
-                $penjualanTemp = $this->createTemp();
-                session()->put(['penjualan'=>$penjualanTemp->id]);
-            }
-        } else {
-            // buat session baru, dengan check temporary yg lama
-            $penjualanTemp = PenjualanTemp::whereNull('id_jual')->where('jenisTemp', 'Penjualan')->where('idSales', Auth::id())->latest()->first();
-            if (!$penjualanTemp){
-                // jika tidak ada data, maka buat session baru
-                $penjualanTemp = $this->createTemp();
-                session()->put(['penjualan'=>$penjualanTemp->id]);
-            } else {
-                // jika ada, maka ambil temporary yg lama dan buat session untuk itu
-                $penjualanTemp = $penjualanTemp;
-                session()->put(['penjualan'=>$penjualanTemp->id]);
-            }
-        }
+        // get data sales Temp
+        $penjualanTemp = (new SalesTempRepository())->checkSession('Penjualan', $sessionTemp);
 
         $data = [
             'idTemp' => $penjualanTemp->id,
@@ -120,12 +89,13 @@ class SalesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
-        $idPenjualan = $this->idPenjualan();
+        $penjualanRepo = new SalesRepository();
+        $idPenjualan = $penjualanRepo->kode();
         $idTemp = $request->idTemp;
         $tglPenjualan = date('Y-m-d', strtotime($request->tglNota));
         $tglTempo = date('Y-m-d', strtotime($request->tglTempo));
@@ -149,21 +119,23 @@ class SalesController extends Controller
         }
 
         // Data Penjualan untuk di insert ke Tabel Penjualan
-        $data = [
-            'activeCash' => session('ClosedCash'),
-            'id_jual' => $idPenjualan,
-            'tgl_nota' => $tglPenjualan,
-            'tgl_tempo' => ($request->jenisBayar == 'Tempo') ? $tglTempo : null,
-            'status_bayar' => $request->jenisBayar,
+        $data = (object) [
+            'idPenjualan' => $idPenjualan,
+            'tglPenjualan' => $tglPenjualan,
+            'tglTempo' => $tglTempo,
+            'jenbisBayar' => $request->jenisBayar,
             'sudahBayar'=> "belum", // pembuatan nota belum bayar
             'total_jumlah' => $detilTemp->count(), // jumlah Item
             'ppn' => $request->ppn,
             'biaya_lain' => $request->biayaLain,
             'total_bayar' => $detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain, // total semua subtotal atau $request->hiddenTotalSemuanya
-            'id_cust' => $request->idCustomer,
-            'id_user' => Auth::user()->id,
+            'idCustomer' => $request->idCustomer,
+            'idUser' => Auth::user()->id,
             'idBranch'=> $request->branch,
-            'keterangan' => $request->keterangan
+            'keterangan' => $request->keterangan,
+            // for Stock Keluar
+            'tglStockKeluar' => $tglPenjualan,
+            'jenisStockKeluar'=>'penjualan'
         ];
 
         // transaction start
@@ -173,18 +145,9 @@ class SalesController extends Controller
             // insert detil_penjualan
             $insertDetail = PenjualanDetil::insert($dataDetil);
             // insert penjualan
-            $insertMaster = Penjualan::create($data);
+            $insertMaster = $penjualanRepo->storePenjualan($data);
             // insert stock_keluar
-            $insertStockKeluar = StockKeluar::create([
-                'active_cash'=>session('ClosedCash'),
-                'tgl_keluar'=>$tglPenjualan,
-                'kode'=>$this->kode(),
-                'branch'=>$request->branch ?? null,
-                'jenis_keluar'=>'Penjualan',
-                'customer'=>$request->idCustomer,
-                'penjualan'=>$idPenjualan,
-                'users'=>Auth::id(),
-            ]);
+            $insertStockKeluar = (new StockKeluarRepository())->storeStockKeluar();
             // insert stock_keluar_detil
             foreach ($detilTemp as $row) {
                 StockKeluarDetil::create([
@@ -305,7 +268,7 @@ class SalesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
