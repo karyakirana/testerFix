@@ -2,7 +2,12 @@
 
 namespace App\Http\Repositories\Sales;
 
+use App\Http\Repositories\Stock\InventoryRealRepository;
+use App\Http\Repositories\Stock\StockKeluarRepository;
 use App\Models\Sales\Penjualan;
+use App\Models\Sales\PenjualanDetil;
+use App\Models\Sales\PenjualanDetilTemp;
+use App\Models\Sales\PenjualanTemp;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -45,13 +50,86 @@ class SalesRepository
         );
     }
 
+    public function storePenjualanDetail($dataDetail)
+    {
+        return PenjualanDetil::create($dataDetail);
+    }
+
+    /**
+     * @param $data
+     * @return array|bool[]
+     */
     public function commitPenjualan($data)
+    {
+        // prepare for Detail Commit
+
+        DB::beginTransaction();
+        try {
+            /**
+             * Master Commit
+             */
+            $storePenjualan = $this->storePenjualan($data);
+            $storeStockKeluar = (new StockKeluarRepository())->storeStockKeluar($data);
+            /**
+             * Detil Commit each detail
+             */
+            $forCommitDetail = null;
+            $getTempPenjualan = (new SalesTempRepository())->getTempDetail($data->idTemp);
+            foreach ($getTempPenjualan as $tempDetail){
+                $dataDetail = [
+                    'id_jual'=>$data->idPenjualan,
+                    'stock_keluar'=>$storeStockKeluar->id,
+                    'id_produk'=>$tempDetail->idBarang,
+                    'jumlah'=>$tempDetail->jumlah,
+                    'harga'=>$tempDetail->harga,
+                    'diskon'=>$tempDetail->diskon,
+                    'sub_total'=>$tempDetail->sub_total,
+                    // branch
+                    'branch_id'=>$data->idBranch,
+                ];
+                (new InventoryRealRepository())->insertOrUpdate((object)$dataDetail);
+                $this->storePenjualanDetail($dataDetail);
+                (new StockKeluarRepository())->storeStockKeluarDetail($dataDetail);
+            }
+            (new SalesTempRepository())->destroyAllTemp($data->idTemp);
+            session()->forget('penjualan');
+            DB::commit();
+            $returnData = [
+                'status'=>true,
+                'nomorPenjualan'=>str_replace('/', '-', $data->idPenjualan)
+            ];
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+            $returnData = [
+                'status'=>false,
+                'keterangan'=>$e
+            ];
+        }
+        return $returnData;
+    }
+
+    public function getSalesData($id_jual)
+    {
+        // get data from penjualan
+        $dataPenjualan = Penjualan::where('id_jual', $id_jual)->first();
+    }
+
+    public function commitUpdatePenjualan($data)
     {
         DB::beginTransaction();
         try {
-            DB::beginTransaction();
+            DB::commit();
+            $returnData = [
+                'status'=>true,
+                'nomorPenjualan'=>str_replace('/', '-', $data->idPenjualan)
+            ];
         } catch (ModelNotFoundException $e){
             DB::rollBack();
+            $returnData = [
+                'status'=>false,
+                'keterangan'=>$e
+            ];
         }
+        return $returnData;
     }
 }

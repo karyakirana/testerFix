@@ -3,7 +3,10 @@
 namespace App\Http\Repositories\Stock;
 
 use App\Models\Stock\StockKeluar;
+use App\Models\Stock\StockKeluarDetil;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class  StockKeluarRepository
 {
@@ -27,11 +30,26 @@ class  StockKeluarRepository
             'active_cash'=>session('ClosedCash'),
             'tgl_keluar'=>$dataStockKeluar->tglStockKeluar,
             'kode'=>$dataStockKeluar->kodeStockKeluar ?? $this->kode(),
-            'branch'=>$dataStockKeluar->branch ?? null,
+            'branch'=>$dataStockKeluar->idBranch ?? null,
             'jenis_keluar'=>$dataStockKeluar->jenisStockKeluar,
             'customer'=>$dataStockKeluar->idCustomer,
             'penjualan'=>$dataStockKeluar->idPenjualan ?? '',
             'users'=>$dataStockKeluar->idUser,
         ]);
+    }
+
+    public function storeStockKeluarDetail($dataDetail)
+    {
+        return StockKeluarDetil::create($dataDetail);
+    }
+
+    public function commitStockKeluar($dataStockKeluar)
+    {
+        DB::beginTransaction();
+        try {
+            DB::commit();
+        } catch (ModelNotFoundException $e){
+            DB::rollBack();
+        }
     }
 }

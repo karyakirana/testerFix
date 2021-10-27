@@ -69,35 +69,19 @@ class SalesController extends Controller
         $idTemp = $request->idTemp;
         $tglPenjualan = date('Y-m-d', strtotime($request->tglNota));
         $tglTempo = date('Y-m-d', strtotime($request->tglTempo));
-
-        // ambil data dari detil_penjualan_temp
-        $detilTemp = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->get();
-
-        // array untuk datadetil
-        $dataDetil = null;
-        foreach ($detilTemp as $row) {
-            $data = [
-                'id_jual' => $idPenjualan,
-                'id_produk' => $row->idBarang,
-                'jumlah' => $row->jumlah,
-                'harga' => $row->harga,
-                'diskon' => $row->diskon,
-                'sub_total' => $row->sub_total,
-            ];
-            $dataDetil [] = $data;
-            // $hitungData++;
-        }
+        $detilTemp = (new SalesTempRepository())->getTempDetail($idTemp);
 
         // Data Penjualan untuk di insert ke Tabel Penjualan
         $data = (object) [
+            'idTemp'=>$idTemp,
             'idPenjualan' => $idPenjualan,
             'tglPenjualan' => $tglPenjualan,
             'tglTempo' => $tglTempo,
-            'jenbisBayar' => $request->jenisBayar,
+            'jenisBayar' => $request->jenisBayar,
             'sudahBayar'=> "belum", // pembuatan nota belum bayar
             'total_jumlah' => $detilTemp->count(), // jumlah Item
             'ppn' => $request->ppn,
-            'biaya_lain' => $request->biayaLain,
+            'biayaLain' => $request->biayaLain,
             'total_bayar' => $detilTemp->sum('sub_total') + $request->ppn + $request->biayaLain, // total semua subtotal atau $request->hiddenTotalSemuanya
             'idCustomer' => $request->idCustomer,
             'idUser' => Auth::user()->id,
@@ -108,64 +92,8 @@ class SalesController extends Controller
             'jenisStockKeluar'=>'penjualan'
         ];
 
-        // transaction start
-        $jsonData = null;
-        DB::beginTransaction();
-        try {
-            // insert detil_penjualan
-            $insertDetail = PenjualanDetil::insert($dataDetil);
-            // insert penjualan
-            $insertMaster = $penjualanRepo->storePenjualan($data);
-            // insert stock_keluar
-            $insertStockKeluar = (new StockKeluarRepository())->storeStockKeluar();
-            // insert stock_keluar_detil
-            foreach ($detilTemp as $row) {
-                StockKeluarDetil::create([
-                    'stock_keluar'=>$insertStockKeluar->id,
-                    'id_produk'=>$row->idBarang,
-                    'jumlah'=>$row->jumlah
-                ]);
-                // update or create inventory_real
-                $inventory_real = InventoryReal::where('idProduk', $row->idBarang)
-                    ->where('branchId', $request->branch)->get();
-                if ($inventory_real->count() > 0){
-                    // update
-                    InventoryReal::where('idProduk', $row->idBarang)
-                        ->where('branchId', $request->branch)
-                        ->update([
-                            'stockOut'=>DB::raw('stockOut +'.$row->jumlah),
-                        ]);
-                } else {
-                    InventoryReal::create([
-                        'idProduk'=>$row->idBarang,
-                        'branchId'=>$request->branch,
-                        'stockOut'=>$row->jumlah,
-                    ]);
-                }
-            }
-            // delete detil_penjualan_temp
-            $deleteTempDetail = PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
-            // delete penjualan_temp
-            $deleteTempMaster = PenjualanTemp::where('id', $idTemp)->delete();
-            DB::commit();
-            session()->forget('penjualan'); // hapus session temp
-            $jsonData = [
-                'status' => true,
-                'detail' => $insertDetail,
-                'master' => $insertMaster,
-                'deleteDetail' => $deleteTempDetail,
-                'deletemaster' => $deleteTempMaster,
-                'nomorPenjualan' => str_replace('/', '-', $idPenjualan),
-            ];
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            $jsonData = [
-                'status' => false,
-                'keterangan' => $e->getMessage(),
-            ];
-        }
-
-        return response()->json($jsonData);
+        $commit = $penjualanRepo->commitPenjualan($data);
+        return response()->json($commit);
 
     }
 
@@ -185,7 +113,7 @@ class SalesController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function edit($id)
     {

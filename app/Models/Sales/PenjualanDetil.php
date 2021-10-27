@@ -13,7 +13,8 @@ class PenjualanDetil extends Model
     protected $table='detil_penjualan';
     protected $primaryKey = 'id_detil';
     protected $fillable =[
-        'id_jual', 'id_produk', 'jumlah', 'harga', 'diskon', 'sub_total'
+        'id_jual', 'id_produk', 'jumlah', 'harga', 'diskon', 'sub_total',
+        'options->enabled',
     ];
 
     public function penjualan()

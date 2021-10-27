@@ -2,6 +2,7 @@
 
 namespace App\Http\Repositories\Sales;
 
+use App\Models\Sales\PenjualanDetilTemp;
 use App\Models\Sales\PenjualanTemp;
 use Illuminate\Support\Facades\Auth;
 
@@ -58,5 +59,23 @@ class SalesTempRepository
         }
 
         return $sessionSales;
+    }
+
+    public function checkUpdateSession($jenisTemp, $idMaster)
+    {
+        //
+    }
+
+    public function getTempDetail($idTemp)
+    {
+        return PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->get();
+    }
+
+    public function destroyAllTemp($idTemp)
+    {
+        // delete detil temp
+        PenjualanDetilTemp::where('idPenjualanTemp', $idTemp)->delete();
+        // delete temp
+        PenjualanTemp::destroy($idTemp);
     }
 }
