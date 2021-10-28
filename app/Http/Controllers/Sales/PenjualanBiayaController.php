@@ -7,5 +7,38 @@ use Illuminate\Http\Request;
 
 class PenjualanBiayaController extends Controller
 {
-    //
+    public function index()
+    {
+        //
+    }
+
+    public function create($idPenjualan)
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        //
+    }
+
+    public function edit($idPenjualan)
+    {
+        //
+    }
+
+    public function storeLine(Request $request)
+    {
+        //
+    }
+
+    public function editLine($id)
+    {
+        //
+    }
+
+    public function destroyLine($id)
+    {
+        //
+    }
 }
