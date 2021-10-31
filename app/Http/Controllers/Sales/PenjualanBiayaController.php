@@ -14,7 +14,7 @@ class PenjualanBiayaController extends Controller
 
     public function create($idPenjualan)
     {
-        //
+        return view('pages.sales.PenjualanBiaya', ['id_jual'=>$idPenjualan]);
     }
 
     public function store(Request $request)

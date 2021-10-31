@@ -14,6 +14,18 @@ use Illuminate\Support\Facades\DB;
 
 class SalesRepository
 {
+    /**
+     * get Penjualan and Detail
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public function getPenjualanAndDetail($id)
+    {
+        return Penjualan::with(['detilPenjualan', 'detilPenjualan.produk'])
+            ->where('id', $id)
+            ->first();
+    }
+
     public function kode()
     {
         $data = Penjualan::where('activeCash', session('ClosedCash'))->latest('id_jual')->first();

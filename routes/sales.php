@@ -12,6 +12,9 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'edit']);
     Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
 
+    // biaya Penjualan
+    Route::get('/sales/biaya/{id}', [\App\Http\Controllers\Sales\PenjualanBiayaController::class, 'create']);
+
     // Retur Baik
     Route::get('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'index'])->name('returBaik');
     Route::put('/retur/baik', [\App\Http\Controllers\Sales\SalesReturController::class, 'update']);
