@@ -13,6 +13,7 @@ Route::middleware(['auth'])->group(function (){
     Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
 
     // biaya Penjualan
+    Route::get('/sales/biaya', [\App\Http\Controllers\Sales\PenjualanBiayaController::class, 'index'])->name('sales.biaya');
     Route::get('/sales/biaya/{id}', [\App\Http\Controllers\Sales\PenjualanBiayaController::class, 'create']);
 
     // Retur Baik
