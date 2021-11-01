@@ -37,4 +37,31 @@ class MasterAccountingRepository
         ])
             ->get();
     }
+
+    protected $deskripsiKategori;
+    protected $idKategori;
+
+    /**
+     * @param null $deskripsiKategori
+     * @param null $idKategori
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function getAccountByKategori($deskripsiKategori = null, $idKategori = null)
+    {
+        $this->deskripsiKategori = $deskripsiKategori;
+        return Account::with([
+            'accountKategori'=>function($query){
+                $query->where('deskripsi', 'like', $this->deskripsiKategori)
+                ->orWhere('id', $this->idKategori);
+            }
+        ])->get();
+    }
+
+    public function getAccountJoinKategori($deskripsiKategori = null, $idKategori = null)
+    {
+        return Account::leftJoin('accounting_kategori_sub as aks', 'accounting_account.kategori_sub_id', '=', 'aks.id')
+            ->where('deskripsi', 'like', $deskripsiKategori)
+            ->orWhere('kategori_sub_id', $idKategori)
+            ->get();
+    }
 }

@@ -26,4 +26,9 @@ class Account extends Model
     {
         return $this->hasMany(AccountSub::class, 'account_id');
     }
+
+    public static function getJoinSubKategori($idKategori = null, $deskripsiKategori = null)
+    {
+        //
+    }
 }
