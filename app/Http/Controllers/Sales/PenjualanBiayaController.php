@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repositories\Accounting\JournalTempRepository;
 use Illuminate\Http\Request;
 
 class PenjualanBiayaController extends Controller
@@ -19,7 +20,11 @@ class PenjualanBiayaController extends Controller
 
     public function create($idPenjualan)
     {
-        return view('pages.sales.PenjualanBiaya', ['id_jual'=>$idPenjualan]);
+        $sessionTemp = (new JournalTempRepository())->createNewSession('jurnal biaya penjualan');
+        return view('pages.sales.PenjualanBiaya', [
+            'id_jual'=>$idPenjualan,
+            'idTemporary'=>$sessionTemp->id,
+        ]);
     }
 
     public function store(Request $request)

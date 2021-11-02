@@ -19,6 +19,7 @@ class TablePenjualanList extends Component
     {
         //
     }
+
     public function render()
     {
         return view('livewire.sales.table-penjualan-list', [

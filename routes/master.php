@@ -35,4 +35,6 @@ Route::middleware(['auth'])->group(function (){
     Route::get('master/customer/{id}', [\App\Http\Controllers\Master\CustomerController::class, 'edit']);
     Route::delete('master/customer/{id}', [\App\Http\Controllers\Master\CustomerController::class, 'destroy']);
 
+    Route::get('master/pegawai', [\App\Http\Controllers\Master\PegawaiController::class, 'index'])->name('pegawai');
+
 });

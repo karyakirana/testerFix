@@ -126,10 +126,19 @@ class SalesRepository
         $dataPenjualan = Penjualan::where('id_jual', $id_jual)->first();
     }
 
+    public function getSalesById($id)
+    {
+        return Penjualan::with(['detilPenjualan', 'detilPenjualan.produk'])
+            ->where('id', $id)
+            ->first();
+    }
+
     public function getSalesAllByActiveCash($activeCash)
     {
         return Penjualan::with(['pengguna', 'customer'])
-            ->where('activeCash', $activeCash)->paginate(10);
+            ->where('activeCash', $activeCash)
+            ->latest('id_jual')
+            ->paginate(10);
     }
 
     public function commitUpdatePenjualan($data)

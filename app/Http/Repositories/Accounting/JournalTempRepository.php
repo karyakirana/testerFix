@@ -17,10 +17,10 @@ class JournalTempRepository
         ]);
     }
 
-    public function createNewSession($sessionJurnal, $jenisJurnal)
+    public function createNewSession($jenisJurnal)
     {
         // check session
-        $sessionJurnal = session($sessionJurnal);
+        $sessionJurnal = session($jenisJurnal);
         if (!$sessionJurnal){
             // check last jurnal by user
             $lastJurnalTemp = JurnalTempMaster::where('user_id', Auth::id())
