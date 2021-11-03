@@ -22,6 +22,8 @@ class PegawaiLiviwire extends Component
     public $dataPegawaiAll;
     public $dataPegawaiById;
 
+    public $successMessage;
+
     protected $rules = [
         'nama'=>'required',
         'alamat'=>'required',
@@ -41,21 +43,68 @@ class PegawaiLiviwire extends Component
         ]);
     }
 
+    protected function resetInput()
+    {
+        $this->idPegawai = '';
+        $this->kode = '';
+        $this->nama = '';
+        $this->alamat = '';
+        $this->kota = '';
+        $this->gender = '';
+        $this->kotaLahir = '';
+        $this->tglLahir = '';
+        $this->ktp = '';
+        $this->npwp = '';
+
+        $this->successMessage = '';
+    }
+
+    public function cancel()
+    {
+        $this->resetInput();
+
+        // reset error
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
+    public function edit($id)
+    {
+        $dataPegawai = (new PegawaiRepository())->getPegawaiById($id);
+        $this->idPegawai = $dataPegawai->id;
+        $this->kode = $dataPegawai->kode;
+        $this->nama = $dataPegawai->nama;
+        $this->alamat = $dataPegawai->alamat;
+        $this->kota = $dataPegawai->kota;
+        $this->gender = $dataPegawai->gender;
+        $this->kotaLahir = $dataPegawai->kotaLahir;
+        $this->tglLahir = $dataPegawai->tglLahir;
+        $this->ktp = $dataPegawai->ktp;
+        $this->npwp = $dataPegawai->npwp;
+    }
+
     public function storePegawai()
     {
         $this->validate();
         $dataInput = (object)[
+            'idPegawai'=>$this->idPegawai,
             'kode'=>$this->kode,
             'nama'=>$this->nama,
             'alamat'=>$this->alamat,
             'kota'=>$this->kota,
             'gender'=>$this->gender,
             'kotaLahir'=>$this->kotaLahir,
-            'tglLahir'=>$this->kotaLahir,
-            'tgllahir'=>$this->tglLahir,
+            'tglLahir'=>date('Y-m-d', strtotime($this->tglLahir)),
             'ktp'=>$this->ktp,
             'npwp'=>$this->ktp,
         ];
         $store = (new PegawaiRepository())->updateOrCreatePegawai($dataInput);
+        $this->successMessage = 'data berhasil disimpan';
+        $this->emit('pegawaiStore');
+    }
+
+    public function destroyPegawai($id)
+    {
+        $delete = (new PegawaiRepository())->deletePegawai($id);
     }
 }

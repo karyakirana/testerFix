@@ -34,7 +34,7 @@ class PegawaiRepository
     public function updateOrCreatePegawai($dataPegawai)
     {
         return Pegawai::updateOrCreate(
-            ['id'=>$dataPegawai->id],
+            ['id'=>$dataPegawai->idPegawai],
             [
             'kode'=>$dataPegawai->kode ?? $this->kodepegawai(),
             'nama'=>$dataPegawai->nama,

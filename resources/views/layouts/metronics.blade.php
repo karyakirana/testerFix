@@ -888,6 +888,7 @@
 <!--end::Global Theme Bundle-->
 @stack('scripts')
 @livewireScripts
+@stack('livewires')
 </body>
 <!--end::Body-->
 </html>
