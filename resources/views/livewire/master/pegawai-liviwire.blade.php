@@ -56,7 +56,7 @@
         <x-slot name="title">
             Form Pegawai
         </x-slot>
-        <form class="form">
+        <form class="form" id="formPegawai">
             <input type="text" wire:model.defer="idPegawai" hidden>
             <div class="form-group row">
                 <label for="" class="col-md-3 col-form-label">ID</label>
