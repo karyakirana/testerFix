@@ -109,6 +109,11 @@ class SalesController extends Controller
         return response()->json($data);
     }
 
+    protected function createTemp($id_jual)
+    {
+        return (new SalesTempRepository())->newSessionSalesTemp($id_jual);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
