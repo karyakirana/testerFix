@@ -42,4 +42,6 @@ Route::middleware(['auth'])->group(function(){
     Route::get('kasir/pembayarannota', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'index'])->name('jurnalPembayaranNota');
     Route::get('kasir/pembayarannota/baru', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'create'])->name('jurnalPembayaranNotaBaru');
 
+    Route::get('kasir/payment/penjualan', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan'])->name('daftarBiayaPenjualan');
+
 });
