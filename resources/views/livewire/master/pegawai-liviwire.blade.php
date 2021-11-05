@@ -104,7 +104,7 @@
             <div class="form-group row">
                 <label for="" class="col-md-3 col-form-label">Tanggal Lahir</label>
                 <div class="col-md-6">
-                    <x-nano.input-datepicker name="tglLahir" id="tglLahir" wire:model.defer="tglLahir" autocomplete="off"/>
+                    <x-nano.input-datepicker wire:model.defer="tglLahir" name="tglLahir" id="tglLahir" autocomplete="off"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -134,6 +134,14 @@
             window.livewire.on('pegawaiStore', ()=>{
                 $('#formModal').modal('hide');
             });
+
+            // datepicker
+            $('#tglLahir').on('change', function (e) {
+                let date = $(this).data("#tglLahir");
+                // eval(date).set('tglLahir', $('#tglLahir').val())
+                console.log(e.target.value);
+                @this.tglLahir = e.target.value;
+            })
         </script>
     @endpush
 </div>

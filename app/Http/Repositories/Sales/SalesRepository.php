@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Segala bentuk manipulasi data sebelum disimpan ke database
+ */
 class SalesRepository
 {
     /**

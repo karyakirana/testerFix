@@ -78,7 +78,7 @@ class PegawaiLiviwire extends Component
         $this->kota = $dataPegawai->kota;
         $this->gender = $dataPegawai->gender;
         $this->kotaLahir = $dataPegawai->kotaLahir;
-        $this->tglLahir = $dataPegawai->tglLahir;
+        $this->tglLahir = date('d-M-Y', strtotime($dataPegawai->tglLahir));
         $this->ktp = $dataPegawai->ktp;
         $this->npwp = $dataPegawai->npwp;
     }
@@ -94,12 +94,10 @@ class PegawaiLiviwire extends Component
             'kota'=>$this->kota,
             'gender'=>$this->gender,
             'kotaLahir'=>$this->kotaLahir,
-//            'tglLahir'=>date('Y-m-d', strtotime($this->tglLahir)),
-            'tglLahir'=>$this->tglLahir,
+            'tglLahir'=>date('Y-m-d', strtotime($this->tglLahir)),
             'ktp'=>$this->ktp,
             'npwp'=>$this->ktp,
         ];
-        dd($dataInput);
         $store = (new PegawaiRepository())->updateOrCreatePegawai($dataInput);
         $this->successMessage = 'data berhasil disimpan';
         $this->emit('pegawaiStore');
