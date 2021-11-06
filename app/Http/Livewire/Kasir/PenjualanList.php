@@ -9,7 +9,6 @@ use Livewire\WithPagination;
 class PenjualanList extends Component
 {
     use WithPagination;
-    protected $paginationTheme = 'bootstrap';
 
     public $search = '1772';
 
