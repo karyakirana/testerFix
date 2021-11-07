@@ -5,6 +5,7 @@ namespace App\Models\Sales;
 use App\Models\Master\Customer;
 use App\Models\Stock\BranchStock;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,6 +26,12 @@ class Penjualan extends Model
         'tgl_nota'=> 'date:d-m-Y',
         'tgl_tempo'=> 'date:d-m-Y',
     ];
+
+    public function scopeWithForeignMe($query, $search = null)
+    {
+        return $query->with(['pengguna'
+        ]);
+    }
 
     protected function getTotalBayarAttribute($value)
     {

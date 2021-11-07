@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Kasir;
 
+use App\Http\Repositories\Kasir\PenjualanRepository;
 use App\Http\Repositories\Sales\SalesRepository;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -9,8 +10,10 @@ use Livewire\WithPagination;
 class PenjualanList extends Component
 {
     use WithPagination;
+    protected $paginationTheme = 'bootstrap';
 
-    public $search = '1772';
+    public $search='';
+    public $dataDetail;
 
     public function mount()
     {
@@ -22,10 +25,16 @@ class PenjualanList extends Component
         //
     }
 
+    protected function datatable()
+    {
+        return (new PenjualanRepository())->getPenjualanAll($this->search);
+    }
+
     public function render()
     {
+//        dd((new PenjualanRepository())->getPenjualanAll($this->search));
         return view('livewire.kasir.penjualan-list', [
-            'penjualanAll'=>(new SalesRepository())->getSalesAllByActiveCash(session('ClosedCash'), $this->search)
+            'penjualanAll'=>$this->datatable()
         ]);
     }
 }
