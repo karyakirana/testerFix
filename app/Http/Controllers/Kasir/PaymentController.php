@@ -16,9 +16,12 @@ class PaymentController extends Controller
         return view('pages.kasir.payment-listBiayaPenjualan');
     }
 
-    public function transaksiTambahanBiayaPenjualan()
+    public function transaksiTambahanBiayaPenjualan($idPenjualan)
     {
-        //
+        return view('pages.kasir.payment-transaksi-biaya-penjualan',
+        [
+            'idPenjualan'=>$idPenjualan
+        ]);
     }
 
     public function penjualanToPiutang()

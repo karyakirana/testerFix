@@ -18,6 +18,11 @@ class PenjualanRepository
             ->paginate(10);
     }
 
+    public function penjualanById($id)
+    {
+        return Penjualan::where('id', $id)->first();
+    }
+
     public function setStatusPenjualan($idPenjualan, $statusBayar)
     {
         return Penjualan::where('id', $idPenjualan)

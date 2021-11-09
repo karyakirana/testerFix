@@ -43,5 +43,10 @@ Route::middleware(['auth'])->group(function(){
     Route::get('kasir/pembayarannota/baru', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'create'])->name('jurnalPembayaranNotaBaru');
 
     Route::get('kasir/payment/penjualan', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan'])->name('daftarBiayaPenjualan');
+    Route::get('kasir/payment/tambahbiaya/{id}', [\App\Http\Controllers\Kasir\PaymentController::class, 'transaksiTambahanBiayaPenjualan']);
+    Route::get('kasir/payment/tambahbiaya/{id}/edit', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan']);
+
+    // piutang
+    Route::get('kasir/piutang/penjualan', []);
 
 });

@@ -139,8 +139,10 @@ class SalesRepository
     public function getSalesAllByActiveCash($activeCash, $search)
     {
         return Penjualan::with(['pengguna', 'customer'])
-            ->where('id_jual', 'like', '%'.$search.'%')
             ->where('activeCash', $activeCash)
+            ->where(function ($query) use ($search) {
+                $query->where('id_jual', 'like', '%'.$search.'%');
+            })
             ->latest('id_jual')
             ->paginate(10);
     }
