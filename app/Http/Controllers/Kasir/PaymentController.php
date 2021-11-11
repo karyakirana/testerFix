@@ -29,8 +29,8 @@ class PaymentController extends Controller
         //
     }
 
-    public function pembayaranPenjualanCash()
+    public function pembayaranPenjualanCash($idPenjualan)
     {
-        //
+        return view('pages.kasir.payment-nota-cash', ['idPenjualan'=>$idPenjualan]);
     }
 }

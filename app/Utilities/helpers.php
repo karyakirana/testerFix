@@ -24,6 +24,6 @@ if (!function_exists('tanggalan_database_format')){
 if (!function_exists('diskon_format')){
     function diskon_format($value, $angkaBelakangKoma)
     {
-        return number_format($value, 2,",", ".");
+        return number_format($value, $angkaBelakangKoma,",", ".");
     }
 }

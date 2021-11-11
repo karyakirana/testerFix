@@ -696,14 +696,6 @@
 													<span class="menu-text">Penjualan</span>
 												</span>
                         </li>
-                        <li class="menu-item {{ (request()->is('kasir/pembayarannota')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
-                            <a href="{{ route('jurnalPembayaranNota') }}" class="menu-link">
-                                <i class="menu-bullet menu-bullet-dot">
-                                    <span></span>
-                                </i>
-                                <span class="menu-text">Daftar Penjualan</span>
-                            </a>
-                        </li>
                         <li class="menu-item {{ (request()->is('kasir/pembayarannota/baru')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
                             <a href="{{ route('jurnalPembayaranNotaBaru') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">

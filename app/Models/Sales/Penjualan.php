@@ -33,10 +33,10 @@ class Penjualan extends Model
         ]);
     }
 
-    protected function getTotalBayarAttribute($value)
-    {
-        return number_format($value, '0', ',', '.');
-    }
+//    protected function getTotalBayarAttribute($value)
+//    {
+//        return number_format($value, '0', ',', '.');
+//    }
 
     public function customer()
     {
@@ -56,5 +56,10 @@ class Penjualan extends Model
     public function detilPenjualan()
     {
         return $this->hasMany(PenjualanDetil::class, 'id_jual', 'id_jual');
+    }
+
+    public function biayaPenjualan()
+    {
+        return $this->hasMany(PenjualanBiaya::class, 'penjualan_id', 'id');
     }
 }

@@ -38,9 +38,11 @@
                         <td class="text-center">{{ tanggalan_format($row->tgl_tempo) }}</td>
                         <td class="text-center">{{ $row->sudahBayar }}</td>
                         <td class="text-center">{{ $row->status_bayar }}</td>
-                        <td class="text-right">{{ $row->total_bayar }}</td>
+                        <td class="text-right">{{ rupiah_format($row->total_bayar + $row->biayaPenjualan->sum('nominal')) }}</td>
                         <td class="text-center">{{ $row->pengguna->name }}</td>
-                        <td class="text-right">{{ $row->biaya_lain > 0 ? $row->biaya_lain : '-' }}</td>
+                        <td class="text-right">
+                            {{rupiah_format($row->biayaPenjualan->sum('nominal') + $row->biaya_lain)}}
+                        </td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-clean"
                                     data-toggle="modal"
@@ -195,10 +197,20 @@
                     <td>Biaya Lain</td>
                     <td class="text-right">{{ isset($dataDetail['biaya_lain']) ? rupiah_format($dataDetail['biaya_lain']) : '' }}</td>
                 </tr>
+                @isset($biayaPenjualan)
+                    @forelse($biayaPenjualan as $row)
+                        <tr>
+                            <td colspan="4"></td>
+                            <td>{{ $row->account->account_name }}</td>
+                            <td class="text-right">{{ rupiah_format($row->nominal) }}</td>
+                        </tr>
+                    @empty
+                    @endforelse
+                @endisset
                 <tr>
                     <td colspan="4"></td>
                     <td>Total Bayar</td>
-                    <td class="text-right">{{ $dataDetail['totalBayar'] ?? '' }}</td>
+                    <td class="text-right">{{ isset($dataDetail['totalBayar']) ? rupiah_format($dataDetail['totalBayar']) : '' }}</td>
                 </tr>
             </tfoot>
         </table>

@@ -39,12 +39,14 @@ Route::middleware(['auth'])->group(function(){
     Route::get('accounting/master/jurnalref', [\App\Http\Controllers\Accounting\JournalRefController::class, 'index'])->name('accountingJournalRef');
 
     // journal pembayaran nota
-    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'index'])->name('jurnalPembayaranNota');
+//    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'index'])->name('jurnalPembayaranNota');
     Route::get('kasir/pembayarannota/baru', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'create'])->name('jurnalPembayaranNotaBaru');
 
-    Route::get('kasir/payment/penjualan', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan'])->name('daftarBiayaPenjualan');
+    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan'])->name('jurnalPembayaranNota');
     Route::get('kasir/payment/tambahbiaya/{id}', [\App\Http\Controllers\Kasir\PaymentController::class, 'transaksiTambahanBiayaPenjualan']);
     Route::get('kasir/payment/tambahbiaya/{id}/edit', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan']);
+
+    Route::get('/kasir/payment/cash/{id}', [\App\Http\Controllers\Kasir\PaymentController::class, 'pembayaranPenjualanCash']);
 
     // piutang
     Route::get('kasir/piutang/penjualan', []);
