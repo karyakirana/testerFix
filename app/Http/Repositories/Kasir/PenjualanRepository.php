@@ -15,6 +15,19 @@ class PenjualanRepository
         ])
             ->where('activeCash', session('ClosedCash'))
             ->whereRelation('customer', 'nama_cust', 'like', '%'.$search.'%')
+            ->orWhere('id_jual', 'like', '%'.$search.'%')
+            ->paginate(10);
+    }
+
+    public function getPenjualanByTempo($search)
+    {
+        return Penjualan::with([
+            'customer'
+        ])
+            ->where('activeCash', session('ClosedCash'))
+            ->where('status_bayar', 'like', '%tempo%')
+            ->whereRelation('customer', 'nama_cust', 'like', '%'.$search.'%')
+            ->orWhere('id_jual', 'like', '%'.$search.'%')
             ->paginate(10);
     }
 

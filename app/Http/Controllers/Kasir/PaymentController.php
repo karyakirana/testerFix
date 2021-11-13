@@ -24,6 +24,30 @@ class PaymentController extends Controller
         ]);
     }
 
+    /**
+     * Daftar Nota Penjualan
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function notaPenjualan()
+    {
+        return view('pages.kasir.payment-listBiayaPenjualan');
+    }
+
+    public function notaPenjualanTempo()
+    {
+//        return view('livewire.kasir.nota-penjualan-tempo');
+    }
+
+    public function notaPenjualanCash()
+    {
+        //
+    }
+
+    public function notaPenjualanBelumBayar()
+    {
+        //
+    }
+
     public function penjualanToPiutang()
     {
         //

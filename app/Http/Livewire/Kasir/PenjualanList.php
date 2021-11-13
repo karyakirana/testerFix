@@ -26,7 +26,6 @@ class PenjualanList extends Component
     public function dataDetail($id)
     {
         $data = (new PenjualanRepository())->penjualanById($id);
-//        dd($data);
         $this->biayaPenjualan = PenjualanBiaya::where('penjualan_id', $id)->get();
         if ($this->biayaPenjualan->count()>0){
             $totalBayar = $this->biayaPenjualan->sum('nominal');
@@ -80,5 +79,10 @@ class PenjualanList extends Component
     public function setToPiutang($id)
     {
         return redirect()->to('kasir/piutang/penjualan');
+    }
+
+    public function setCash($id)
+    {
+        return $this->redirect()->to('/kasir/payment/cash/'.$id);
     }
 }

@@ -42,7 +42,10 @@ Route::middleware(['auth'])->group(function(){
 //    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'index'])->name('jurnalPembayaranNota');
     Route::get('kasir/pembayarannota/baru', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'create'])->name('jurnalPembayaranNotaBaru');
 
-    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan'])->name('jurnalPembayaranNota');
+    Route::get('kasir/nota/', [\App\Http\Controllers\Kasir\PaymentController::class, 'notaPenjualan'])->name('kasir.nota');
+    Route::get('kasir/nota/tempo', \App\Http\Livewire\Kasir\NotaPenjualanTempo::class)->name('kasir.nota.tempo');
+    Route::get('kasir/nota/cash', [\App\Http\Controllers\Kasir\PaymentController::class, 'notaPenjualanCash'])->name('kasir.nota.cash');
+    Route::get('kasir/nota/piutang', [\App\Http\Controllers\Kasir\PaymentController::class, 'notaPenjualanBelumBayar'])->name('kasir.nota.piutang');
     Route::get('kasir/payment/tambahbiaya/{id}', [\App\Http\Controllers\Kasir\PaymentController::class, 'transaksiTambahanBiayaPenjualan']);
     Route::get('kasir/payment/tambahbiaya/{id}/edit', [\App\Http\Controllers\Kasir\PaymentController::class, 'tambahanBiayaPenjualan']);
 
