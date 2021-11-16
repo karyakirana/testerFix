@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('welcome');
+    return redirect()->to('/metronics');
 });
 
 Route::get('login', [\App\Http\Controllers\Custom\LoginController::class, 'index'])
@@ -29,7 +30,8 @@ Route::get('/metronics', function (){
 })->middleware('auth');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+//    return view('dashboard');
+    return redirect()->to('/metronics');
 })->middleware(['auth'])->name('dashboard');
 
 //require __DIR__.'/auth.php';
