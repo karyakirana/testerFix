@@ -17,6 +17,8 @@ class PenjualanTransaksiNew extends Component
     public $hargaSudahDiskon, $hargaDiskonJumlah, $hargaSubTotal;
     public $detailPenjualan = [];
 
+    public $update, $indexDetail;
+
     protected $listeners = ['getDataProduk', 'getDataCustomer'];
 
     public function mount()
@@ -87,21 +89,42 @@ class PenjualanTransaksiNew extends Component
             'subTotal'=>$this->produkSubTotal,
         ];
         $this->resetForm();
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 
     public function editItem($index)
     {
-        //
+        $this->update = true;
+        $this->indexDetail = $index;
+        $this->produkId = $this->detailPenjualan['produkId'];
+        $this->produkKodeLokal = $this->detailPenjualan['kodeLokal'];
+        $this->produkName = $this->detailPenjualan['item'];
+        $this->produkHarga = $this->detailPenjualan['harga'];
+        $this->produkJumlah = $this->detailPenjualan['jumlah'];
+        $this->produkDiskon = $this->detailPenjualan['diskon'];
+        $this->produkSubTotal = $this->detailPenjualan['subTotal'];
     }
 
     public function updateitem()
     {
-        //
+        $index = $this->indexDetail;
+        $this->detailPenjualan[$index]['produkId'] = $this->produkId;
+        $this->detailPenjualan[$index]['kodeLokal'] = $this->produkKodeLokal;
+        $this->detailPenjualan[$index]['item'] = $this->produkName;
+        $this->detailPenjualan[$index]['harga'] = $this->produkHarga;
+        $this->detailPenjualan[$index]['jumlah'] = $this->produkJumlah;
+        $this->detailPenjualan[$index]['diskon'] = $this->produkDiskon;
+        $this->detailPenjualan[$index]['subTotal'] = $this->produkSubTotal;
+        $this->resetForm();
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 
     public function deleteItem($index)
     {
-        //
+        unset($this->detailPenjualan[$index]);
+        $this->detailPenjualan = array_values($this->detailPenjualan);
     }
 
     public function storeAll()
