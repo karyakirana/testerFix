@@ -92,8 +92,8 @@ class SalesController extends Controller
             'jenisStockKeluar'=>'penjualan'
         ];
 
-        $commit = $penjualanRepo->commitPenjualan($data);
-        return response()->json($commit);
+        $commit = (new SalesRepository())->commitPenjualan($data);
+        return response()->json([$commit]);
 
     }
 

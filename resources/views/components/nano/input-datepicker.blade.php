@@ -1,4 +1,5 @@
-<input type="text" {{ $attributes->merge(['class'=>'form-control tanggalan']) }}>
+@props(['hasError'=>false])
+<input type="text" {{ $attributes->class(['form-control tanggalan', 'is-invalid'=>$hasError]) }}>
 
 @push('scripts')
     <script>
@@ -20,7 +21,8 @@
             let tanggalan = function (){
                 $('.tanggalan').datepicker({
                     rtl: KTUtil.isRTL(),
-                    format: 'dd-M-yyyy',
+                    language : 'ID',
+                    format: 'dd MM yyyy',
                     todayHighlight: true,
                     orientation: "bottom left",
                     templates: arrows

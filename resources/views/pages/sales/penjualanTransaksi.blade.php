@@ -460,9 +460,14 @@
                     success : function (data){
                         if (data.status){
                             window.location.href = '{{ url('/') }}'+'/sales/print/'+data.nomorPenjualan;
+                        } else {
+                            Swal.fire(data);
+                            console.log(data);
                         }
                     },
                     error : function (jqXHR, textStatus, errorThrown){
+                        console.log(jqXHR.responseText);
+                        Swal.fire(jqXHR);
                         $('.invalid-feedback').remove();
                         $('.is-invalid').removeClass('is-invalid');
                         for (const property in jqXHR.responseJSON.errors) {
