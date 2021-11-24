@@ -81,6 +81,7 @@
                         <tr>
                             <x-atom.table-th :width="'10%'">ID</x-atom.table-th>
                             <x-atom.table-th :width="'30%'">Item</x-atom.table-th>
+                            <x-atom.table-th :width="'15%'">Harga</x-atom.table-th>
                             <x-atom.table-th :width="'15%'">Jumlah</x-atom.table-th>
                             <x-atom.table-th :width="'10%'">Diskon</x-atom.table-th>
                             <x-atom.table-th :width="'20%'">Sub Total</x-atom.table-th>
@@ -92,9 +93,10 @@
                             <tr>
                                 <x-atom.table-td :type="'center'">{{$item['kodeLokal']}}</x-atom.table-td>
                                 <x-atom.table-td>{{$item['item']}}</x-atom.table-td>
+                                <x-atom.table-td :type="'right'">{{$item['harga']}}</x-atom.table-td>
                                 <x-atom.table-td :type="'center'">{{$item['jumlah']}}</x-atom.table-td>
                                 <x-atom.table-td :type="'center'">{{$item['diskon']}}</x-atom.table-td>
-                                <x-atom.table-td>{{$item['subTotal']}}</x-atom.table-td>
+                                <x-atom.table-td :type="'right'">{{$item['subTotal']}}</x-atom.table-td>
                                 <x-atom.table-td :type="'center'">
                                     {{$index}}
                                 </x-atom.table-td>
@@ -126,7 +128,7 @@
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Harga</label>
                             <div class="col-md-7">
-                                <input type="text" class="form-control @error('produkHarga') is-invalid @enderror" wire:model.defer="produkHarga">
+                                <input type="text" class="form-control @error('produkHarga') is-invalid @enderror" wire:model="produkHarga">
                                 @error('produkHarga')
                                 <span class="invalid-feedback">{{$message}}</span>
                                 @enderror
@@ -135,7 +137,9 @@
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Diskon</label>
                             <div class="col-md-7">
-                                <input type="text" class="form-control @error('produkDiskon') is-invalid @enderror" wire:model.defer="produkDiskon">
+                                <input type="number" class="form-control @error('produkDiskon') is-invalid @enderror"
+                                       wire:keyup="hitungHargaDiskon"
+                                       wire:model="produkDiskon">
                                 @error('produkDiskon')
                                 <span class="invalid-feedback">{{$message}}</span>
                                 @enderror
@@ -144,13 +148,15 @@
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Harga Diskon</label>
                             <div class="col-md-7">
-                                <input type="text" class="form-control" wire:model.defer="hargaSudahDiskon" readonly>
+                                <input type="text" class="form-control" wire:model="hargaSudahDiskon" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label">Jumlah</label>
                             <div class="col-md-7">
-                                <input type="text" class="form-control @error('produkJumlah') is-invalid @enderror" wire:model.defer="produkJumlah">
+                                <input type="text" class="form-control @error('produkJumlah') is-invalid @enderror"
+                                       wire:keyup="hitungSubTotal"
+                                       wire:model="produkJumlah">
                                 @error('produkJumlah')
                                 <span class="invalid-feedback">{{$message}}</span>
                                 @enderror
@@ -165,7 +171,7 @@
                     </form>
                     <div class="text-center mb-5">
                         <button class="btn btn-primary" type="button" onclick="addProduk()">Add Produk</button>
-                        <button class="btn btn-success" type="button">Simpan Produk</button>
+                        <button class="btn btn-success" type="button" wire:click="storeItem">Simpan Produk</button>
                     </div>
                     <div class="text-center mb-5">
                         <button class="btn btn-danger" type="button">SIMPAN ALL</button>
