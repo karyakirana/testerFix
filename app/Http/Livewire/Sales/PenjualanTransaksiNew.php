@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Sales;
 use App\Models\Master\Customer;
 use App\Models\Master\Produk;
 use App\Models\Stock\BranchStock;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class PenjualanTransaksiNew extends Component
@@ -86,6 +87,31 @@ class PenjualanTransaksiNew extends Component
             'subTotal'=>$this->produkSubTotal,
         ];
         $this->resetForm();
+    }
+
+    public function editItem($index)
+    {
+        //
+    }
+
+    public function updateitem()
+    {
+        //
+    }
+
+    public function deleteItem($index)
+    {
+        //
+    }
+
+    public function storeAll()
+    {
+        DB::beginTransaction();
+        try {
+            DB::commit();
+        } catch (\Exception $e){
+            DB::rollBack();
+        }
     }
 
     public function render()
