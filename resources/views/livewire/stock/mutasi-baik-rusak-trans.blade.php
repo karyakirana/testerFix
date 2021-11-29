@@ -52,17 +52,19 @@
                     </thead>
                     <tbody>
                         @forelse($mutasiBaikRusakDetail as $index => $row)
-                            <x-atom.table-td :type="'center'">{{$row['kodeLokal']}}</x-atom.table-td>
-                            <x-atom.table-td>{{$row['item']}}</x-atom.table-td>
-                            <x-atom.table-td :type="'center'">{{$row['jumlah']}}</x-atom.table-td>
-                            <x-atom.table-td :type="'center'">
-                                <button class="btn btn-sm btn-clean btn-text-primary btn-hover-primary btn-icon" wire:click="editItem('{{$index}}')">
-                                    <i class="la la-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-clean btn-text-primary btn-hover-primary btn-icon" wire:click="deleteItem('{{$index}}')">
-                                    <i class="la la-trash"></i>
-                                </button>
-                            </x-atom.table-td>
+                            <tr>
+                                <x-atom.table-td :type="'center'">{{$row['kodeLokal']}}</x-atom.table-td>
+                                <x-atom.table-td>{{$row['item']}}</x-atom.table-td>
+                                <x-atom.table-td :type="'center'">{{$row['jumlah']}}</x-atom.table-td>
+                                <x-atom.table-td :type="'center'">
+                                    <button class="btn btn-sm btn-clean btn-text-primary btn-hover-primary btn-icon" wire:click="editItem('{{$index}}')">
+                                        <i class="la la-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-clean btn-text-primary btn-hover-primary btn-icon" wire:click="deleteItem('{{$index}}')">
+                                        <i class="la la-trash"></i>
+                                    </button>
+                                </x-atom.table-td>
+                            </tr>
                         @empty
                         <tr>
                             <td class="text-center" colspan="4">Tidak Ada data</td>
