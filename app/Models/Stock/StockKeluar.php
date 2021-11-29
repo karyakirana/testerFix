@@ -45,4 +45,9 @@ class StockKeluar extends Model
     {
         return $this->belongsTo(User::class, 'users');
     }
+
+    public function stockKeluarDetail()
+    {
+        return $this->hasMany(StockKeluar::class, 'stock_keluar');
+    }
 }

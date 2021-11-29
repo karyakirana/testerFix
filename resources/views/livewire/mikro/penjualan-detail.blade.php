@@ -1,5 +1,5 @@
 <div>
-    @push('livewires')
+
         <x-nano.modal-large id="detailPenjualan" wire:ignore.self :closeModal="'closePegawai'">
             <x-slot name="title">
                 Nomor Penjualan
@@ -137,5 +137,6 @@
             </x-slot>
 
         </x-nano.modal-large>
+    @push('livewires')
     @endpush
 </div>

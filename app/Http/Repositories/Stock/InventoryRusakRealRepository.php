@@ -56,5 +56,25 @@ class InventoryRusakRealRepository
                 'stockIn'=>DB::raw('stockIn -'.$dataDetil->jumlah),
             ]);
     }
+
+    public function storeStockIn($branch, array $dataDetil)
+    {
+        $inventory = InventoryRusak::where('idProduk', $dataDetil['produk_id'])
+            ->where('branchId', $branch)->get()->count();
+        if ($inventory > 0){
+            InventoryRusak::where('idProduk', $dataDetil['produk_id'])
+                ->where('branchId', $branch)
+                ->update([
+                    'stockIn'=>DB::raw('stockIn +'.$dataDetil['jumlah']),
+                ]);
+        } else {
+            InventoryRusak::create([
+                'idProduk'=>$dataDetil['produk_id'],
+                'branchId'=>$branch,
+                'stockOpname'=>0,
+                'stockIn'=>$dataDetil['jumlah']
+            ]);
+        }
+    }
 }
 

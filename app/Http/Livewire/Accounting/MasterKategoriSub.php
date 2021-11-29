@@ -6,15 +6,19 @@ use App\Models\Accounting\AccountKategori;
 use App\Models\Accounting\AccountKategoriSub;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class MasterKategoriSub extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
     public $inputForm = [];
 
     public function render()
     {
         return view('livewire.accounting.master-kategori-sub', [
-            'subKategoriData'=>AccountKategoriSub::all(),
+            'subKategoriData'=>AccountKategoriSub::paginate(10),
             'selectkategori'=>AccountKategori::all()
         ]);
     }

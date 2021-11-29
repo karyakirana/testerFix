@@ -1,5 +1,11 @@
 <div>
     <x-nano.modal-large :title="'Data Customer'" id="customerModal" wire:ignore.self>
+        <div class="col-md-6 row mb-6">
+            <label for="" class="col-form-label col-2">Search : </label>
+            <div class="col-5">
+                <input type="text" class="form-control" wire:model="search">
+            </div>
+        </div>
         <table class="table table-bordered">
             <thead>
                 <tr>

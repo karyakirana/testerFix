@@ -102,7 +102,7 @@ class TransaksiBiayaPenjualan extends Component
                 'keterangan'=>$row['keterangan']
             ]);
         }
-        // redirect
+        return redirect()->to('/kasir');
     }
 
     public function render()

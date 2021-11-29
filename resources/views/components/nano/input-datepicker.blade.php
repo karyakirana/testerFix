@@ -21,8 +21,7 @@
             let tanggalan = function (){
                 $('.tanggalan').datepicker({
                     rtl: KTUtil.isRTL(),
-                    language : 'ID',
-                    format: 'dd MM yyyy',
+                    format: 'dd-M-yyyy',
                     todayHighlight: true,
                     orientation: "bottom left",
                     templates: arrows

@@ -13,7 +13,9 @@ Route::middleware(['auth'])->group(function (){
     Route::delete('/sales/edit/{id}', [\App\Http\Controllers\Sales\SalesController::class, 'destroy']);
 
     // Refactoring Penjualan
-    Route::get('/sales/penjualan', [\App\Http\Controllers\Sales\PenjualanController::class, 'create'])->name('penjualan');
+    Route::get('/sales', [\App\Http\Controllers\Sales\PenjualanController::class, 'index'])->name('penjualan');
+    Route::get('/sales/penjualan', [\App\Http\Controllers\Sales\PenjualanController::class, 'create'])->name('penjualan.transaksi');
+    Route::get('/sales/penjualan/{id}', [\App\Http\Controllers\Sales\PenjualanController::class, 'edit']);
 
     // biaya Penjualan
     Route::get('/sales/biaya', [\App\Http\Controllers\Sales\PenjualanBiayaController::class, 'index'])->name('sales.biaya');

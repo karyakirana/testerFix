@@ -10,21 +10,13 @@ Route::middleware(['auth'])->group(function(){
     Route::get('kasir/pemasukan/transaksi', [\App\Http\Controllers\Accounting\KasirPemasukanController::class, 'create'])->name('kasir.pemasukan.transaksi');
 
     // kategori
-    Route::get('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'index'])->name('accountingKategori');
-    Route::post('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'store']);
-    Route::patch('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'dataList']);
-    Route::get('accounting/master/kategori/{id}', [\App\Http\Controllers\Accounting\KategoriController::class, 'edit']);
-    Route::delete('accounting/master/kategori/{id}', [\App\Http\Controllers\Accounting\KategoriController::class, 'destroy']);
-    Route::put('accounting/master/kategori', [\App\Http\Controllers\Accounting\KategoriController::class, 'select2']);
+    Route::get('accounting/master/kategori', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'kategori'])->name('accountingKategori');
 
     // kategori-sub
-    Route::get('accounting/master/kategorisub', [\App\Http\Controllers\Accounting\KategoriSubController::class, 'index'])->name('accountingSubKategori');
-    Route::post('accounting/master/kategorisub', [\App\Http\Controllers\Accounting\KategoriSubController::class, 'store']);
-    Route::patch('accounting/master/kategorisub', [\App\Http\Controllers\Accounting\KategoriSubController::class, 'dataList']);
-    Route::get('accounting/master/kategorisub/{id}', [\App\Http\Controllers\Accounting\KategoriSubController::class, 'edit']);
+    Route::get('accounting/master/kategorisub', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'subKategori'])->name('accountingSubKategori');
 
     // account
-    Route::get('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'index'])->name('accountingAccount');
+    Route::get('accounting/master/account', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'account'])->name('accountingAccount');
     Route::patch('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'listData']);
     Route::post('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'store']);
     Route::get('accounting/master/account/{id}', [\App\Http\Controllers\Accounting\AccountController::class, 'edit']);
@@ -37,6 +29,12 @@ Route::middleware(['auth'])->group(function(){
 
     // journal ref
     Route::get('accounting/master/jurnalref', [\App\Http\Controllers\Accounting\JournalRefController::class, 'index'])->name('accountingJournalRef');
+
+    /**
+     * Kasir Routing
+     */
+    Route::get('/kasir', [\App\Http\Controllers\Kasir\KasirController::class, 'index'])->name('kasir');
+    Route::get('/kasir/tambahbiaya/{id}', [\App\Http\Controllers\Kasir\KasirController::class, 'tambahBiaya'])->name('kasir.tambahbiaya');
 
     // journal pembayaran nota
 //    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'index'])->name('jurnalPembayaranNota');

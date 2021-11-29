@@ -66,7 +66,15 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/real/rusak/{id}', [\App\Http\Controllers\Stock\InventoryRusakController::class, 'byBranch']);
 
     // Input Barang Rusak
-    Route::get('/stock/rusak/masuk', [\App\Http\Controllers\Stock\StockMasukRusakController::class, 'index'])->name('stockRusakMasuk');
+    Route::get('/stock/rusak/real',[\App\Http\Controllers\Stock\StockRusakController::class, 'index'])->name('stockRusak');
+    Route::get('/stock/rusak/masuk',[\App\Http\Controllers\Stock\StockRusakController::class, 'stockMasukRusak']);
+    Route::get('/stock/rusak/masuk/list',[\App\Http\Controllers\Stock\StockRusakController::class, 'stockMasukRusakList']);
+    Route::get('/stock/rusak/keluar',[\App\Http\Controllers\Stock\StockRusakController::class, 'stockKeluarRusak']);
+    // Stock Mutasi Rusak
+    Route::get('/stock/rusak/mutasi/rusak', [\App\Http\Controllers\Stock\StockMutasiRusak2Controller::class, 'index'])->name('stock.mutasi.rusak.rusak');
+    Route::get('/stock/rusak/mutasi/rusak/transaksi', [\App\Http\Controllers\Stock\StockMutasiRusak2Controller::class, 'transaksiMutasiRusakRusak']);
+    Route::get('/stock/rusak/mutasi/baik/rusak', [\App\Http\Controllers\Stock\MutasiBaikRusakController::class, 'index'])->name('stock.mutasi.baik.rusak');
+    Route::get('/stock/rusak/mutasi/baik/rusak/transaksi', [\App\Http\Controllers\Stock\MutasiBaikRusakController::class, 'create'])->name('stock.mutasi.baik.rusak.transaksi');
 
     // Stock Temp Trans
     Route::post('/stock/temp', [\App\Http\Controllers\Stock\StockTempController::class, 'store']);

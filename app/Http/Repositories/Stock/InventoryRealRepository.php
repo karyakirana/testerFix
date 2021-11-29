@@ -42,4 +42,45 @@ class InventoryRealRepository
             ]);
         }
     }
+
+    // stock keluar array
+    public function updateInventoryOut(array $data)
+    {
+        $inventoryReal = InventoryReal::where('idProduk', $data['produkId'] ?? $data['produk_id'])
+            ->where('branchId', $data['branchId'])
+            ->get()->count();
+        if ($inventoryReal > 0){
+            // update data
+            InventoryReal::where('idProduk', $data['produkId'] ?? $data['produk_id'])
+                ->where('branchId', $data['branchId'])
+                ->update([
+                    'stockOut'=>DB::raw('stockOut +'.$data['jumlah']),
+                    'stockNow'=>DB::raw('stockNow -'.$data['jumlah']),
+                ]);
+        } else {
+            InventoryReal::create([
+                'idProduk'=>$data['produkId'] ?? $data['produk_id'],
+                'branchId'=>$data['branchId'],
+                'stockOut'=>$data['jumlah'],
+                'stockNow'=>DB::raw('stockNow +'.$data['jumlah']),
+            ]);
+        }
+    }
+
+    // rollback inventoryOut by StockKeluar
+    public function rollbackInventoryOut($stockKeluarDetail, $branchId)
+    {
+        foreach ($stockKeluarDetail as $row)
+        {
+            $inventoryReal = InventoryReal::where('idProduk', $row->id_produk)
+                ->where('branchId', $branchId)
+                ->get()->count();
+            InventoryReal::where('idProduk', $row->id_produk)
+                ->where('branchId', $branchId)
+                ->update([
+                    'stockOut'=>DB::raw('stockOut -'.$row->id_produk),
+                    'stockNow'=>DB::raw('stockNow +'.$row->id_produk),
+                ]);
+        }
+    }
 }

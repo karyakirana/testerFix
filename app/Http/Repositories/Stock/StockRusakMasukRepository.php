@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Stock;
 
 use App\Models\Stock\StockMasukRusak;
+use App\Models\Stock\StockMasukRusakDetil;
 
 class StockRusakMasukRepository
 {
@@ -57,5 +58,31 @@ class StockRusakMasukRepository
     public function destroy($idStockRusakIn)
     {
         //
+    }
+
+    public function storeStockMasuk(array $dataStockMasuk, $idReturRusak = null, $idMutasi = null)
+    {
+        return StockMasukRusak::create([
+            'jenis'=>$dataStockMasuk['jenis'] ?? $dataStockMasuk['jenis_keluar'],
+            'activeCash'=>$dataStockMasuk['activeCash'],
+            'kode'=>self::getKode(),
+            'branch_id'=>$dataStockMasuk['branchId'] ?? $dataStockMasuk['gudang_tujuan'],
+            'retur_id'=>$idReturRusak ?? null,
+            'customer_id'=>$dataStockMasuk['customerId'] ?? null,
+            'supplier_id'=>$dataStockMasuk['supplierId'] ?? null,
+            'user_id'=>$dataStockMasuk['userId'] ?? $dataStockMasuk['user_id'],
+            'tgl_masuk_rusak'=>$dataStockMasuk['tglMasukRusak'] ?? $dataStockMasuk['tglReturRusak'] ?? $dataStockMasuk['tgl_mutasi'],
+            'mutasi_id'=>$dataStockMasuk['mutasiId'] ?? $idMutasi,
+            'keterangan'=>$dataStockMasuk['keterangan'],
+        ]);
+    }
+
+    public function storeStockMasukDetail(array $dataStockMasukDetail)
+    {
+        return StockMasukRusakDetil::create([
+            'stock_masuk_rusak_id'=>$dataStockMasukDetail['stockMasukRusakId'],
+            'produk_id'=>$dataStockMasukDetail['produkId'] ?? $dataStockMasukDetail['produk_id'],
+            'jumlah'=>$dataStockMasukDetail['jumlah']
+        ]);
     }
 }

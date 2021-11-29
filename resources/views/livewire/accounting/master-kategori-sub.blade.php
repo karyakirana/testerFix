@@ -31,7 +31,7 @@
             @forelse($subKategoriData as $row)
                 <tr>
                     <td class="text-center">{{$row->kode_kategori_sub}}</td>
-                    <td class="text-center">{{$row->kategori->deskripsi}}</td>
+                    <td class="text-center">{{$row->kategori->deskripsi ?? ''}}</td>
                     <td>{{$row->deskripsi}}</td>
                     <td class="text-center">{{$row->keterangan}}</td>
                     <td class="text-center">
@@ -50,6 +50,7 @@
             @endforelse
             </tbody>
         </table>
+        {{$subKategoriData->links()}}
     </x-mikro.card-custom>
 
     <x-nano.modal-standart :title="'Form Sub Kategori'" id="modalSubKategori" wire:ignore.self>
