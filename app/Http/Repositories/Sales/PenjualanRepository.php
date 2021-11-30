@@ -64,7 +64,7 @@ class PenjualanRepository
 
     public function updatePenjualan(array $dataPenjualan)
     {
-        return Penjualan::where('id_jual', $dataPenjualan->id_jual)
+        return Penjualan::where('id_jual', $dataPenjualan['id_jual'])
             ->update([
                 'id_cust'=>$dataPenjualan['customerId'],
                 'idBranch'=>$dataPenjualan['branchId'],
@@ -95,7 +95,7 @@ class PenjualanRepository
 
     public function destroyPenjualanDetailByIdJual($idJual)
     {
-        return Penjualan::where('id_jual', $idJual)->delete();
+        return PenjualanDetil::where('id_jual', $idJual)->delete();
     }
 
     /**

@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <x-mikro.card-custom :title="'Data Penjualan'">
+    <x-mikro.card-custom :title="'Data Penjualan '.$idPenjualan">
 
         <div class="row">
             <div class="col-md-8">

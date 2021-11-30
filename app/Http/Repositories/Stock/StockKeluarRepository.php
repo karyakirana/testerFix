@@ -83,6 +83,11 @@ class  StockKeluarRepository
         ]);
     }
 
+    public function destroyDetail($idStockKeluar)
+    {
+        return StockKeluarDetil::where('stock_keluar', $idStockKeluar)->delete();
+    }
+
     public function storeStockKeluarDetail($dataDetail)
     {
         return StockKeluarDetil::create($dataDetail);

@@ -48,6 +48,6 @@ class StockKeluar extends Model
 
     public function stockKeluarDetail()
     {
-        return $this->hasMany(StockKeluar::class, 'stock_keluar');
+        return $this->hasMany(StockKeluarDetil::class, 'stock_keluar');
     }
 }

@@ -78,8 +78,8 @@ class InventoryRealRepository
             InventoryReal::where('idProduk', $row->id_produk)
                 ->where('branchId', $branchId)
                 ->update([
-                    'stockOut'=>DB::raw('stockOut -'.$row->id_produk),
-                    'stockNow'=>DB::raw('stockNow +'.$row->id_produk),
+                    'stockOut'=>DB::raw('stockOut -'.$row->jumlah),
+                    'stockNow'=>DB::raw('stockNow +'.$row->jumlah),
                 ]);
         }
     }

@@ -19,4 +19,9 @@ class MutasiStockRusakRusakList extends Component
             'dataMutasiRusak'=>(new MutasiGudangRusakRepository())->getDataBySearch($this->search)
         ]);
     }
+
+    public function newData()
+    {
+        return redirect()->to(route('stock.mutasi.rusak.rusak.transaksi'));
+    }
 }

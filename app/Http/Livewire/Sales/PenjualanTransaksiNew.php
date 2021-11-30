@@ -8,6 +8,7 @@ use App\Http\Repositories\Stock\StockKeluarRepository;
 use App\Models\Master\Customer;
 use App\Models\Master\Produk;
 use App\Models\Stock\BranchStock;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -48,6 +49,8 @@ class PenjualanTransaksiNew extends Component
             $this->tglNota = tanggalan_format($dataPenjualan->tgl_nota);
             $this->tglTempo = tanggalan_format($dataPenjualan->tgl_tempo);
             $this->gudangId = $dataPenjualan->idBranch;
+            $this->ppn = $dataPenjualan->ppn;
+            $this->biayaLain = $dataPenjualan->biaya_lain;
             $this->keterangan = $dataPenjualan->keterangan;
 
             // set to detail
@@ -298,7 +301,7 @@ class PenjualanTransaksiNew extends Component
 
             // delete detail first
             $penjualanRepository->destroyPenjualanDetailByIdJual($this->idPenjualan);
-            $stockKeluarRepository->destroyStockKeluarByIdStockkeluar($stockKeluarId);
+            $stockKeluarRepository->destroyDetail($stockKeluarId);
 
             // rollback inventory by stock keluar
             $inventoryRealRepository->rollbackInventoryOut($getStockKeluar->stockKeluarDetail, $this->gudangId);
@@ -325,7 +328,7 @@ class PenjualanTransaksiNew extends Component
             }
             DB::commit();
             return redirect()->to('sales/print/'.str_replace('/', '-', $this->idPenjualan));
-        } catch (\Exception $e){
+        } catch (ModelNotFoundException $e){
             DB::rollBack();
             session()->flash('message', $e);
         }
