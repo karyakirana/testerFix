@@ -118,7 +118,9 @@ class PenjualanTransaksiNew extends Component
 
     public function hitungTotalBayar()
     {
-        $this->totalBayar = $this->total + $this->biayaLain + $this->ppn;
+        $biayaLain = (int) $this->biayaLain;
+        $ppn = (int) $this->ppn;
+        $this->totalBayar = $this->total + $biayaLain + $ppn;
         $this->totalBayarRupiah = rupiah_format($this->totalBayar);
     }
 

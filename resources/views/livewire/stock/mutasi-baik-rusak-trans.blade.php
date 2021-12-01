@@ -19,7 +19,7 @@
                                 @endforelse
                             </select>
                         </div>
-                        <label class="col-2 col-form-label">Gudang Asal</label>
+                        <label class="col-2 col-form-label">Gudang Tujuan</label>
                         <div class="col-4">
                             <select class="form-control" wire:model.defer="gudangTujuan">
                                 <option selected>Dipilih</option>

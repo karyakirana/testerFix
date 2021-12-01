@@ -24,7 +24,10 @@ class KasirController extends Controller
         ]);
     }
 
-    //
+    public function daftarPiutang()
+    {
+        //
+    }
 
     public function setPiutangTransaksi()
     {
