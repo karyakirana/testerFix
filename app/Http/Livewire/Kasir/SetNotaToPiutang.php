@@ -37,6 +37,17 @@ class SetNotaToPiutang extends Component
         ];
     }
 
+    public function deleteItem($index)
+    {
+        unset($this->listNota[$index]);
+        $this->listNota = array_values($this->listNota);
+    }
+
+    public function storeAll()
+    {
+        //
+    }
+
     public function showDetail($idPenjualan)
     {
         $this->emit('showDetailInfo', $idPenjualan);

@@ -125,10 +125,10 @@
 
         @push('livewires')
             <script>
-                $('#tglMutasi').on('change', function (e) {
-                    let date = $(this).data("#tglMutasi");
+                $('#tgl_mutasi').on('change', function (e) {
+                    let date = $(this).data("#tgl_mutasi");
                     console.log(e.target.value);
-                    @this.tglMutasi = e.target.value;
+                    @this.tgl_mutasi = e.target.value;
                 })
             </script>
         @endpush

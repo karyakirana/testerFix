@@ -100,6 +100,7 @@ class StockMasukRusak1 extends Component
         $this->detailStockRusak[$index]['stockIn'] = $this->stockIn;
     }
 
+
     public function storeAll()
     {
         DB::beginTransaction();

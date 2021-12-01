@@ -26,9 +26,9 @@
                 @forelse($dataStockMutasi as $row)
                     <tr>
                         <x-atom.table-td>{{$row->kode}}</x-atom.table-td>
+                        <x-atom.table-td>{{tanggalan_format($row->tgl_mutasi)}}</x-atom.table-td>
                         <x-atom.table-td>{{$row->gudangAsal->branchName}}</x-atom.table-td>
                         <x-atom.table-td>{{$row->gudangTujuan->branchName}}</x-atom.table-td>
-                        <x-atom.table-td>{{tanggalan_format($row->tgl_mutasi)}}</x-atom.table-td>
                         <x-atom.table-td>{{ucfirst($row->user->name)}}</x-atom.table-td>
                         <x-atom.table-td>
                             <button type="button" class="btn btn-sm btn-clean btn-icon" title="edit" wire:click=""><i class="la la-edit"></i></button>

@@ -12,8 +12,8 @@ class MutasiGudangBaikRusakRepository
         return MutasiBaikRusak::where('activeCash', session('ClosedCash'))
             ->Where(function ($query) use($search){
                 $query->whereRelation('gudangAsal', 'branchName', 'like', '%'.$search.'%')
-                    ->whereRelation('gudangTujuan', 'branchName', 'like', '%'.$search.'%')
-                    ->whereRelation('user', 'name', '%'.$search.'%');
+                    ->orWhereRelation('gudangTujuan', 'branchName', 'like', '%'.$search.'%')
+                    ->orWhereRelation('user', 'name', '%'.$search.'%');
             })
             ->paginate(10);
     }

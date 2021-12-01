@@ -38,9 +38,8 @@
                             <x-atom.table-td :type="'right'" class="pr-5">{{rupiah_format($row['totalBayar'])}}</x-atom.table-td>
                             <x-atom.table-td :type="'center'" >
                                 <div class="btn-group">
-                                    <x-atom.button-for-table :name="'Edit'"><i class="la la-edit"></i></x-atom.button-for-table>
-                                    <x-atom.button-for-table :name="'Edit'" wire:click="showDetail('{{$row['id']}}')"><i class="la la-list"></i></x-atom.button-for-table>
-                                    <x-atom.button-for-table :name="'Delete'"><i class="la la-trash"></i></x-atom.button-for-table>
+                                    <x-atom.button-for-table :name="'Detail'" wire:click="showDetail('{{$row['id']}}')"><i class="la la-list"></i></x-atom.button-for-table>
+                                    <x-atom.button-for-table :name="'Delete'" wire:click="deleteItem('{{$index}}')"><i class="la la-trash"></i></x-atom.button-for-table>
                                 </div>
                             </x-atom.table-td>
                         </tr>
