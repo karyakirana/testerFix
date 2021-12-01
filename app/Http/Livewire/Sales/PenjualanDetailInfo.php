@@ -18,7 +18,10 @@ class PenjualanDetailInfo extends Component
 
     public function showDetailInfo($idPenjualan)
     {
-        $this->penjualan = Penjualan::where('id_jual', $idPenjualan)->first();
+        $this->penjualan = Penjualan::query()
+            ->where('id_jual', $idPenjualan)
+            ->orWhere('id', $idPenjualan)
+            ->first();
         $this->penjualanDetail = $this->penjualan->detilPenjualan;
     }
 

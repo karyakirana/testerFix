@@ -35,7 +35,9 @@
                         <x-atom.table-td :type="'center'">{{ucfirst($row->status_bayar)}}</x-atom.table-td>
                         <x-atom.table-td :type="'right'">{{rupiah_format($row->total_bayar)}}</x-atom.table-td>
                         <x-atom.table-td :type="'center'">
-                            <button type="button" class="btn btn-sm btn-clean btn-icon" title="edit" wire:click="edit('{{$row->id_jual}}')"><i class="la la-edit"></i></button>
+                            @if($row->sudahBayar === 'belum')
+                                <button type="button" class="btn btn-sm btn-clean btn-icon" title="edit" wire:click="edit('{{$row->id_jual}}')"><i class="la la-edit"></i></button>
+                            @endif
                             <button type="button" class="btn btn-sm btn-clean btn-icon" title="detail" wire:click="openPreview('{{$row->id_jual}}')"><i class="flaticon2-indent-dots"></i></button>
                             <button type="button" class="btn btn-sm btn-clean btn-icon" title="print" wire:click="printPreview('{{$row->id_jual}}')"><i class="flaticon-technology"></i></button>
                         </x-atom.table-td>

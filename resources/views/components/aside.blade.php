@@ -679,8 +679,8 @@
 													<span class="menu-text">Kasir</span>
 												</span>
                         </li>
-                        <li class="menu-item {{ (request()->is('kasir/nota')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
-                            <a href="{{ route('kasir.nota') }}" class="menu-link">
+                        <li class="menu-item {{ (request()->is('kasir')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('kasir') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>

@@ -23,4 +23,11 @@ class KasirController extends Controller
             'idPenjualan'=>$idPenjualan
         ]);
     }
+
+    //
+
+    public function setPiutangTransaksi()
+    {
+        return view('pages.kasir.payment-set-piutang');
+    }
 }

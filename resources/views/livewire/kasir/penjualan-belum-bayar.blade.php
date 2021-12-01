@@ -36,7 +36,6 @@
                     <x-atom.table-td :type="'center'">{{ucfirst($row->status_bayar)}}</x-atom.table-td>
                     <x-atom.table-td :type="'right'">{{rupiah_format($row->total_bayar)}}</x-atom.table-td>
                     <x-atom.table-td :type="'center'">
-                        <button type="button" class="btn btn-sm btn-clean btn-icon" title="edit"><i class="la la-edit"></i></button>
                         <button type="button" class="btn btn-sm btn-clean btn-icon" title="detail" wire:click="showDetailInfo('{{$row->id_jual}}')"><i class="flaticon2-indent-dots"></i></button>
                         <button type="button" class="btn btn-sm btn-clean btn-icon" title="print"><i class="flaticon-technology"></i></button>
                     </x-atom.table-td>

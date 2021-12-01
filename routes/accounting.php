@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function(){
      * Kasir Routing
      */
     Route::get('/kasir', [\App\Http\Controllers\Kasir\KasirController::class, 'index'])->name('kasir');
+    Route::get('kasir/nota/piutang/transaksi', [\App\Http\Controllers\Kasir\KasirController::class, 'setPiutangTransaksi'])->name('kasir.piutang.transaksi');
     Route::get('/kasir/tambahbiaya/{id}', [\App\Http\Controllers\Kasir\KasirController::class, 'tambahBiaya'])->name('kasir.tambahbiaya');
 
     // journal pembayaran nota
