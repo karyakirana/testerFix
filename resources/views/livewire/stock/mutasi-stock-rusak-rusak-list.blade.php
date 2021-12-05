@@ -5,7 +5,7 @@
         </x-slot>
 
         <div class="col-6 row mb-8">
-            <label for="search" class="col-2 col-form-label">Search...</label>
+            <label for="search" class="col-2 col-form-label">Search :</label>
             <div class="col-5">
                 <input type="text" class="form-control" wire:model="search">
             </div>

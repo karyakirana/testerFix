@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Stock;
 
 use App\Models\Stock\StockKeluarRusak;
+use App\Models\Stock\StockKeluarRusakDetil;
 use Illuminate\Support\Facades\Auth;
 
 class StockRusakKeluarRepository
@@ -50,15 +51,28 @@ class StockRusakKeluarRepository
         return StockKeluarRusak::destroy($id);
     }
 
-    public function storeStockKeluar(array $dataStockkeluar)
+    public function storeStockKeluar(array $data)
     {
-        return StockKeluarRusak::create([
-            'activeCash'=>$dataStockkeluar['activeCash'],
-            'kode'=>$this->kode(),
-            'supplier_id'=>$dataStockkeluar['supplierId'],
-            'user_id'=>$dataStockkeluar['userId'],
-            'tgl_keluar_rusak'=>$dataStockkeluar['tglKeluar'],
-            'keterangan'=>$dataStockkeluar['keterangan'],
+        $dataStockkeluar = $data;
+
+        return StockKeluarRusak::query()->create(
+            [
+                'activeCash'=>($dataStockkeluar["activeCash"]),
+                'kode'=>$this->kode(),
+                'supplier_id'=>$dataStockkeluar['supplierId'],
+                'user_id'=>$dataStockkeluar['userId'] ?? $dataStockkeluar['user_id'],
+                'tgl_keluar_rusak'=>$dataStockkeluar['tglKeluar'] ?? $dataStockkeluar['tglReturRusak'] ?? $dataStockkeluar['tgl_mutasi'],
+                'keterangan'=>$dataStockkeluar['keterangan'],
+            ]
+        );
+    }
+
+    public function storeStockKeluarDetail(array $data)
+    {
+        return StockKeluarRusakDetil::create([
+            'stock_keluar_rusak_id'=>$data['stockKeluarRusakId'],
+            'produk_id'=>$data['produk_id'],
+            'jumlah'=>$data['jumlah'],
         ]);
     }
 }

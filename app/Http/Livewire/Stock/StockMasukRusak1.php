@@ -76,7 +76,7 @@ class StockMasukRusak1 extends Component
     public function editItem($index)
     {
         $this->update = true;
-        $this->indexDetail = $index;
+        $this->indexItem = $index;
         $this->idProduk = $this->detailStockRusak[$index]['id_produk'];
         $this->namaProduk = $this->detailStockRusak[$index]['nama_produk'];
         $this->branchId = $this->detailStockRusak[$index]['branchId'];

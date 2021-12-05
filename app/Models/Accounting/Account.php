@@ -14,6 +14,7 @@ class Account extends Model
     protected $fillable = [
         'kode_account',
         'account_name',
+        'accounting_tipe_id',
         'keterangan',
         'kategori_sub_id'
     ];
@@ -31,5 +32,10 @@ class Account extends Model
     public static function getJoinSubKategori($idKategori = null, $deskripsiKategori = null)
     {
         //
+    }
+
+    public function tipe()
+    {
+        return $this->belongsTo(TipeAccount::class, 'accounting_tipe_id', 'id');
     }
 }

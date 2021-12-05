@@ -10,9 +10,24 @@
                 <div class="col-8">
                     <form class="form">
                         <div class="form-group row">
+                            <label class="col-lg-2 col-form-label text-lg-right" for="supplier">Supplier</label>
+                            <div class="col-lg-4">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="supplier" id="supplier" wire:model="supplier" readonly>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" name="supplier" id="supplier" type="button" onclick="addSupplier()">Supplier</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="col-2 col-form-label">Tanggal Mutasi</label>
+                            <div class="col-4">
+                                <x-nano.input-datepicker id="tgl_mutasi" wire:model.defer="tgl_mutasi" :hasError="$errors->has('tgl_mutasi')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-2 col-form-label">Gudang Asal</label>
                             <div class="col-4">
-                                <select id="gudang_asal" class="form-control" wire:model.defer="gudang_asal">
+                                <select id="gudang_asal" class="form-control @error('gudang_asal') is-invalid @enderror " wire:model.defer="gudang_asal">
                                     <option selected>Dipilih</option>
                                     @forelse($dataGudangAsal as $row)
                                         <option value="{{$row->id}}">{{$row->branchName}}</option>
@@ -22,7 +37,7 @@
                             </div>
                             <label class="col-2 col-form-label">Gudang tujuan</label>
                             <div class="col-4">
-                                <select class="form-control" wire:model.defer="gudang_tujuan">
+                                <select class="form-control @error('gudang_tujuan') is-invalid @enderror" wire:model.defer="gudang_tujuan">
                                     <option selected>Dipilih</option>
                                     @forelse($dataGudangTujuan as $row)
                                         <option value="{{$row->id}}">{{$row->branchName}}</option>
@@ -32,10 +47,6 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-2 col-form-label">Tanggal Mutasi</label>
-                            <div class="col-4">
-                                <x-nano.input-datepicker id="tgl_mutasi" wire:model.defer="tgl_mutasi"/>
-                            </div>
                             <label class="col-2 col-form-label">Keterangan</label>
                             <div class="col-4">
                                 <input type="text" class="form-control" wire:model.defer="keterangan">

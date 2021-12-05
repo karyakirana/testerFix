@@ -22,7 +22,7 @@
                     <x-atom.table-td>{{$row->namaSupplier}}</x-atom.table-td>
                     <x-atom.table-td>{{$row->alamatSupplier}}</x-atom.table-td>
                     <x-atom.table-td :type="'center'">
-                        <button class="btn btn-clean" wire:click="setSupplier('{{$row->kodeSupplier}}')">set</button>
+                        <button class="btn btn-clean" wire:click="setSupplier('{{$row->id}}')">set</button>
                     </x-atom.table-td>
                 </tr>
             @empty

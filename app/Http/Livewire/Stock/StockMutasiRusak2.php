@@ -15,6 +15,7 @@ use App\Models\Stock\StockKeluar;
 use App\Models\Stock\StockMasuk;
 use App\Models\Stock\StockMasukDetil;
 use App\Models\Stock\StockKeluarDetil;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -22,13 +23,15 @@ use Livewire\Component;
 class StockMutasiRusak2 extends Component
 {
     public $idProduk, $namaProduk, $kodeLokal, $jumlah, $mutasiRusakRusakId;
+    public $supplierId, $supplier, $jenisSupplier;
     public $activeCash, $gudang_asal, $gudang_tujuan, $user_id, $tgl_mutasi, $keterangan, $dataGudangAsal, $dataGudangTujuan;
+    public $idSupplier;
 
     public $mutasiRusakRusakDetail = [];
 
     public $update, $indexItem;
 
-    protected $listeners = ['getDataProduk'];
+    protected $listeners = ['getDataProduk', 'getDataSupplier'];
 
     public function mount($IdMutasiRusakRusak = null)
     {
@@ -45,6 +48,14 @@ class StockMutasiRusak2 extends Component
         $this->idProduk = $produk->id_produk;
         $this->namaProduk = $produk->nama_produk."\n".$produk->cover."\n".$produk->hal;
         $this->kodeLokal = $produk->kode_lokal;
+    }
+
+    public function getDataSupplier($supplierId)
+    {
+        $supplier = Supplier::find($supplierId);
+        $this->supplierId = $supplier->id;
+        $this->supplier = $supplier->namaSupplier;
+        $this->jenisSupplier = $supplier->jenisSupplier;
     }
 
     public function updatingSearch()
@@ -105,6 +116,7 @@ class StockMutasiRusak2 extends Component
         $this->validate([
             'gudang_asal'=>'required',
             'gudang_tujuan'=>'required',
+            'supplier'=>'required',
             'tgl_mutasi'=>'required',
         ]);
 
@@ -120,10 +132,10 @@ class StockMutasiRusak2 extends Component
                 'activeCash'=>session('ClosedCash'),
                 'gudang_asal'=>$this->gudang_asal,
                 'gudang_tujuan'=>$this->gudang_tujuan,
-                'tgl_mutasi'=>$this->tgl_mutasi,
+                'supplierId'=>$this->supplierId,
+                'tgl_mutasi'=>tanggalan_database_format($this->tgl_mutasi,'d-M-Y'),
                 'user_id'=>\Auth::id(),
                 'keterangan'=>$this->keterangan,
-
                 'jenis_keluar'=>'mutasi_rusak_rusak'
             ];
             // insert to mutasi rusak rusak
@@ -131,25 +143,31 @@ class StockMutasiRusak2 extends Component
             // insert to stock rusak masuk
             $storeStockRusakMasuk = $stockRusakMasukRepo->storeStockMasuk($dataMutasiRusak, null, $storeMutasiRusakRusak->id);
             // insert to stock rusak keluar
-            $storeStockRusakKeluar = $stockRusakKeluarRepo->storeStockKeluar($dataMutasiRusak, $storeMutasiRusakRusak->id);
+            $storeStockRusakKeluar = $stockRusakKeluarRepo->storeStockKeluar($dataMutasiRusak);
             foreach ($this->mutasiRusakRusakDetail as $row)
             {
                 $dataMutasiRusakDetail = [
-                    'mutasi_gudan_id'=>$storeMutasiRusakRusak->id,
-                    'produk_id'=>$row->idProduk,
-                    'jumlahStock'=>$row->jumlah,
+                    'mutasi_gudang_id'=>$storeMutasiRusakRusak->id,
+                    'produk_id'=>$row['id_produk'],
+                    'jumlah'=>$row['jumlahStock'],
 
-                    'stockKeluarRusak'=>$storeStockRusakKeluar->id,
+                    'stockKeluarRusakId'=>$storeStockRusakKeluar->id,
                     'branchId'=>$this->gudang_asal,
                     'stockMasukRusakId'=>$storeStockRusakMasuk->id,
                 ];
                 // inv rusak out
                 $inventoryRusakRepo->storeStockIn($this->gudang_tujuan, $dataMutasiRusakDetail);
+                // insert stock mutasi rusak rusak detail
+                $mutasiRusakRusakRepo->storeDetailData($dataMutasiRusakDetail);
+                // insert stock rusak keluar
+                $stockRusakKeluarRepo->storeStockKeluarDetail($dataMutasiRusakDetail);
+                // insert stock rusak masuk
+                $stockRusakMasukRepo->storeStockMasukDetail($dataMutasiRusakDetail);
 
             }
             DB::commit();
             return redirect()->to('stock/rusak/mutasi/rusak');
-        } catch (\Exception $e){
+        } catch (ModelNotFoundException $e){
             DB::rollBack();
             session()->flash('message', $e);
         }

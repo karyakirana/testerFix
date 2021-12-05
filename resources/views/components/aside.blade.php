@@ -612,6 +612,14 @@
 													<span class="menu-text">Master Akuntansi</span>
 												</span>
                         </li>
+                        <li class="menu-item {{ (request()->is('accounting/master')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
+                            <a href="{{ route('accounting.master') }}" class="menu-link">
+                                <i class="menu-bullet menu-bullet-dot">
+                                    <span></span>
+                                </i>
+                                <span class="menu-text">Daftar Akun</span>
+                            </a>
+                        </li>
                         <li class="menu-item {{ (request()->is('accounting/master/kategori')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
                             <a href="{{ route('accountingKategori') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
@@ -637,7 +645,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{ (request()->is('accounting/master/sub')) ? 'menu-item-active' : '' }}" aria-haspopup="true">
-                            <a href="{{ route('accountingSubAccount') }}" class="menu-link">
+                            <a href="{{ route('accounting.account.sub') }}" class="menu-link">
                                 <i class="menu-bullet menu-bullet-dot">
                                     <span></span>
                                 </i>

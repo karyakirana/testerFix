@@ -25,6 +25,7 @@
                 <x-atom.table-th>ID</x-atom.table-th>
                 <x-atom.table-th>Sub Kategori</x-atom.table-th>
                 <x-atom.table-th>Nama Akun</x-atom.table-th>
+                <x-atom.table-th>Tipe Akun</x-atom.table-th>
                 <x-atom.table-th>Keterangan</x-atom.table-th>
                 <x-atom.table-th></x-atom.table-th>
             </tr>
@@ -35,13 +36,14 @@
                         <x-atom.table-td :type="'center'">{{$row->kode_account}}</x-atom.table-td>
                         <x-atom.table-td>{{$row->accountKategori->deskripsi ?? ''}}</x-atom.table-td>
                         <x-atom.table-td>{{$row->account_name}}</x-atom.table-td>
+                        <x-atom.table-td>{{$row->tipe->tipe ?? ''}}</x-atom.table-td>
                         <x-atom.table-td>{{$row->keterangan}}</x-atom.table-td>
                         <x-atom.table-td :type="'center'">
-                            <button class="btn btn-clean" wire:click="edit('{{$row->id}}')">edit</button>
-                            <button class="btn btn-clean" wire:click="destroy('{{$row->id}}')">delete</button>
-                            @can('SuperAdmin')
-                                <button class="btn btn-clean" wire:click="forceDestroy('{{$row->id}}')">force</button>
-                            @endcan
+                            <div class="btn-group">
+                                <x-atom.button-for-table wire:click="edit('{{$row->id}}')"><i class="la la-edit"></i></x-atom.button-for-table>
+                                <x-atom.button-for-table wire:click="notification('{{$row->id}}')"><i class="la la-trash"></i></x-atom.button-for-table>
+                                <x-atom.button-for-table class="btn btn-sm btn-clean btn-icon btn-icon-danger" wire:click="notification('{{$row->id}}', true)"><i class="la la-trash"></i></x-atom.button-for-table>
+                            </div>
                         </x-atom.table-td>
                     </tr>
                 @empty
@@ -64,6 +66,12 @@
                 <label class="col-3 col-form-label">Kode</label>
                 <div class="col-9">
                     <input type="text" class="form-control" name="kode_account" wire:model.defer="kodeAccount">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Tipe</label>
+                <div class="col-9">
+                    <input type="text" class="form-control" name="kode_account" wire:model.defer="tipe">
                 </div>
             </div>
             <div class="form-group row">
@@ -98,6 +106,14 @@
         </x-slot>
     </x-nano.modal-standart>
 
+    <x-nano.modal-standart id="modalNotification">
+        Apakah Anda yakin?
+        <x-slot name="footer">
+            <button class="btn btn-success" wire:click="destroy">Yakin</button>
+            <button class="btn btn-danger" data-dismiss="modal">Tidak</button>
+        </x-slot>
+    </x-nano.modal-standart>
+
     @push('livewires')
         <script>
             window.livewire.on('showModalAccount', ()=>{
@@ -106,6 +122,13 @@
 
             window.livewire.on('hideModalAccount', ()=>{
                 $('#modalAccountForm').modal('hide');
+            })
+
+            window.livewire.on('showNotification', ()=>{
+                $('#modalNotification').modal('show')
+            })
+            window.livewire.on('hideNotification', ()=>{
+                $('#modalNotification').modal('hide')
             })
         </script>
     @endpush

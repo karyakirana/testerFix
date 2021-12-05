@@ -25,7 +25,7 @@ class StockRusakIndex extends Component
     public function render()
     {
         return view('livewire.stock.stock-rusak-index', [
-            'datainventory_real_rusak'=>InventoryRusak::search('idProduk',$this->search)->paginate(10),
+            'datainventory_real_rusak'=>InventoryRusak::paginate(10),
         ]);
     }
 }

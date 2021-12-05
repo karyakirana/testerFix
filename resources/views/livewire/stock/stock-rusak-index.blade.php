@@ -1,8 +1,11 @@
 <div>
     <x-mikro.card-custom>
         <x-slot name="title">Stock Rusak</x-slot>
-        <div class="py-4 space-y">
-            <x-input placeholder="Search" wire:model="search"/>
+        <div class="col-6 row mb-8">
+            <label for="search" class="col-2 col-form-label">Search :</label>
+            <div class="col-5">
+                <input type="text" class="form-control" wire:model="search">
+            </div>
         </div>
 
         <table class="table table-bordered">
@@ -24,7 +27,7 @@
                     <td class="text-center">{{ $row->branch->branchName }}</td>
                     <td class="text-center">{{ $row->stockIn }}</td>
                     <td class="text-center">{{ $row->stockOut }}</td>
-                    <td class="text-center">{{ $row->stockNow }}</td>
+                    <td class="text-center">{{ $row->stockIn - $row->stockOut }}</td>
                 </tr>
             @empty
                 <tr>

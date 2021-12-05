@@ -22,16 +22,18 @@ class StockRusakMasukDetilRepository
 
     public function update($dataStockRusakInDetil)
     {
-        //
+        return StockMasukRusakDetil::where('id', $dataStockRusakInDetil)
+            ->update($dataStockRusakInDetil);
     }
 
     public function destroy($idDetilStockRusakIn)
     {
-        //
+        return StockMasukRusakDetil::destroy($idDetilStockRusakIn);
     }
 
     public function destroyByMaster($idStockRusakIn)
     {
-        //
+        return StockMasukRusakDetil::where('idStockRusakIn', $idStockRusakIn)
+            ->delete();
     }
 }

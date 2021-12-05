@@ -6,6 +6,7 @@ use App\Models\Accounting\Account;
 use App\Models\Accounting\AccountKategoriSub;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,9 +15,11 @@ class MasterAccount extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
+    protected $listeners = ['destroy'];
+
     public $search;
 
-    public $accountId, $kategoriSubId, $kodeAccount, $accountName, $keterangan;
+    public $accountId, $kategoriSubId, $kodeAccount, $tipe, $accountName, $keterangan;
     public $dataSubKategori;
 
     public function mount()
@@ -26,13 +29,28 @@ class MasterAccount extends Component
 
     public function render()
     {
-        return view('livewire.accounting.master-account', [
-            'daftarAkun'=>Account::where(function ($query) {
-                $query->whereRelation('accountKategori', 'deskripsi', 'like', '%'.$this->search.'%')
-                    ->orWhere('account_name', 'like', '%'.$this->search.'%')
-                    ->orWhere('kode_account', 'like', '%'.$this->search.'%');
-            })->paginate(10)
-        ]);
+        if (Gate::allows('SuperAdmin')){
+            return view('livewire.accounting.master-account', [
+                'daftarAkun'=>Account::query()
+                    ->withTrashed()
+                    ->where(function ($query) {
+                        $query->whereRelation('accountKategori', 'deskripsi', 'like', '%'.$this->search.'%')
+                            ->orWhereRelation('tipe', 'tipe', 'like', '%'.$this->search.'%')
+                            ->orWhere('account_name', 'like', '%'.$this->search.'%')
+                            ->orWhere('kode_account', 'like', '%'.$this->search.'%');
+                    })->paginate(10)
+            ]);
+        } else {
+
+            return view('livewire.accounting.master-account', [
+                'daftarAkun'=>Account::where(function ($query) {
+                    $query->whereRelation('accountKategori', 'deskripsi', 'like', '%'.$this->search.'%')
+                        ->orWhereRelation('tipe', 'tipe', 'like', '%'.$this->search.'%')
+                        ->orWhere('account_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('kode_account', 'like', '%'.$this->search.'%');
+                })->paginate(10)
+            ]);
+        }
     }
 
     public function addData()
@@ -42,6 +60,12 @@ class MasterAccount extends Component
 
     public function store()
     {
+        $this->validate([
+            'tipe'=>'required',
+            'kode'=>'required|unique:accounting_account, kode_account',
+            'kategoriSubId'=>'required',
+            'namaAkun'=>'required|min:2',
+        ]);
         DB::beginTransaction();
         try {
             Account::updateOrCreate(
@@ -50,6 +74,7 @@ class MasterAccount extends Component
                 ],
                 [
                     'kode_account'=>$this->kodeAccount,
+                    'accounting_tipe_id'=>$this->tipe,
                     'account_name'=>$this->accountName,
                     'keterangan'=>$this->keterangan,
                     'kategori_sub_id'=>$this->kategoriSubId
@@ -70,6 +95,7 @@ class MasterAccount extends Component
     {
         $account = Account::find($id);
         $this->accountId = $account->id;
+        $this->tipe = $account->accounting_tipe_id;
         $this->kategoriSubId = $account->kategori_sub_id;
         $this->kodeAccount = $account->kode_account;
         $this->accountName = $account->account_name;
@@ -77,9 +103,20 @@ class MasterAccount extends Component
         $this->emit('showModalAccount');
     }
 
-    public function destroy($id)
+    public function notification($id, $type=null)
     {
-        Account::destroy($id);
+        $this->accountId = $id;
+        $this->emit('showNotification', $type);
+    }
+
+    public function destroy($type = null)
+    {
+        if (!is_null($type)){
+            $this->forceDestroy($this->accountId);
+        } else {
+            Account::destroy($this->accountId);
+        }
+        $this->emit('hideNotification');
         session()->flash('simpan', 'Data berhasil dihapus');
     }
 
@@ -93,6 +130,7 @@ class MasterAccount extends Component
     public function resetForm()
     {
         $this->accountId = '';
+        $this->tipe = '';
         $this->kategoriSubId = '';
         $this->kodeAccount = '';
         $this->accountName = '';

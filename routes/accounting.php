@@ -9,6 +9,8 @@ Route::middleware(['auth'])->group(function(){
     Route::patch('kasir/pemasukan/', [\App\Http\Controllers\Accounting\KasirPemasukanController::class, 'listData']);
     Route::get('kasir/pemasukan/transaksi', [\App\Http\Controllers\Accounting\KasirPemasukanController::class, 'create'])->name('kasir.pemasukan.transaksi');
 
+    Route::get('accounting/master', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'index'])->name('accounting.master');
+
     // kategori
     Route::get('accounting/master/kategori', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'kategori'])->name('accountingKategori');
 
@@ -17,15 +19,9 @@ Route::middleware(['auth'])->group(function(){
 
     // account
     Route::get('accounting/master/account', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'account'])->name('accountingAccount');
-    Route::patch('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'listData']);
-    Route::post('accounting/master/account', [\App\Http\Controllers\Accounting\AccountController::class, 'store']);
-    Route::get('accounting/master/account/{id}', [\App\Http\Controllers\Accounting\AccountController::class, 'edit']);
 
     // account-sub
-    Route::get('accounting/master/accountsub', [\App\Http\Controllers\Accounting\AccountSubController::class, 'index'])->name('accountingSubAccount');
-    Route::patch('accounting/master/accountsub', [\App\Http\Controllers\Accounting\AccountSubController::class, 'listData']);
-    Route::post('accounting/master/accountsub', [\App\Http\Controllers\Accounting\AccountSubController::class, 'store']);
-    Route::get('accounting/master/accountsub/{id}', [\App\Http\Controllers\Accounting\AccountSubController::class, 'edit']);
+    Route::get('accounting/master/accountsub', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'subAccount'])->name('accounting.account.sub');
 
     // journal ref
     Route::get('accounting/master/jurnalref', [\App\Http\Controllers\Accounting\JournalRefController::class, 'index'])->name('accountingJournalRef');
