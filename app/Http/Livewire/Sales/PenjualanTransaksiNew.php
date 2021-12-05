@@ -61,7 +61,7 @@ class PenjualanTransaksiNew extends Component
                     'kodeLokal'=>$item->produk->kode_lokal,
                     'item'=>$item->produk->nama_produk,
                     'harga'=>$item->harga,
-                    'jumlah'=>$item->harga,
+                    'jumlah'=>$item->jumlah,
                     'diskon'=>$item->diskon,
                     'subTotal'=>$item->sub_total,
                 ];
