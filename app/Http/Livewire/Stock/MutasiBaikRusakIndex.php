@@ -20,6 +20,11 @@ class MutasiBaikRusakIndex extends Component
         ]);
     }
 
+    public function editItem()
+    {
+        return redirect()->to(route('stock.mutasi.baik.rusak.transaksi'));
+    }
+
     public function newOrder()
     {
         return redirect()->to(route('stock.mutasi.baik.rusak.transaksi'));

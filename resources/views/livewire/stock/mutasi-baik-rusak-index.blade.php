@@ -31,8 +31,7 @@
                         <x-atom.table-td>{{$row->gudangTujuan->branchName}}</x-atom.table-td>
                         <x-atom.table-td>{{ucfirst($row->user->name)}}</x-atom.table-td>
                         <x-atom.table-td>
-                            <button type="button" class="btn btn-sm btn-clean btn-icon" title="edit" wire:click=""><i class="la la-edit"></i></button>
-                            <button type="button" class="btn btn-sm btn-clean btn-icon" title="detail" wire:click=""><i class="flaticon2-indent-dots"></i></button>
+                            <button type="button" class="btn btn-sm btn-clean btn-icon" title="edit" wire:click="editItem"><i class="la la-edit"></i></button>
                             <button type="button" class="btn btn-sm btn-clean btn-icon" title="print" wire:click=""><i class="flaticon-technology"></i></button>
                         </x-atom.table-td>
                     </tr>

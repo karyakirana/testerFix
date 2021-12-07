@@ -4,9 +4,11 @@ namespace App\Http\Livewire\Accounting;
 
 use App\Models\Accounting\Account;
 use App\Models\Accounting\AccountKategoriSub;
+use App\Models\Accounting\TipeAccount;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -22,9 +24,12 @@ class MasterAccount extends Component
     public $accountId, $kategoriSubId, $kodeAccount, $tipe, $accountName, $keterangan;
     public $dataSubKategori;
 
+    public $dataTipeAccount;
+
     public function mount()
     {
         $this->dataSubKategori = AccountKategoriSub::all();
+        $this->dataTipeAccount = TipeAccount::all();
     }
 
     public function render()
@@ -56,15 +61,18 @@ class MasterAccount extends Component
     public function addData()
     {
         $this->emit('showModalAccount');
+        $this->resetForm();
     }
 
     public function store()
     {
         $this->validate([
             'tipe'=>'required',
-            'kode'=>'required|unique:accounting_account, kode_account',
+            'kodeAccount'=>['required',
+                    Rule::unique('accounting_account', 'kode_account')->ignore($this->accountId)
+                ],
             'kategoriSubId'=>'required',
-            'namaAkun'=>'required|min:2',
+            'accountName'=>'required|min:2',
         ]);
         DB::beginTransaction();
         try {
@@ -135,5 +143,7 @@ class MasterAccount extends Component
         $this->kodeAccount = '';
         $this->accountName = '';
         $this->keterangan = '';
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 }

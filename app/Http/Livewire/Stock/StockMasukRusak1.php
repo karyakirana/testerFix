@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Stock;
 
+use App\Http\Repositories\Stock\StockRusakMasukDetilRepository;
 use App\Http\Repositories\Stock\StockRusakMasukRepository;
 use App\Models\Master\Supplier;
 use App\Models\Stock\InventoryRusak;
@@ -38,10 +39,15 @@ class StockMasukRusak1 extends Component
 
     public function getDataSupplier($supplierId)
     {
-        $supplier = Supplier::where('kodeSupplier', $supplierId)->first();
-        $this->supplierId = $supplier->kodeSupplier;
+        $supplier = Supplier::find($supplierId);
+        $this->supplierId = $supplier->id;
         $this->supplier = $supplier->namaSupplier;
         $this->jenisSupplier = $supplier->jenisSupplier;
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 
     public function resetForm()
@@ -67,7 +73,6 @@ class StockMasukRusak1 extends Component
         'branchId'=>$this->branchId,
         'jenis'=>$this->jenis,
         'jumlahStock'=>$this->jumlah,
-        'kode_supplier'=>$this->supplierId,
         'stockOut'=>$this->stockOut,
         'stockIn'=>$this->stockIn,
         ];
@@ -82,7 +87,6 @@ class StockMasukRusak1 extends Component
         $this->branchId = $this->detailStockRusak[$index]['branchId'];
         $this->jenis = $this->detailStockRusak[$index]['jenis'];
         $this->jumlah = $this->detailStockRusak[$index]['jumlahStock'];
-        $this->supplierId = $this->detailStockRusak[$index]['kodeSupplier'];
         $this->stockOut = $this->detailStockRusak[$index]['stockOut'];
         $this->stockIn = $this->detailStockRusak[$index]['stockIn'];
     }
@@ -94,7 +98,6 @@ class StockMasukRusak1 extends Component
         $this->detailStockRusak[$index]['nama_produk'] = $this->namaProduk;
         $this->detailStockRusak[$index]['branchId'] = $this->branchId;
         $this->detailStockRusak[$index]['jenis'] = $this->jenis;
-        $this->detailStockRusak[$index]['jumlahStock'] = $this->jumlah;
         $this->detailStockRusak[$index]['kodeSupplier'] = $this->supplierId;
         $this->detailStockRusak[$index]['stockOut'] = $this->stockOut;
         $this->detailStockRusak[$index]['stockIn'] = $this->stockIn;
@@ -116,8 +119,8 @@ class StockMasukRusak1 extends Component
             ];
             // insert stock table
             $storeStockMasuk = (new StockRusakMasukRepository())->storeStockMasuk($dataStockMasuk);
-//            // insert stock detil table
-//            $storeStockMasuk = (new StockMasukRepository())->storeStockMasukDetail($dataStockMasukDetail);
+            // insert stock detil table
+            $storeStockMasuk = (new StockRusakMasukDetilRepository())->create($dataStockMasuk);
 
 
             foreach ($this->detailStockRusak as $row)

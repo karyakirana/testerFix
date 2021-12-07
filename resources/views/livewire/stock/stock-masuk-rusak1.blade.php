@@ -112,12 +112,21 @@
                     </form>
                 </div>
                 <div class="example-preview text-center">
-                        <button class="btn btn-primary btn-lg" wire:click="storeAll">SIMPAN & CETAK</button>
+                        <button class="btn btn-danger" type="button" wire:click="storeAll">SIMPAN ALL</button>
                 </div>
             </div>
         </div>
 
 
     </x-mikro.card-custom>
+    @push('livewires')
+        <script>
+            $('#tgl_mutasi').on('change', function (e) {
+                let date = $(this).data("#tgl_mutasi");
+                console.log(e.target.value);
+                @this.tgl_mutasi = e.target.value;
+            })
+        </script>
+    @endpush
 
 </div>

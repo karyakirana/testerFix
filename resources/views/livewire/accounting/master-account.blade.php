@@ -57,7 +57,7 @@
         {{ $daftarAkun->links() }}
     </x-mikro.card-custom>
 
-    <x-nano.modal-standart id="modalAccountForm">
+    <x-nano.modal-standart id="modalAccountForm" wire:ignore.self>
         <x-slot name="title">Akun Form</x-slot>
 
         <form action="#" id="formModal">
@@ -65,31 +65,41 @@
             <div class="form-group row">
                 <label class="col-3 col-form-label">Kode</label>
                 <div class="col-9">
-                    <input type="text" class="form-control" name="kode_account" wire:model.defer="kodeAccount">
+                    <input type="text" class="form-control @error('kodeAccount') is-invalid @enderror" name="kode_account" wire:model.defer="kodeAccount">
+                    @error('kodeAccount') <span class="invalid-feedback">{{$message}}</span> @enderror
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-3 col-form-label">Tipe</label>
                 <div class="col-9">
-                    <input type="text" class="form-control" name="kode_account" wire:model.defer="tipe">
+                    <select name="tipe" id="tipe" class="form-control @error('tipe') is-invalid @enderror " wire:model.defer="tipe">
+                        <option selected>Dipilih</option>
+                        @forelse($dataTipeAccount as $row)
+                            <option value="{{$row->id}}">{{$row->tipe}}</option>
+                        @empty
+                        @endforelse
+                    </select>
+                    @error('tipe') <span class="invalid-feedback">{{$message}}</span> @enderror
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-3 col-form-label">Sub Kategori</label>
                 <div class="col-9">
-                    <select id="kategoriSubId" class="form-control" wire:model.defer="kategoriSubId">
+                    <select id="kategoriSubId" class="form-control @error('kategoriSubId') is-invalid @enderror " wire:model.defer="kategoriSubId">
                         <option selected>Silahkan Pilih</option>
                         @forelse($dataSubKategori as $row)
                             <option value="{{$row->id}}">{{$row->kode_kategori_sub}} | {{$row->deskripsi}}</option>
                         @empty
                         @endforelse
                     </select>
+                    @error('kategoriSubId') <span class="invalid-feedback">{{$message}}</span> @enderror
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-3 col-form-label">Akun</label>
                 <div class="col-9">
-                    <input type="text" class="form-control" name="namaAkun" wire:model.defer="accountName">
+                    <input type="text" class="form-control @error('accountName') is-invalid @enderror " name="namaAkun" wire:model.defer="accountName">
+                    @error('accountName') <span class="invalid-feedback">{{$message}}</span> @enderror
                 </div>
             </div>
             <div class="form-group row">
@@ -106,7 +116,7 @@
         </x-slot>
     </x-nano.modal-standart>
 
-    <x-nano.modal-standart id="modalNotification">
+    <x-nano.modal-standart id="modalNotification" wire:ignore.self>
         Apakah Anda yakin?
         <x-slot name="footer">
             <button class="btn btn-success" wire:click="destroy">Yakin</button>

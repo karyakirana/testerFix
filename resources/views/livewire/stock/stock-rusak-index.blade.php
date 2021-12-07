@@ -25,9 +25,15 @@
                     <td class="text-center">{{ $row->idProduk }}</td>
                     <td class="text-center">{{ $row->produk->nama_produk }}</td>
                     <td class="text-center">{{ $row->branch->branchName }}</td>
-                    <td class="text-center">{{ $row->stockIn }}</td>
-                    <td class="text-center">{{ $row->stockOut }}</td>
-                    <td class="text-center">{{ $row->stockIn - $row->stockOut }}</td>
+                    <td class="text-center">
+                        <button class="btn btn-hover-bg-light" id="modalStock">{{ $row->stockIn }}</button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-hover-bg-light">{{ $row->stockOut }}</button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-hover-bg-light">{{ $row->stockIn - $row->stockOut }}</button>
+                    </td>
                 </tr>
             @empty
                 <tr>
