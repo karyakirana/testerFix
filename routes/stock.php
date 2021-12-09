@@ -81,6 +81,13 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/stock/temp/{id}', [\App\Http\Controllers\Stock\StockTempController::class, 'edit']);
     Route::delete('/stock/temp/{id}', [\App\Http\Controllers\Stock\StockTempController::class, 'destroy']);
 
+    // stock Rusak
+    Route::get('stock/rusak/branch/{id}', [\App\Http\Controllers\Stock\StockRusakController::class, 'indexByBranch']);
+
+    // Stock Rusak Opname
+    Route::get('stock/opname/rusak', [\App\Http\Controllers\Stock\StockOpnameRusak::class, 'index'])->name('stock.opname.rusak');
+    Route::get('stock/opname/rusak/trans', [\App\Http\Controllers\Stock\StockOpnameRusak::class, 'create'])->name('stock.opname.rusak.transaksi');
+
     // Stock generate
     Route::post('/generate/penjualan/to/stock', [\App\Http\Controllers\Generator\GenerateSalesToStockController::class, 'store'])->name('generateSalesToStock');
 

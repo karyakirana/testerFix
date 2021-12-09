@@ -11,6 +11,9 @@ Route::middleware(['auth'])->group(function(){
 
     Route::get('accounting/master', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'index'])->name('accounting.master');
 
+    // tipe account
+    Route::get('accounting/master/tipe', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'tipeAccount'])->name('accounting.master.tipe');
+    Route::get('accounting/master/kategori/tipe', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'kategoriTipe']);
     // kategori
     Route::get('accounting/master/kategori', [\App\Http\Controllers\Accounting\MasterAccountController::class, 'kategori'])->name('accountingKategori');
 
@@ -33,6 +36,10 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/kasir/tambahbiaya/{id}', [\App\Http\Controllers\Kasir\KasirController::class, 'tambahBiaya'])->name('kasir.tambahbiaya');
     Route::get('kasir/nota/piutang', [\App\Http\Controllers\Kasir\KasirController::class, 'daftarPiutang'])->name('kasir.piutang');
     Route::get('kasir/nota/piutang/transaksi', [\App\Http\Controllers\Kasir\KasirController::class, 'setPiutangTransaksi'])->name('kasir.piutang.transaksi');
+
+    // Penerimaan Cash
+    Route::get('/kasir/penerimaan/cash', [\App\Http\Controllers\Kasir\KasirController::class, 'penerimaanCash'])->name('kasir.penerimaan.cash');
+    Route::get('/kasir/penerimaan/cash/transaksi', [\App\Http\Controllers\Kasir\KasirController::class, 'penerimaanCashTransaksi'])->name('kasir.penerimaan.cash.transaksi');
 
     // journal pembayaran nota
 //    Route::get('kasir/pembayarannota', [\App\Http\Controllers\Accounting\JurnalPembayaranNotaController::class, 'index'])->name('jurnalPembayaranNota');

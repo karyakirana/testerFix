@@ -3,6 +3,8 @@
 namespace App\Http\Repositories\Stock;
 
 use App\Models\Stock\InventoryRusak;
+use App\Models\Stock\StockMasukRusak;
+use App\Models\Stock\StockMasukRusakDetil;
 use Illuminate\Support\Facades\DB;
 
 class InventoryRusakRealRepository
@@ -75,6 +77,27 @@ class InventoryRusakRealRepository
                 'stockIn'=>$dataDetil['jumlah']
             ]);
         }
+    }
+
+    public function searchInventoryRusakByBrach($branch, $search, $paginate)
+    {
+        $data = InventoryRusak::query()
+            ->where('branchId', $branch)
+            ->Where('idProduk', 'like', '%'.$search.'%')
+            ->orWhereRelation('produk', 'nama_produk', 'like', '%'.$search.'%');
+        if($paginate > 0){
+            return $data->paginate($paginate);
+        } else {
+            return $data->get();
+        }
+    }
+
+    public function detilInInventoryReal($idbranch, $idProduk)
+    {
+        return StockMasukRusakDetil::query()
+            ->where('produk_id', $idProduk)
+            ->whereRelation('stockMasukRusak', 'branch_id', '=', $idbranch)
+            ->get();
     }
 }
 

@@ -11,6 +11,12 @@ class TipeAccount extends Model
     protected $table = 'account_tipe';
     protected $fillable = [
         'tipe',
+        'kategori_tipe_id',
         'keterangan'
     ];
+
+    public function tipeKategori()
+    {
+        return $this->belongsTo(AccountKategoriTipe::class, 'kategori_tipe_id', 'id');
+    }
 }

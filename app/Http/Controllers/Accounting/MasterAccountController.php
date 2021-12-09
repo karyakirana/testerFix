@@ -12,6 +12,16 @@ class MasterAccountController extends Controller
         return view('pages.accounting.master-account-index');
     }
 
+    public function kategoriTipe()
+    {
+        return view('pages.accounting.account-kategori-tipe');
+    }
+
+    public function tipeAccount()
+    {
+        return view('pages.accounting.account-tipe');
+    }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */

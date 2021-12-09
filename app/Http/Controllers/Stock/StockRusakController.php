@@ -26,4 +26,9 @@ class StockRusakController extends Controller
     {
         return view('pages.stock.stock-keluar-rusak1');
     }
+
+    public function indexByBranch($idBranch)
+    {
+        return view('pages.stock.stock-rusak-byBranch', ['idBranch'=>$idBranch]);
+    }
 }

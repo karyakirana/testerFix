@@ -24,6 +24,13 @@ class KasirController extends Controller
         ]);
     }
 
+    public function daftarCash($sudahBayar = null)
+    {
+        return view('pages.kasir.kasir-daftar-cash', [
+            'sudahBayar'=>$sudahBayar
+        ]);
+    }
+
     public function daftarPiutang()
     {
         //
@@ -32,5 +39,27 @@ class KasirController extends Controller
     public function setPiutangTransaksi()
     {
         return view('pages.kasir.payment-set-piutang');
+    }
+
+    public function penerimaanCash()
+    {
+        return view('pages.kasir.penerimaan-cash');
+    }
+
+    public function penerimaanCashTransaksi($penerimaanCashId = null)
+    {
+        return view('pages.kasir.penerimaan-cash-transaksi', [
+            'penerimaanCashId'=>$penerimaanCashId
+        ]);
+    }
+
+    public function penerimaanTempo()
+    {
+        //
+    }
+
+    public function penerimaanTempoTransaksi()
+    {
+        //
     }
 }

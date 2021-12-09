@@ -2,6 +2,7 @@
 
 namespace App\Models\Master;
 
+use App\Models\Stock\StockMasukRusakDetil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,5 +48,10 @@ class Produk extends Model
     public function kategoriHarga()
     {
         return $this->belongsTo(KategoriHarga::class, 'id_kat_harga', 'id_kat_harga');
+    }
+
+    public function stockRusakMasukDetail()
+    {
+        return $this->hasMany(StockMasukRusakDetil::class, 'produk_id', 'id_produk');
     }
 }
